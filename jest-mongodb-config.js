@@ -4,10 +4,11 @@ module.exports = {
       dbName: 'jest',
     },
     binary: {
-      version: '4.0.2',
+      version: '4.0.3',
       skipMD5: true,
     },
     autoStart: false,
   },
+  mongoURLEnvName: 'MONGO_URI',
 };
 
