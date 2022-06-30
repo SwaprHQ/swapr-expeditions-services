@@ -17,6 +17,11 @@ export const VisitSchema = new Schema<IVisit>(
       type: Schema.Types.Date,
       required: true,
     },
+    allVisits: {
+      type: Schema.Types.Number,
+      required: true,
+      default: 0,
+    },
   },
   {
     timestamps: true,
@@ -41,5 +46,5 @@ VisitSchema.plugin(MongooseDelete, {
 });
 
 // register the model and export it
-export const VisitSchemaModel = model<IVisit>('ImageAsset', VisitSchema);
+export const VisitModel = model<IVisit>('Visit', VisitSchema);
 

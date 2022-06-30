@@ -2,7 +2,10 @@ import { Server } from '@hapi/hapi';
 import { isAddress } from '@ethersproject/address';
 import Joi from 'joi';
 
-import { getDailyVisitsController } from '../expeditions';
+import {
+  addDailyVisitsController,
+  getDailyVisitsController,
+} from '../expeditions';
 
 async function register(server: Server) {
   // Return nothing
@@ -23,18 +26,16 @@ async function register(server: Server) {
             .custom(value => {
               if (!isAddress(value)) {
                 throw new Error('Address is not valid');
-              } else {
-                return true;
               }
+
+              return value;
             })
             .required(),
         },
       },
       tags: ['api', 'expeditions'],
     },
-    handler: () => ({
-      message: 'not implemented',
-    }),
+    handler: getDailyVisitsController,
   });
 
   server.route({
@@ -49,7 +50,7 @@ async function register(server: Server) {
       },
       tags: ['api', 'expeditions', 'daily visit'],
     },
-    handler: getDailyVisitsController,
+    handler: addDailyVisitsController,
   });
 }
 
