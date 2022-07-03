@@ -1,0 +1,8 @@
+generates:
+  src/modules/expeditions/generated/graphql/queries.ts:
+    schema: "https://api.thegraph.com/subgraphs/name/dxgraphs/swapr-xdai-v2"
+    documents: "src/modules/expeditions/graphql/queries.ts"
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-graphql-request
