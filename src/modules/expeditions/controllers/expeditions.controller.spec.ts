@@ -59,6 +59,24 @@ describe('Expeditions Controllers', () => {
 
       expect(signupRes.statusCode).toBe(200);
       expect((signupRes.result as any).data.allVisits).toEqual(5);
+  describe('getWeeklyLiquidityPositionDeposits', () => {
+    test('should return data from the subgraphs', async () => {
+      const address = testWallet.address;
+
+      const testRes = await server.inject({
+        method: 'GET',
+        url: `/expeditions/weekly-liquidity?address=${address}`,
+      });
+
+      expect(testRes.statusCode).toBe(200);
+      expect(Object.keys((testRes.result as any).data)).toEqual(
+        expect.arrayContaining([
+          'liquidityDeposits',
+          'totalAmountUSD',
+          'claimableFragments',
+          'claimedFragments',
+        ])
+      );
     });
   });
 });
