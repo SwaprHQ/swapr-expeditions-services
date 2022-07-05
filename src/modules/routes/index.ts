@@ -5,7 +5,30 @@ import Joi from 'joi';
 import {
   addDailyVisitsController,
   getDailyVisitsController,
+  getWeeklyLiquidityPositionDeposits,
 } from '../expeditions';
+
+/**
+ * Custom method to validate Joi Ethereum addresss.
+ * @param value - The value to validate.
+ * @returns {boolean} - True if the value is a valid Ethereum address.
+ */
+const joiEthereumAddressMethod = (value: string) => {
+  if (!isAddress(value)) {
+    throw new Error('Address is not valid');
+  }
+
+  return value;
+};
+
+/**
+ * Signature parameter validator
+ */
+const signature = Joi.string().required();
+/**
+ * Ethereum address validator
+ */
+const address = Joi.string().custom(joiEthereumAddressMethod).required();
 
 async function register(server: Server) {
   // Return nothing
@@ -51,6 +74,37 @@ async function register(server: Server) {
       tags: ['api', 'expeditions', 'daily visit'],
     },
     handler: addDailyVisitsController,
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/expeditions/weekly-liquidity',
+    options: {
+      description: `Get an address's weekly liquidity`,
+      validate: {
+        query: {
+          address,
+        },
+      },
+      tags: ['api', 'expeditions', 'weekly liquidity'],
+    },
+    handler: getWeeklyLiquidityPositionDeposits,
+  });
+
+  server.route({
+    method: 'POST',
+    path: '/expeditions/weekly-liquidity/claim',
+    options: {
+      description: `Claim a weekly liquidity reward (fragments)`,
+      validate: {
+        payload: {
+          signature,
+          address,
+        },
+      },
+      tags: ['api', 'expeditions', 'weekly liquidity'],
+    },
+    handler: getWeeklyLiquidityPositionDeposits,
   });
 }
 
