@@ -16,3 +16,33 @@ export const MONGO_URI = process.env.MONGO_URI as string;
  */
 export const SENTRY_DSN = process.env.SENTRY_DSN;
 
+/**
+ * Minimum amount of USD to be eligible for weekly rewards for liquidity provisioning
+ */
+export const ADD_LIQUIDITY_MIN_USD_AMOUNT = 50;
+
+/**
+ * Minimum amount of USD to be eligible for weekly rewards for staking liquidity
+ */
+export const STAKE_LIQUIDITY_MIN_USD_AMOUNT = 50;
+
+/**
+ * The maximum number of fragments that can be claimed by a user in a week.
+ */
+export const MAX_WEEKLY_CLAIM_FRAGMENT = 750;
+
+/**
+ * Past completed week adds 50 fragments to the total fragments.
+ */
+export const PAST_WEEK_ADDITIONAL_FRAGMENT = 50;
+
+/**
+ * Base number of fragments per week.
+ */
+export const FRAGMENTS_PER_WEEK = 50;
+
+/**
+ * A shared text payload used to verify the signature of a message.
+ */
+export const SIGNATURE_TEXT_PAYLOAD = 'Swapr Daily Visit';
+
