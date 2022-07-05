@@ -1,13 +1,17 @@
 import { captureException } from '@sentry/node';
 import { Request } from '@hapi/hapi';
 import Boom from '@hapi/boom';
-import { ethers } from 'ethers';
+import { verifyMessage } from '@ethersproject/wallet';
 import dayjs from 'dayjs';
-import dayjsUtcPlugin from 'dayjs/plugin/utc';
 
 import { VisitModel } from '../models';
-
-dayjs.extend(dayjsUtcPlugin);
+import { SIGNATURE_TEXT_PAYLOAD } from '../../config/config.service';
+import { MultichainSubgraphService } from '../services/MultichainSubgraph.service';
+import { APIGeneralResponse } from 'src/modules/shared/interfaces/response.interface';
+import { WeeklyFragmentService } from '../services/WeeklyFragments.service';
+import { getCurrentWeekInformation } from '../utils/week';
+import { WeeklyFragmentModel } from '../models/WeeklyFragment.model';
+import { WeeklyFragmentType } from '../interfaces/IFragment.interface';
 
 interface IGetDailyVisitsRequest extends Request {
   query: {
@@ -15,13 +19,15 @@ interface IGetDailyVisitsRequest extends Request {
   };
 }
 
-const defaultDailyVisitPayload = 'Swapr Dail Visit';
-
 interface IAddDailyVisitsRequest extends Request {
   payload: {
+    address: string;
     signature: string;
   };
 }
+
+type IGetWeeklyRewardsRequest = IGetDailyVisitsRequest;
+type IClaimWeeklyRewardsRequest = IAddDailyVisitsRequest;
 
 /**
  * Get daily visits for a given address
@@ -56,15 +62,18 @@ export async function getDailyVisitsController(req: IGetDailyVisitsRequest) {
  */
 export async function addDailyVisitsController(req: IAddDailyVisitsRequest) {
   try {
-    const { signature } = req.payload;
-
-    const address = ethers.utils.verifyMessage(
-      defaultDailyVisitPayload,
+    const { signature, address } = req.payload;
+    const addressFromSignature = verifyMessage(
+      SIGNATURE_TEXT_PAYLOAD,
       signature
     );
 
+    if (addressFromSignature !== address) {
+      throw new Error('Invalid signature');
+    }
+
     const lastVisitDocument = await VisitModel.findOne({
-      address: address,
+      address,
     });
 
     if (lastVisitDocument != null) {
@@ -101,6 +110,117 @@ export async function addDailyVisitsController(req: IAddDailyVisitsRequest) {
         address,
         lastVisit,
         allVisits,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    captureException(error);
+    throw Boom.badRequest(error);
+  }
+}
+
+interface GetWeeklyLiquidityPositionDepositsResponse {
+  liquidityDeposits: any[];
+  totalAmountUSD: number;
+  claimableFragments: number;
+  claimedFragments: number;
+}
+
+/**
+ * Returns the weekly liquidity rewards for a given address
+ * @param req
+ * @returns
+ */
+export async function getWeeklyLiquidityPositionDeposits(
+  req: IGetWeeklyRewardsRequest
+): Promise<APIGeneralResponse<GetWeeklyLiquidityPositionDepositsResponse>> {
+  try {
+    let { address } = req.query;
+    address = address.toLowerCase();
+
+    const currentWeek = getCurrentWeekInformation();
+
+    const weeklyFragmentService = new WeeklyFragmentService({
+      multichainSubgraphService: new MultichainSubgraphService(),
+      weeklyFragmentModel: WeeklyFragmentModel,
+    });
+
+    const weeklyRewardData = await weeklyFragmentService.getLiquidityProvisionWeekRewards(
+      {
+        address,
+        week: currentWeek,
+      }
+    );
+
+    return {
+      data: weeklyRewardData,
+    };
+  } catch (error) {
+    console.log(error);
+    captureException(error);
+    throw Boom.badRequest(error);
+  }
+}
+
+interface ClaimWeeklyFragmentsForLiquidityPositionDeposits {
+  claimedFragments: number;
+}
+
+/**
+ *
+ */
+export async function claimWeeklyFragmentsForLiquidityPositionDeposits(
+  req: IClaimWeeklyRewardsRequest
+): Promise<
+  APIGeneralResponse<ClaimWeeklyFragmentsForLiquidityPositionDeposits>
+> {
+  try {
+    const { signature } = req.payload;
+
+    // Get the address and use the lowercase version
+    const address = verifyMessage(
+      SIGNATURE_TEXT_PAYLOAD,
+      signature
+    ).toLowerCase();
+
+    // Fetch the weekly fragment informationx
+    const currentWeek = getCurrentWeekInformation();
+    const weeklyFragmentService = new WeeklyFragmentService({
+      multichainSubgraphService: new MultichainSubgraphService(),
+      weeklyFragmentModel: WeeklyFragmentModel,
+    });
+
+    const weekRewards = await weeklyFragmentService.getLiquidityProvisionWeekRewards(
+      {
+        address,
+        week: currentWeek,
+      }
+    );
+
+    // Store the claimed fragments
+    const currentWeeklyFragment = await WeeklyFragmentModel.findOne({
+      address,
+      week: currentWeek.weekNumber,
+    });
+
+    if (currentWeeklyFragment != null) {
+      throw new Error('Weekly fragment already claimed');
+    }
+
+    if (weekRewards.claimableFragments === 0) {
+      throw new Error('No claimable fragments');
+    }
+
+    await new WeeklyFragmentModel({
+      address,
+      type: WeeklyFragmentType.LIQUIDITY_PROVISION,
+      week: currentWeek.weekNumber,
+      fragments: weekRewards.claimableFragments,
+    }).save();
+
+    return {
+      data: {
+        claimedFragments: weekRewards.claimableFragments,
       },
     };
   } catch (error) {

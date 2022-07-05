@@ -19,6 +19,7 @@ describe('Expeditions Controllers', () => {
 
   afterEach(async () => {
     await server.stop();
+    await mongoose.connection.db.dropDatabase();
     await mongoose.disconnect();
   });
 
@@ -38,6 +39,20 @@ describe('Expeditions Controllers', () => {
     });
 
     test('should return correct data values when address has no previous data', async () => {
+      const signature = await testWallet.signMessage('Swapr Daily Visit');
+      const testRes = await server.inject({
+        method: 'POST',
+        url: `/expeditions/daily-visit`,
+        payload: {
+          signature,
+          address: testWallet.address,
+        },
+      });
+      expect(testRes.statusCode).toBe(200);
+      expect((testRes.result as any).data.allVisits).toEqual(1);
+    });
+
+    test('should increase visits by one when address has previous visits', async () => {
       const testDate = dayjs().utc().add(-2, 'days').toDate();
 
       // Inject data into mongoose
@@ -47,18 +62,40 @@ describe('Expeditions Controllers', () => {
         lastVisit: testDate,
       }).save();
 
-      const signature = await testWallet.signMessage('Swapr Dail Visit');
+      const signature = await testWallet.signMessage('Swapr Daily Visit');
 
-      const signupRes = await server.inject({
+      const testRes = await server.inject({
         method: 'POST',
         url: `/expeditions/daily-visit`,
         payload: {
           signature,
+          address: testWallet.address,
         },
       });
 
-      expect(signupRes.statusCode).toBe(200);
-      expect((signupRes.result as any).data.allVisits).toEqual(5);
+      expect(testRes.statusCode).toBe(200);
+      expect((testRes.result as any).data.allVisits).toEqual(5);
+    });
+  });
+
+  describe('getWeeklyLiquidityPositionDeposits', () => {
+    test('should return data from the subgraphs', async () => {
+      const address = testWallet.address;
+
+      const testRes = await server.inject({
+        method: 'GET',
+        url: `/expeditions/weekly-liquidity?address=${address}`,
+      });
+
+      expect(testRes.statusCode).toBe(200);
+      expect(Object.keys((testRes.result as any).data)).toEqual(
+        expect.arrayContaining([
+          'liquidityDeposits',
+          'totalAmountUSD',
+          'claimableFragments',
+          'claimedFragments',
+        ])
+      );
     });
   });
 });
