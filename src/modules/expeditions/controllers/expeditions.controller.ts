@@ -1,12 +1,11 @@
 import { captureException } from '@sentry/node';
 import { Request } from '@hapi/hapi';
 import Boom from '@hapi/boom';
-import { ethers } from 'ethers';
+import { verifyMessage } from '@ethersproject/wallet';
 import dayjs from 'dayjs';
-import dayjsUtcPlugin from 'dayjs/plugin/utc';
 
 import { VisitModel } from '../models';
-
+import { SIGNATURE_TEXT_PAYLOAD } from '../../config/config.service';
 import { MultichainSubgraphService } from '../services/MultichainSubgraph.service';
 import { APIGeneralResponse } from 'src/modules/shared/interfaces/response.interface';
 import { WeeklyFragmentService } from '../services/WeeklyFragments.service';
@@ -20,10 +19,9 @@ interface IGetDailyVisitsRequest extends Request {
   };
 }
 
-const defaultDailyVisitPayload = 'Swapr Dail Visit';
-
 interface IAddDailyVisitsRequest extends Request {
   payload: {
+    address: string;
     signature: string;
   };
 }
@@ -64,15 +62,18 @@ export async function getDailyVisitsController(req: IGetDailyVisitsRequest) {
  */
 export async function addDailyVisitsController(req: IAddDailyVisitsRequest) {
   try {
-    const { signature } = req.payload;
-
-    const address = ethers.utils.verifyMessage(
-      defaultDailyVisitPayload,
+    const { signature, address } = req.payload;
+    const addressFromSignature = verifyMessage(
+      SIGNATURE_TEXT_PAYLOAD,
       signature
     );
 
+    if (addressFromSignature !== address) {
+      throw new Error('Invalid signature');
+    }
+
     const lastVisitDocument = await VisitModel.findOne({
-      address: address,
+      address,
     });
 
     if (lastVisitDocument != null) {

@@ -45,15 +45,7 @@ async function register(server: Server) {
       description: `Get an address's expedition information`,
       validate: {
         query: {
-          address: Joi.string()
-            .custom(value => {
-              if (!isAddress(value)) {
-                throw new Error('Address is not valid');
-              }
-
-              return value;
-            })
-            .required(),
+          address,
         },
       },
       tags: ['api', 'expeditions'],
@@ -68,7 +60,8 @@ async function register(server: Server) {
       description: `Record a daily visit to an expedition`,
       validate: {
         payload: {
-          signature: Joi.string().required(),
+          signature,
+          address,
         },
       },
       tags: ['api', 'expeditions', 'daily visit'],
