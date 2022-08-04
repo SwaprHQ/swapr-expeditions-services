@@ -81,5 +81,48 @@ export class WeeklyFragmentService {
 
     return returnValue;
   }
+
+  /**
+   * Returns the weekly rewards for a given address for current week. All times are in UTC.
+   * @returns {Promise<WeeklyFragmentRewards>}
+   */
+  async getLiquidityStakingWeekRewards({
+    address,
+    week,
+  }: GetWeeklyRewardsParams): Promise<WeeklyFragmentRewards> {
+    // Return value
+    const returnValue: WeeklyFragmentRewards = {
+      totalAmountUSD: 0,
+      liquidityDeposits: [],
+      claimableFragments: 0,
+      claimedFragments: 0,
+    };
+
+    const queryParams = {
+      address,
+      minAmountUSD: ADD_LIQUIDITY_MIN_USD_AMOUNT.toString(),
+      timestampA: week.startDate.unix(),
+      timestampB: week.endDate.unix(),
+    };
+
+    returnValue.liquidityDeposits = await this.multichainSubgraphService.getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(
+      queryParams
+    );
+
+    // calculate the total amount of USD deposited
+    const totalAmountUSD: number = returnValue.liquidityDeposits.reduce(
+      (acc, { amountUSD }) => acc + parseInt(amountUSD || '0'),
+      0
+    );
+
+    // Calculate claimable fragments for this week.
+    // Add the base 50 fragments for this week
+    // if the provided liquidity deposits are more than $50 USD
+    if (totalAmountUSD > ADD_LIQUIDITY_MIN_USD_AMOUNT) {
+      returnValue.claimableFragments = FRAGMENTS_PER_WEEK;
+    }
+
+    return returnValue;
+  }
 }
 

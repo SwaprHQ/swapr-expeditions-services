@@ -22,3 +22,56 @@ export const getLiquidityPositionDepositsBetweenTimestampAAndTimestampB = gql`
   }
 `;
 
+export const getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB = gql`
+  query getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB(
+    $address: Bytes!
+    $minAmountUSD: BigDecimal!
+    $timestampA: BigInt!
+    $timestampB: BigInt!
+  ) {
+    liquidityMiningCampaignDeposits: deposits(
+      where: {
+        user: $address
+        timestamp_gte: $timestampA
+        timestamp_lte: $timestampB
+      }
+    ) {
+      id
+      amount
+      timestamp
+      liquidityMiningCampaign {
+        id
+        stakablePair {
+          id
+          reserveUSD
+          token0 {
+            id
+            symbol
+          }
+          token1 {
+            id
+            symbol
+          }
+        }
+      }
+    }
+    singleSidedStakingCampaignDeposits(
+      where: {
+        user: $address
+        timestamp_gte: $timestampA
+        timestamp_lte: $timestampB
+      }
+    ) {
+      id
+      amount
+      timestamp
+      singleSidedStakingCampaign {
+        stakeToken {
+          id
+          symbol
+        }
+      }
+    }
+  }
+`;
+

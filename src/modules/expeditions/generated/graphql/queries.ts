@@ -4910,6 +4910,16 @@ export type GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQueryVaria
 
 export type GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQuery = { __typename?: 'Query', mints: Array<{ __typename?: 'Mint', amountUSD?: any | null, to: any, timestamp: any }> };
 
+export type GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQueryVariables = Exact<{
+  address: Scalars['Bytes'];
+  minAmountUSD: Scalars['BigDecimal'];
+  timestampA: Scalars['BigInt'];
+  timestampB: Scalars['BigInt'];
+}>;
+
+
+export type GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQuery = { __typename?: 'Query', liquidityMiningCampaignDeposits: Array<{ __typename?: 'Deposit', id: string, amount: any, timestamp: any, liquidityMiningCampaign: { __typename?: 'LiquidityMiningCampaign', id: string, stakablePair: { __typename?: 'Pair', id: string, reserveUSD: any, token0: { __typename?: 'Token', id: string, symbol: string }, token1: { __typename?: 'Token', id: string, symbol: string } } } }>, singleSidedStakingCampaignDeposits: Array<{ __typename?: 'SingleSidedStakingCampaignDeposit', id: string, amount: any, timestamp: any, singleSidedStakingCampaign: { __typename?: 'SingleSidedStakingCampaign', stakeToken: { __typename?: 'Token', id: string, symbol: string } } }> };
+
 
 export const GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBDocument = gql`
     query getLiquidityPositionDepositsBetweenTimestampAAndTimestampB($address: Bytes!, $minAmountUSD: BigDecimal!, $timestampA: BigInt!, $timestampB: BigInt!) {
@@ -4919,6 +4929,45 @@ export const GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBDocument 
     amountUSD
     to
     timestamp
+  }
+}
+    `;
+export const GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBDocument = gql`
+    query getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB($address: Bytes!, $minAmountUSD: BigDecimal!, $timestampA: BigInt!, $timestampB: BigInt!) {
+  liquidityMiningCampaignDeposits: deposits(
+    where: {user: $address, timestamp_gte: $timestampA, timestamp_lte: $timestampB}
+  ) {
+    id
+    amount
+    timestamp
+    liquidityMiningCampaign {
+      id
+      stakablePair {
+        id
+        reserveUSD
+        token0 {
+          id
+          symbol
+        }
+        token1 {
+          id
+          symbol
+        }
+      }
+    }
+  }
+  singleSidedStakingCampaignDeposits(
+    where: {user: $address, timestamp_gte: $timestampA, timestamp_lte: $timestampB}
+  ) {
+    id
+    amount
+    timestamp
+    singleSidedStakingCampaign {
+      stakeToken {
+        id
+        symbol
+      }
+    }
   }
 }
     `;
@@ -4932,6 +4981,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   return {
     getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(variables: GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQuery>(GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getLiquidityPositionDepositsBetweenTimestampAAndTimestampB', 'query');
+    },
+    getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB(variables: GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQuery>(GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB', 'query');
     }
   };
 }
