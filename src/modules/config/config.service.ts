@@ -46,3 +46,12 @@ export const FRAGMENTS_PER_WEEK = 50;
  */
 export const SIGNATURE_TEXT_PAYLOAD = 'Swapr Daily Visit';
 
+/**
+ *
+ */
+export const JSON_RPC_PROVIDER_ETHEREUM =
+  process.env.JSON_RPC_PROVIDER_ETHEREUM;
+export const JSON_RPC_PROVIDER_ARBITRUM_ONE =
+  process.env.JSON_RPC_PROVIDER_ARBITRUM_ONE;
+export const JSON_RPC_PROVIDER_GNOSIS = process.env.JSON_RPC_PROVIDER_GNOSIS;
+

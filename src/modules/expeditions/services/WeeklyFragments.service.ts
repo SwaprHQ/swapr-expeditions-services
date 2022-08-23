@@ -3,9 +3,11 @@ import {
   FRAGMENTS_PER_WEEK,
 } from '../../config/config.service';
 import { CurrentWeekInformation } from '../utils/week';
+import { BigNumber } from '@ethersproject/bignumber';
 
 import type { MultichainSubgraphService } from './MultichainSubgraph.service';
 import type { WeeklyFragmentModel } from '../models/WeeklyFragment.model';
+import { MultichainERC20Service } from './multichain-erc20';
 
 interface WeeklyFragmentRewards {
   claimableFragments: number;
@@ -21,11 +23,13 @@ interface GetWeeklyRewardsParams {
 
 interface WeeklyFragmentServiceParams {
   multichainSubgraphService: MultichainSubgraphService;
+  multichainERC20Service: MultichainERC20Service;
   weeklyFragmentModel: WeeklyFragmentModel;
 }
 
 export class WeeklyFragmentService {
   multichainSubgraphService: MultichainSubgraphService;
+  multichainERC20Service: MultichainERC20Service;
   weeklyFragmentModel: WeeklyFragmentModel;
 
   /**
@@ -34,8 +38,10 @@ export class WeeklyFragmentService {
   constructor({
     multichainSubgraphService,
     weeklyFragmentModel,
+    multichainERC20Service,
   }: WeeklyFragmentServiceParams) {
     this.multichainSubgraphService = multichainSubgraphService;
+    this.multichainERC20Service = multichainERC20Service;
     this.weeklyFragmentModel = weeklyFragmentModel;
   }
 
@@ -78,6 +84,17 @@ export class WeeklyFragmentService {
     if (totalAmountUSD > ADD_LIQUIDITY_MIN_USD_AMOUNT) {
       returnValue.claimableFragments = FRAGMENTS_PER_WEEK;
     }
+
+    // Fetch the token balance for the address
+    const multichainTokenBalance = (
+      await this.multichainERC20Service.balanceOf(address)
+    ).map(({ balance }) => balance);
+
+    // total token balance
+    const totalTokenBalanceBN = multichainTokenBalance.reduce(
+      (acc, balance) => acc.add(balance),
+      BigNumber.from(0)
+    );
 
     return returnValue;
   }
