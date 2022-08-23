@@ -4912,7 +4912,6 @@ export type GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQuery = { 
 
 export type GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQueryVariables = Exact<{
   address: Scalars['Bytes'];
-  minAmountUSD: Scalars['BigDecimal'];
   timestampA: Scalars['BigInt'];
   timestampB: Scalars['BigInt'];
 }>;
@@ -4933,7 +4932,7 @@ export const GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBDocument 
 }
     `;
 export const GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBDocument = gql`
-    query getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB($address: Bytes!, $minAmountUSD: BigDecimal!, $timestampA: BigInt!, $timestampB: BigInt!) {
+    query getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB($address: Bytes!, $timestampA: BigInt!, $timestampB: BigInt!) {
   liquidityMiningCampaignDeposits: deposits(
     where: {user: $address, timestamp_gte: $timestampA, timestamp_lte: $timestampB}
   ) {
