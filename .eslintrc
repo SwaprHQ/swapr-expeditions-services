@@ -15,8 +15,11 @@
       "files": ["*-test.ts", "*.spec.ts"],
       "rules": {
         "@typescript-eslint/ban-ts-comment": 0,
-        "no-unused-expressions": 0
+        "no-unused-expressions": 0,
+        "@typescript-eslint/no-explicit-any": 0
       }
     }
-  ]
+  ],
+  "ignorePatterns": ["**/generated/*/**"]
 }
+
