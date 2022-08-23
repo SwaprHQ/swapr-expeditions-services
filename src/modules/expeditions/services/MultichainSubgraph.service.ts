@@ -8,6 +8,11 @@ export interface GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBParam
   timestampB: number;
 }
 
+export type GetLiquidityStakingPositionBetweenTimestampAAndTimestampBParams = Omit<
+  GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBParams,
+  'minAmountUSD'
+>;
+
 enum ChainId {
   MAINNET = 1,
   GNOSIS_CHAIN = 100,
@@ -68,6 +73,37 @@ export class MultichainSubgraphService {
 
         // Filter out results that are not within the time range
         return mints;
+      })
+    );
+
+    return resultsPerSubgraph.flat();
+  }
+
+  async getLiquidityStakingPositionBetweenTimestampAAndTimestampB({
+    address,
+    timestampA,
+    timestampB,
+  }: GetLiquidityStakingPositionBetweenTimestampAAndTimestampBParams) {
+    // Prepare the GraphQL client
+    const resultsPerSubgraph = await Promise.all(
+      Object.values(this.subgraphsSDKs).map(async subgraphSDK => {
+        // Bound results to this week
+        const {
+          liquidityMiningCampaignDeposits,
+          singleSidedStakingCampaignDeposits,
+        } = await subgraphSDK.getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB(
+          {
+            address,
+            timestampA,
+            timestampB,
+          }
+        );
+
+        // Filter out results that are not within the time range
+        return [
+          liquidityMiningCampaignDeposits,
+          singleSidedStakingCampaignDeposits,
+        ];
       })
     );
 
