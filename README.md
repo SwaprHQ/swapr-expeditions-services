@@ -19,7 +19,7 @@ sh ./docker/build.sh
 Create `.env` file
 
 ```shell
-MONGO_URI=mongodb+srv://swapr:swapr@localhost/
+MONGO_URI=mongodb://swapr:swapr@localhost
 ```
 
 Now run the image `swapr-expeditions-services`
