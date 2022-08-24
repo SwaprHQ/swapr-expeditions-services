@@ -6,6 +6,7 @@ import {
   addDailyVisitsController,
   getDailyVisitsController,
   getWeeklyLiquidityPositionDeposits,
+  getWeeklyRewardsFragmentsState,
 } from '../expeditions';
 
 /**
@@ -71,15 +72,36 @@ async function register(server: Server) {
 
   server.route({
     method: 'GET',
-    path: '/expeditions/weekly-liquidity',
+    path: '/expeditions/weekly-rewards',
     options: {
-      description: `Get an address's weekly liquidity`,
+      description: `Get an address's weekly rewards state for given address`,
       validate: {
         query: {
           address,
         },
       },
-      tags: ['api', 'expeditions', 'weekly liquidity'],
+      tags: [
+        'api',
+        'expeditions',
+        'weekly liquidity',
+        'weekly rewards',
+        'weekly rewards fragments',
+      ],
+    },
+    handler: getWeeklyRewardsFragmentsState,
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/expeditions/weekly-liquidity',
+    options: {
+      description: `Get an address's weekly liquidity rewards state for given address`,
+      validate: {
+        query: {
+          address,
+        },
+      },
+      tags: ['api', 'expeditions', 'weekly liquidity', 'weekly rewards'],
     },
     handler: getWeeklyLiquidityPositionDeposits,
   });

@@ -1,5 +1,4 @@
 import { captureException } from '@sentry/node';
-import { Request } from '@hapi/hapi';
 import Boom from '@hapi/boom';
 import { verifyMessage } from '@ethersproject/wallet';
 import dayjs from 'dayjs';
@@ -12,27 +11,21 @@ import { WeeklyFragmentService } from '../services/WeeklyFragments.service';
 import { getCurrentWeekInformation } from '../utils/week';
 import { WeeklyFragmentModel } from '../models/WeeklyFragment.model';
 import { WeeklyFragmentType } from '../interfaces/IFragment.interface';
-
-interface IGetDailyVisitsRequest extends Request {
-  query: {
-    address: string;
-  };
-}
-
-interface IAddDailyVisitsRequest extends Request {
-  payload: {
-    address: string;
-    signature: string;
-  };
-}
-
-type IGetWeeklyRewardsRequest = IGetDailyVisitsRequest;
-type IClaimWeeklyRewardsRequest = IAddDailyVisitsRequest;
+import {
+  IAddDailyVisitsRequest,
+  IAddDailyVisitsResponse,
+  IClaimWeeklyRewardsRequest,
+  IGetDailyVisitsRequest,
+  IGetDailyVisitsResponse,
+  IGetWeeklyRewardsRequest,
+} from './types';
 
 /**
  * Get daily visits for a given address
  */
-export async function getDailyVisitsController(req: IGetDailyVisitsRequest) {
+export async function getDailyVisitsController(
+  req: IGetDailyVisitsRequest
+): Promise<IGetDailyVisitsResponse> {
   try {
     const { address } = req.query;
 
@@ -60,7 +53,9 @@ export async function getDailyVisitsController(req: IGetDailyVisitsRequest) {
 /**
  * Add daily visits for a given address
  */
-export async function addDailyVisitsController(req: IAddDailyVisitsRequest) {
+export async function addDailyVisitsController(
+  req: IAddDailyVisitsRequest
+): Promise<IAddDailyVisitsResponse> {
   try {
     const { signature, address } = req.payload;
     const addressFromSignature = verifyMessage(
@@ -119,12 +114,12 @@ export async function addDailyVisitsController(req: IAddDailyVisitsRequest) {
   }
 }
 
-interface GetWeeklyLiquidityPositionDepositsResponse {
+type GetWeeklyLiquidityPositionDepositsResponse = APIGeneralResponse<{
   liquidityDeposits: any[];
   totalAmountUSD: number;
   claimableFragments: number;
   claimedFragments: number;
-}
+}>;
 
 /**
  * Returns the weekly liquidity rewards for a given address
@@ -133,7 +128,7 @@ interface GetWeeklyLiquidityPositionDepositsResponse {
  */
 export async function getWeeklyLiquidityPositionDeposits(
   req: IGetWeeklyRewardsRequest
-): Promise<APIGeneralResponse<GetWeeklyLiquidityPositionDepositsResponse>> {
+): Promise<GetWeeklyLiquidityPositionDepositsResponse> {
   try {
     let { address } = req.query;
     address = address.toLowerCase();
@@ -162,18 +157,16 @@ export async function getWeeklyLiquidityPositionDeposits(
   }
 }
 
-interface ClaimWeeklyFragmentsForLiquidityPositionDeposits {
+type ClaimWeeklyFragmentsForLiquidityPositionDepositsResponse = APIGeneralResponse<{
   claimedFragments: number;
-}
+}>;
 
 /**
- *
+ * Claims the weekly fragments for liquidity position deposits
  */
 export async function claimWeeklyFragmentsForLiquidityPositionDeposits(
   req: IClaimWeeklyRewardsRequest
-): Promise<
-  APIGeneralResponse<ClaimWeeklyFragmentsForLiquidityPositionDeposits>
-> {
+): Promise<ClaimWeeklyFragmentsForLiquidityPositionDepositsResponse> {
   try {
     const { signature } = req.payload;
 
@@ -221,6 +214,66 @@ export async function claimWeeklyFragmentsForLiquidityPositionDeposits(
     return {
       data: {
         claimedFragments: weekRewards.claimableFragments,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    captureException(error);
+    throw Boom.badRequest(error);
+  }
+}
+
+type IGetWeeklyRewardsResponse = APIGeneralResponse<{
+  liquidityProvision: Awaited<
+    ReturnType<
+      InstanceType<
+        typeof WeeklyFragmentService
+      >['getLiquidityProvisionWeekRewards']
+    >
+  >;
+  liquidityStaking: Awaited<
+    ReturnType<
+      InstanceType<
+        typeof WeeklyFragmentService
+      >['getLiquidityStakingWeekRewards']
+    >
+  >;
+}>;
+
+/**
+ * Returns the weekly rewards for a given address
+ */
+export async function getWeeklyRewardsFragmentsState(
+  req: IGetDailyVisitsRequest
+): Promise<IGetWeeklyRewardsResponse> {
+  try {
+    const { address } = req.query;
+
+    const weeklyFragmentService = new WeeklyFragmentService({
+      multichainSubgraphService: new MultichainSubgraphService(),
+      weeklyFragmentModel: WeeklyFragmentModel,
+    });
+
+    const currentWeek = getCurrentWeekInformation();
+
+    const liquidityProvision = await weeklyFragmentService.getLiquidityProvisionWeekRewards(
+      {
+        address,
+        week: currentWeek,
+      }
+    );
+
+    const liquidityStaking = await weeklyFragmentService.getLiquidityStakingWeekRewards(
+      {
+        address,
+        week: currentWeek,
+      }
+    );
+
+    return {
+      data: {
+        liquidityProvision,
+        liquidityStaking,
       },
     };
   } catch (error) {

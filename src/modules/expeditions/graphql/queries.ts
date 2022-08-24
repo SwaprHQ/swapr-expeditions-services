@@ -25,7 +25,6 @@ export const getLiquidityPositionDepositsBetweenTimestampAAndTimestampB = gql`
 export const getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB = gql`
   query getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB(
     $address: Bytes!
-    $minAmountUSD: BigDecimal!
     $timestampA: BigInt!
     $timestampB: BigInt!
   ) {

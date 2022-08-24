@@ -7,7 +7,7 @@ import { CurrentWeekInformation } from '../utils/week';
 import type { MultichainSubgraphService } from './MultichainSubgraph.service';
 import type { WeeklyFragmentModel } from '../models/WeeklyFragment.model';
 
-interface WeeklyFragmentRewards {
+export interface WeeklyFragmentRewards {
   claimableFragments: number;
   claimedFragments: number;
   totalAmountUSD: number;
