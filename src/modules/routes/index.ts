@@ -3,10 +3,10 @@ import { isAddress } from '@ethersproject/address';
 import Joi from 'joi';
 
 import {
-  addDailyVisitsController,
-  getDailyVisitsController,
-  getWeeklyLiquidityPositionDeposits,
-  getWeeklyRewardsFragmentsState,
+  claimDailyVisitFragments as claimDailyVisitFragmentsController,
+  getDailyVisitFragments as getDailyVisitFragmentsController,
+  getWeeklyFragments as getWeeklyFragmentsController,
+  claimWeeklyLiquidityProvisionFragments as claimWeeklyLiquidityProvisionFragmentsController,
 } from '../expeditions';
 
 /**
@@ -41,7 +41,7 @@ async function register(server: Server) {
 
   server.route({
     method: 'GET',
-    path: '/expeditions',
+    path: '/expeditions/daily-visit',
     options: {
       description: `Get an address's expedition information`,
       validate: {
@@ -49,9 +49,9 @@ async function register(server: Server) {
           address,
         },
       },
-      tags: ['api', 'expeditions'],
+      tags: ['api', 'expeditions', 'daily visit', 'fragments'],
     },
-    handler: getDailyVisitsController,
+    handler: getDailyVisitFragmentsController,
   });
 
   server.route({
@@ -67,14 +67,14 @@ async function register(server: Server) {
       },
       tags: ['api', 'expeditions', 'daily visit'],
     },
-    handler: addDailyVisitsController,
+    handler: claimDailyVisitFragmentsController,
   });
 
   server.route({
     method: 'GET',
-    path: '/expeditions/weekly-rewards',
+    path: '/expeditions/weekly-fragments',
     options: {
-      description: `Get an address's weekly rewards state for given address`,
+      description: `Get an address's weekly rewards (fragments) state for given address`,
       validate: {
         query: {
           address,
@@ -88,29 +88,14 @@ async function register(server: Server) {
         'weekly rewards fragments',
       ],
     },
-    handler: getWeeklyRewardsFragmentsState,
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/expeditions/weekly-liquidity',
-    options: {
-      description: `Get an address's weekly liquidity rewards state for given address`,
-      validate: {
-        query: {
-          address,
-        },
-      },
-      tags: ['api', 'expeditions', 'weekly liquidity', 'weekly rewards'],
-    },
-    handler: getWeeklyLiquidityPositionDeposits,
+    handler: getWeeklyFragmentsController,
   });
 
   server.route({
     method: 'POST',
-    path: '/expeditions/weekly-liquidity/claim',
+    path: '/expeditions/weekly-fragments/liquiditt-provision/claim',
     options: {
-      description: `Claim a weekly liquidity reward (fragments)`,
+      description: `Claim all weekly fragments available for an address`,
       validate: {
         payload: {
           signature,
@@ -119,7 +104,7 @@ async function register(server: Server) {
       },
       tags: ['api', 'expeditions', 'weekly liquidity'],
     },
-    handler: getWeeklyLiquidityPositionDeposits,
+    handler: claimWeeklyLiquidityProvisionFragmentsController,
   });
 }
 
