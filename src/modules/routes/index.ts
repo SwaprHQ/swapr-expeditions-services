@@ -1,19 +1,17 @@
 import { HandlerDecorations, Server } from '@hapi/hapi';
 
 import {
-  addDailyVisitsController,
-  claimWeeklyFragmentsForLiquidityPositionDeposits,
-  getDailyVisitsController,
-  getWeeklyLiquidityPositionDeposits,
-  getWeeklyRewardsFragmentsState,
+  claimDailyVisitFragments as claimDailyVisitFragmentsController,
+  getDailyVisitFragments as getDailyVisitFragmentsController,
+  getWeeklyFragments as getWeeklyFragmentsController,
+  claimWeeklyLiquidityProvisionFragments as claimWeeklyLiquidityProvisionFragmentsController,
 } from '../expeditions';
 
 import { 
   AddressWithSignatureDTO, 
   ClaimWeeklyFragmentsForLiquidityPositionDepositsResponseDTO, 
   DailyVisitsResponseDTO, 
-  GetWeeklyLiquidityPositionDepositsResponseDTO, 
-  GetWeeklyRewardsFragmentsStateResponseDTO
+  GetWeeklyRewardsFragmentsResponseDTO, 
 } from '../expeditions/controllers/expeditions.dto';
 
 import { address } from './validations'
@@ -27,7 +25,7 @@ async function register(server: Server) {
 
   server.route({
     method: 'GET',
-    path: '/expeditions/daily-visits',
+    path: '/expeditions/daily-visit',
     options: {
       description: `Get an address's expedition information`,
       validate: {
@@ -35,12 +33,12 @@ async function register(server: Server) {
           address,
         },
       },
-      tags: ['api', 'expeditions'],
+      tags: ['api', 'expeditions', 'daily visit', 'fragments'],
       response: {
         schema: DailyVisitsResponseDTO
       }
     },
-    handler: getDailyVisitsController as HandlerDecorations,
+    handler: getDailyVisitFragmentsController as HandlerDecorations,
   });
 
   server.route({
@@ -56,14 +54,14 @@ async function register(server: Server) {
         schema: DailyVisitsResponseDTO
       }
     },
-    handler: addDailyVisitsController as HandlerDecorations,
+    handler: claimDailyVisitFragmentsController as HandlerDecorations,
   });
 
   server.route({
     method: 'GET',
-    path: '/expeditions/weekly-rewards',
+    path: '/expeditions/weekly-fragments',
     options: {
-      description: `Get an address's weekly rewards state for given address`,
+      description: `Get an address's weekly rewards (fragments) state for given address`,
       validate: {
         query: {
           address,
@@ -77,35 +75,17 @@ async function register(server: Server) {
         'weekly rewards fragments',
       ],
       response: {
-        schema: GetWeeklyRewardsFragmentsStateResponseDTO
+        schema: GetWeeklyRewardsFragmentsResponseDTO
       }
     },
-    handler: getWeeklyRewardsFragmentsState as HandlerDecorations,
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/expeditions/weekly-liquidity',
-    options: {
-      description: `Get an address's weekly liquidity rewards state for given address`,
-      validate: {
-        query: {
-          address,
-        },
-      }, 
-      tags: ['api', 'expeditions', 'weekly liquidity', 'weekly rewards'],
-      response: { 
-        schema: GetWeeklyLiquidityPositionDepositsResponseDTO 
-      }
-    },
-    handler: getWeeklyLiquidityPositionDeposits as HandlerDecorations,
+    handler: getWeeklyFragmentsController as HandlerDecorations,
   });
 
   server.route({
     method: 'POST',
-    path: '/expeditions/weekly-liquidity/claim',
+    path: '/expeditions/weekly-fragments/liquiditt-provision/claim',
     options: {
-      description: `Claim a weekly liquidity reward (fragments)`,
+      description: `Claim all weekly fragments available for an address`,
       validate: {
         payload: AddressWithSignatureDTO,
       },
@@ -114,7 +94,8 @@ async function register(server: Server) {
         schema: ClaimWeeklyFragmentsForLiquidityPositionDepositsResponseDTO
       }
     },
-    handler: claimWeeklyFragmentsForLiquidityPositionDeposits as HandlerDecorations,
+    handler: claimWeeklyLiquidityProvisionFragmentsController as HandlerDecorations,
+
   });
 }
 

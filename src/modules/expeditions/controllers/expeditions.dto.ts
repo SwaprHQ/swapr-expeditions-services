@@ -18,15 +18,6 @@ export const DailyVisitsResponseDTO = apiGeneralResponseDTOCreator(
   })
   )
 
-export const GetWeeklyLiquidityPositionDepositsResponseDTO = apiGeneralResponseDTOCreator(
-  Joi.object({
-    liquidityDeposits: Joi.array().items(Joi.any()),
-    totalAmountUSD: Joi.number(),
-    claimableFragments: Joi.number(),
-    claimedFragments: Joi.number(),
-  })
-)
-
 export const ClaimWeeklyFragmentsForLiquidityPositionDepositsResponseDTO = apiGeneralResponseDTOCreator(
   Joi.object({
     claimedFragments: Joi.number()
@@ -40,7 +31,7 @@ const weeklyRewardsFragmentSchema = Joi.object({
   claimedFragments: Joi.number(),
 })
 
-export const GetWeeklyRewardsFragmentsStateResponseDTO = apiGeneralResponseDTOCreator(
+export const GetWeeklyRewardsFragmentsResponseDTO = apiGeneralResponseDTOCreator(
   Joi.object({
     liquidityProvision: weeklyRewardsFragmentSchema,
     liquidityStaking: weeklyRewardsFragmentSchema,
