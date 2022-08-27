@@ -23,11 +23,11 @@ describe('Expeditions Controllers', () => {
     await mongoose.disconnect();
   });
 
-  describe('getDailyVisitsController', () => {
+  describe('getDailyVisitFragments', () => {
     test('should return default values when address has no previous data', async () => {
       const signupRes = await server.inject({
         method: 'GET',
-        url: `/expeditions?address=${testWallet.address}`,
+        url: `/expeditions/daily-visit?address=${testWallet.address}`,
       });
 
       expect(signupRes.statusCode).toBe(200);
@@ -37,8 +37,10 @@ describe('Expeditions Controllers', () => {
         lastVisit: 0,
       });
     });
+  });
 
-    test('should return correct data values when address has no previous data', async () => {
+  describe('claimDailyVisitFragments', () => {
+    test('should return updated allVisits count after claimng fragment', async () => {
       const signature = await testWallet.signMessage('Swapr Daily Visit');
       const testRes = await server.inject({
         method: 'POST',
