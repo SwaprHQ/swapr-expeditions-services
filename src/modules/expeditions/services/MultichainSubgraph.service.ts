@@ -56,6 +56,7 @@ export class MultichainSubgraphService {
   }: GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBParams): Promise<
     Mint[]
   > {
+    address = address.toLowerCase();
     // Prepare the GraphQL client
     const resultsPerSubgraph = await Promise.all(
       Object.values(this.subgraphsSDKs).map(async subgraphSDK => {
@@ -84,6 +85,7 @@ export class MultichainSubgraphService {
     timestampA,
     timestampB,
   }: GetLiquidityStakingPositionBetweenTimestampAAndTimestampBParams) {
+    address = address.toLowerCase();
     // Prepare the GraphQL client
     const resultsPerSubgraph = await Promise.all(
       Object.values(this.subgraphsSDKs).map(async subgraphSDK => {
