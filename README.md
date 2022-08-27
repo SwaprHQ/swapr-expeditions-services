@@ -30,3 +30,7 @@ docker run -d \
 --env-file ./.env \
 swapr-expeditions-services
 ```
+
+# Docs
+
+`http:{baseUrl}/documentation`
