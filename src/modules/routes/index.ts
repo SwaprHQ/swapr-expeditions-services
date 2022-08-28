@@ -1,6 +1,4 @@
-import { Server } from '@hapi/hapi';
-import { isAddress } from '@ethersproject/address';
-import Joi from 'joi';
+import { HandlerDecorations, Server } from '@hapi/hapi';
 
 import {
   claimDailyVisitFragments as claimDailyVisitFragmentsController,
@@ -9,28 +7,14 @@ import {
   claimWeeklyLiquidityProvisionFragments as claimWeeklyLiquidityProvisionFragmentsController,
 } from '../expeditions';
 
-/**
- * Custom method to validate Joi Ethereum addresss.
- * @param value - The value to validate.
- * @returns {boolean} - True if the value is a valid Ethereum address.
- */
-const joiEthereumAddressMethod = (value: string) => {
-  if (!isAddress(value)) {
-    throw new Error('Address is not valid');
-  }
+import { 
+  AddressWithSignatureDTO, 
+  ClaimWeeklyFragmentsForLiquidityPositionDepositsResponseDTO, 
+  DailyVisitsResponseDTO, 
+  GetWeeklyRewardsFragmentsResponseDTO, 
+} from '../expeditions/controllers/expeditions.dto';
 
-  return value;
-};
-
-/**
- * Signature parameter validator
- */
-const signature = Joi.string().required();
-/**
- * Ethereum address validator
- */
-const address = Joi.string().custom(joiEthereumAddressMethod).required();
-
+import { address } from './validations'
 async function register(server: Server) {
   // Return nothing
   server.route({
@@ -50,24 +34,27 @@ async function register(server: Server) {
         },
       },
       tags: ['api', 'expeditions', 'daily visit', 'fragments'],
+      response: {
+        schema: DailyVisitsResponseDTO
+      }
     },
-    handler: getDailyVisitFragmentsController,
+    handler: getDailyVisitFragmentsController as HandlerDecorations,
   });
 
   server.route({
     method: 'POST',
-    path: '/expeditions/daily-visit',
+    path: '/expeditions/daily-visits',
     options: {
       description: `Record a daily visit to an expedition`,
       validate: {
-        payload: {
-          signature,
-          address,
-        },
+        payload: AddressWithSignatureDTO,
       },
       tags: ['api', 'expeditions', 'daily visit'],
+      response: {
+        schema: DailyVisitsResponseDTO
+      }
     },
-    handler: claimDailyVisitFragmentsController,
+    handler: claimDailyVisitFragmentsController as HandlerDecorations,
   });
 
   server.route({
@@ -87,8 +74,11 @@ async function register(server: Server) {
         'weekly rewards',
         'weekly rewards fragments',
       ],
+      response: {
+        schema: GetWeeklyRewardsFragmentsResponseDTO
+      }
     },
-    handler: getWeeklyFragmentsController,
+    handler: getWeeklyFragmentsController as HandlerDecorations,
   });
 
   server.route({
@@ -97,14 +87,15 @@ async function register(server: Server) {
     options: {
       description: `Claim all weekly fragments available for an address`,
       validate: {
-        payload: {
-          signature,
-          address,
-        },
+        payload: AddressWithSignatureDTO,
       },
       tags: ['api', 'expeditions', 'weekly liquidity'],
+      response: {
+        schema: ClaimWeeklyFragmentsForLiquidityPositionDepositsResponseDTO
+      }
     },
-    handler: claimWeeklyLiquidityProvisionFragmentsController,
+    handler: claimWeeklyLiquidityProvisionFragmentsController as HandlerDecorations,
+
   });
 }
 
