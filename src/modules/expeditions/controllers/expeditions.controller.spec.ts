@@ -27,9 +27,8 @@ describe('Expeditions Controllers', () => {
     test('should return default values when address has no previous data', async () => {
       const signupRes = await server.inject({
         method: 'GET',
-        url: `/expeditions/daily-visit?address=${testWallet.address}`,
+        url: `/expeditions/daily-visits?address=${testWallet.address}`,
       });
-
       expect(signupRes.statusCode).toBe(200);
       expect((signupRes.result as any).data).toEqual({
         address: testWallet.address,
@@ -44,7 +43,7 @@ describe('Expeditions Controllers', () => {
       const signature = await testWallet.signMessage('Swapr Daily Visit');
       const testRes = await server.inject({
         method: 'POST',
-        url: `/expeditions/daily-visit`,
+        url: `/expeditions/daily-visits`,
         payload: {
           signature,
           address: testWallet.address,
@@ -68,7 +67,7 @@ describe('Expeditions Controllers', () => {
 
       const testRes = await server.inject({
         method: 'POST',
-        url: `/expeditions/daily-visit`,
+        url: `/expeditions/daily-visits`,
         payload: {
           signature,
           address: testWallet.address,
@@ -80,25 +79,19 @@ describe('Expeditions Controllers', () => {
     });
   });
 
-  describe('getWeeklyLiquidityPositionDeposits', () => {
+  describe('getWeeklyFragments', () => {
     test('should return data from the subgraphs', async () => {
       const address = testWallet.address;
 
       const testRes = await server.inject({
         method: 'GET',
-        url: `/expeditions/weekly-liquidity?address=${address}`,
+        url: `/expeditions/weekly-fragments?address=${address}`,
       });
 
       expect(testRes.statusCode).toBe(200);
       expect(Object.keys((testRes.result as any).data)).toEqual(
-        expect.arrayContaining([
-          'liquidityDeposits',
-          'totalAmountUSD',
-          'claimableFragments',
-          'claimedFragments',
-        ])
+        expect.arrayContaining(['liquidityProvision', 'liquidityStaking'])
       );
     });
   });
 });
-

@@ -7,14 +7,14 @@ import {
   claimWeeklyLiquidityProvisionFragments as claimWeeklyLiquidityProvisionFragmentsController,
 } from '../expeditions';
 
-import { 
-  AddressWithSignatureDTO, 
-  ClaimWeeklyFragmentsForLiquidityPositionDepositsResponseDTO, 
-  DailyVisitsResponseDTO, 
-  GetWeeklyRewardsFragmentsResponseDTO, 
+import {
+  AddressWithSignatureDTO,
+  ClaimWeeklyFragmentsForLiquidityPositionDepositsResponseDTO,
+  DailyVisitsResponseDTO,
+  GetWeeklyRewardsFragmentsResponseDTO,
 } from '../expeditions/controllers/expeditions.dto';
 
-import { address } from './validations'
+import { address } from './validations';
 async function register(server: Server) {
   // Return nothing
   server.route({
@@ -25,9 +25,9 @@ async function register(server: Server) {
 
   server.route({
     method: 'GET',
-    path: '/expeditions/daily-visit',
+    path: '/expeditions/daily-visits',
     options: {
-      description: `Get an address's expedition information`,
+      description: `Get daily rewards (fragments) state for an address`,
       validate: {
         query: {
           address,
@@ -35,8 +35,8 @@ async function register(server: Server) {
       },
       tags: ['api', 'expeditions', 'daily visit', 'fragments'],
       response: {
-        schema: DailyVisitsResponseDTO
-      }
+        schema: DailyVisitsResponseDTO,
+      },
     },
     handler: getDailyVisitFragmentsController as HandlerDecorations,
   });
@@ -45,14 +45,14 @@ async function register(server: Server) {
     method: 'POST',
     path: '/expeditions/daily-visits',
     options: {
-      description: `Record a daily visit to an expedition`,
+      description: `Claim all daily fragments available for an address`,
       validate: {
         payload: AddressWithSignatureDTO,
       },
-      tags: ['api', 'expeditions', 'daily visit'],
+      tags: ['api', 'expeditions', 'daily visits'],
       response: {
-        schema: DailyVisitsResponseDTO
-      }
+        schema: DailyVisitsResponseDTO,
+      },
     },
     handler: claimDailyVisitFragmentsController as HandlerDecorations,
   });
@@ -61,7 +61,7 @@ async function register(server: Server) {
     method: 'GET',
     path: '/expeditions/weekly-fragments',
     options: {
-      description: `Get an address's weekly rewards (fragments) state for given address`,
+      description: `Get weekly rewards (fragments) state for an address`,
       validate: {
         query: {
           address,
@@ -75,8 +75,8 @@ async function register(server: Server) {
         'weekly rewards fragments',
       ],
       response: {
-        schema: GetWeeklyRewardsFragmentsResponseDTO
-      }
+        schema: GetWeeklyRewardsFragmentsResponseDTO,
+      },
     },
     handler: getWeeklyFragmentsController as HandlerDecorations,
   });
@@ -91,11 +91,10 @@ async function register(server: Server) {
       },
       tags: ['api', 'expeditions', 'weekly liquidity'],
       response: {
-        schema: ClaimWeeklyFragmentsForLiquidityPositionDepositsResponseDTO
-      }
+        schema: ClaimWeeklyFragmentsForLiquidityPositionDepositsResponseDTO,
+      },
     },
     handler: claimWeeklyLiquidityProvisionFragmentsController as HandlerDecorations,
-
   });
 }
 
@@ -104,4 +103,3 @@ export const RoutesPlugin = {
   version: '0.0.1',
   register,
 };
-
