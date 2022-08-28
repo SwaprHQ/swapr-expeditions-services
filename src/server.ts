@@ -1,9 +1,9 @@
 import CatboxMemory from '@hapi/catbox-memory';
-import { Server, ServerRegisterPluginObject  } from '@hapi/hapi';
+import { Server, ServerRegisterPluginObject } from '@hapi/hapi';
 import Joi from 'joi';
 import * as HapiSwagger from 'hapi-swagger';
-import Inert from '@hapi/inert'
-import Vision from '@hapi/vision'
+import Inert from '@hapi/inert';
+import Vision from '@hapi/vision';
 import { SERVER_HOST, SERVER_PORT } from './modules/config/config.service';
 import { RoutesPlugin } from './modules/routes';
 
@@ -54,16 +54,19 @@ export async function configure(server: Server): Promise<Server> {
 
   const swaggerOptions: HapiSwagger.RegisterOptions = {
     info: {
-      title: 'Swapr Expeditions API Documentation'
+      title: 'Swapr Expeditions API Documentation',
     },
-    deReference: true // works better with codegens
-    
-  }
+    deReference: true, // works better with codegens
+  };
 
-  const SwaggerPlugins: Array<ServerRegisterPluginObject<any>> = [{plugin: Inert}, {plugin: Vision}, {plugin: HapiSwagger, options: swaggerOptions}]
+  const SwaggerPlugins: Array<ServerRegisterPluginObject<any>> = [
+    { plugin: Inert },
+    { plugin: Vision },
+    { plugin: HapiSwagger, options: swaggerOptions },
+  ];
 
   // Register routes
-  await server.register([{plugin: RoutesPlugin}, ...SwaggerPlugins]);
+  await server.register([{ plugin: RoutesPlugin }, ...SwaggerPlugins]);
   // Return configured server
   return server;
 }
