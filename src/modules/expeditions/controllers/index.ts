@@ -1,1 +1,1 @@
-export * from './expeditions.controller';
+export * from './expeditions.controllers';
