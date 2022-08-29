@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import { VisitModel } from '../models';
 import { SIGNATURE_TEXT_PAYLOAD } from '../../config/config.service';
 import { MultichainSubgraphService } from '../services/MultichainSubgraph.service';
-import { WeeklyFragmentService } from '../services/WeeklyFragments.service';
+import { WeeklyFragmentService } from '../services/weekly-fragments';
 import { getCurrentWeekInformation } from '../utils/week';
 import { WeeklyFragmentModel } from '../models/WeeklyFragment.model';
 import { WeeklyFragmentType } from '../interfaces/IFragment.interface';
@@ -189,6 +189,7 @@ export async function claimWeeklyLiquidityProvisionFragments(
     const currentWeeklyFragment = await WeeklyFragmentModel.findOne({
       address,
       week: currentWeek.weekNumber,
+      fragmentType: WeeklyFragmentType.LIQUIDITY_PROVISION,
     });
 
     if (currentWeeklyFragment != null) {

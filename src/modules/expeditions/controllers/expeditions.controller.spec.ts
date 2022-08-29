@@ -92,6 +92,20 @@ describe('Expeditions Controllers', () => {
       expect(Object.keys((testRes.result as any).data)).toEqual(
         expect.arrayContaining(['liquidityProvision', 'liquidityStaking'])
       );
+
+      const {
+        liquidityProvision,
+        liquidityStaking,
+      } = (testRes.result as any).data;
+
+      const expectedValues = expect.objectContaining({
+        claimableFragments: expect.any(Number),
+        claimedFragments: expect.any(Number),
+        totalAmountUSD: expect.any(Number),
+      });
+
+      expect(liquidityProvision).toEqual(expectedValues);
+      expect(liquidityStaking).toEqual(expectedValues);
     });
   });
 });

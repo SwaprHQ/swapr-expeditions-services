@@ -1,30 +1,19 @@
 import {
   ADD_LIQUIDITY_MIN_USD_AMOUNT,
   FRAGMENTS_PER_WEEK,
-} from '../../config/config.service';
-import { CurrentWeekInformation } from '../utils/week';
+} from '../../../config/config.service';
 
-import type { MultichainSubgraphService } from './MultichainSubgraph.service';
-import type { WeeklyFragmentModel } from '../models/WeeklyFragment.model';
+import type { MultichainSubgraphService } from '../MultichainSubgraph.service';
+import type { WeeklyFragmentModel } from '../../models/WeeklyFragment.model';
 
-export interface WeeklyFragmentRewards {
-  claimableFragments: number;
-  claimedFragments: number;
-  totalAmountUSD: number;
-  liquidityDeposits: any[];
-}
+import {
+  GetWeeklyRewardsParams,
+  IWeeklyFragmentService,
+  WeeklyFragmentsBase,
+  WeeklyFragmentServiceParams,
+} from './WeeklyFragments.types';
 
-interface GetWeeklyRewardsParams {
-  address: string;
-  week: CurrentWeekInformation;
-}
-
-interface WeeklyFragmentServiceParams {
-  multichainSubgraphService: MultichainSubgraphService;
-  weeklyFragmentModel: WeeklyFragmentModel;
-}
-
-export class WeeklyFragmentService {
+export class WeeklyFragmentService implements IWeeklyFragmentService {
   multichainSubgraphService: MultichainSubgraphService;
   weeklyFragmentModel: WeeklyFragmentModel;
 
@@ -46,11 +35,10 @@ export class WeeklyFragmentService {
   async getLiquidityProvisionWeekRewards({
     address,
     week,
-  }: GetWeeklyRewardsParams): Promise<WeeklyFragmentRewards> {
+  }: GetWeeklyRewardsParams): Promise<WeeklyFragmentsBase> {
     // Return value
-    const returnValue: WeeklyFragmentRewards = {
+    const returnValue: WeeklyFragmentsBase = {
       totalAmountUSD: 0,
-      liquidityDeposits: [],
       claimableFragments: 0,
       claimedFragments: 0,
     };
@@ -62,12 +50,12 @@ export class WeeklyFragmentService {
       timestampB: week.endDate.unix(),
     };
 
-    returnValue.liquidityDeposits = await this.multichainSubgraphService.getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(
+    const liquidityProvisionList = await this.multichainSubgraphService.getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(
       queryParams
     );
 
     // calculate the total amount of USD deposited
-    const totalAmountUSD: number = returnValue.liquidityDeposits.reduce(
+    returnValue.totalAmountUSD = liquidityProvisionList.reduce(
       (acc, { amountUSD }) => acc + parseInt(amountUSD || '0'),
       0
     );
@@ -75,7 +63,7 @@ export class WeeklyFragmentService {
     // Calculate claimable fragments for this week.
     // Add the base 50 fragments for this week
     // if the provided liquidity deposits are more than $50 USD
-    if (totalAmountUSD > ADD_LIQUIDITY_MIN_USD_AMOUNT) {
+    if (returnValue.totalAmountUSD > ADD_LIQUIDITY_MIN_USD_AMOUNT) {
       returnValue.claimableFragments = FRAGMENTS_PER_WEEK;
     }
 
@@ -89,11 +77,10 @@ export class WeeklyFragmentService {
   async getLiquidityStakingWeekRewards({
     address,
     week,
-  }: GetWeeklyRewardsParams): Promise<WeeklyFragmentRewards> {
+  }: GetWeeklyRewardsParams): Promise<WeeklyFragmentsBase> {
     // Return value
-    const returnValue: WeeklyFragmentRewards = {
+    const returnValue: WeeklyFragmentsBase = {
       totalAmountUSD: 0,
-      liquidityDeposits: [],
       claimableFragments: 0,
       claimedFragments: 0,
     };
@@ -105,20 +92,36 @@ export class WeeklyFragmentService {
       timestampB: week.endDate.unix(),
     };
 
-    returnValue.liquidityDeposits = await this.multichainSubgraphService.getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(
+    const liquidityStakingDepositList = await this.multichainSubgraphService.getLiquidityStakingPositionBetweenTimestampAAndTimestampB(
       queryParams
     );
 
     // calculate the total amount of USD deposited
-    const totalAmountUSD: number = returnValue.liquidityDeposits.reduce(
-      (acc, { amountUSD }) => acc + parseInt(amountUSD || '0'),
+    returnValue.totalAmountUSD = liquidityStakingDepositList.reduce(
+      (total, liquidityStakingDeposit) => {
+        // Compute the USD value of the staking position
+        if (liquidityStakingDeposit.__typename === 'Deposit') {
+          const {
+            totalSupply,
+            reserveUSD,
+          } = liquidityStakingDeposit.liquidityMiningCampaign.stakablePair;
+
+          total =
+            total +
+            (parseFloat(liquidityStakingDeposit.amount) /
+              parseFloat(totalSupply)) *
+              reserveUSD;
+        }
+
+        return total;
+      },
       0
     );
 
     // Calculate claimable fragments for this week.
     // Add the base 50 fragments for this week
     // if the provided liquidity deposits are more than $50 USD
-    if (totalAmountUSD > ADD_LIQUIDITY_MIN_USD_AMOUNT) {
+    if (returnValue.totalAmountUSD > ADD_LIQUIDITY_MIN_USD_AMOUNT) {
       returnValue.claimableFragments = FRAGMENTS_PER_WEEK;
     }
 

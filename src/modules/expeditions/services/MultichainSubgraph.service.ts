@@ -103,8 +103,8 @@ export class MultichainSubgraphService {
 
         // Filter out results that are not within the time range
         return [
-          liquidityMiningCampaignDeposits,
-          singleSidedStakingCampaignDeposits,
+          ...liquidityMiningCampaignDeposits,
+          ...singleSidedStakingCampaignDeposits,
         ];
       })
     );
