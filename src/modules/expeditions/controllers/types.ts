@@ -1,5 +1,5 @@
 import { APIGeneralResponse } from 'src/modules/shared/interfaces/response.interface';
-import type { WeeklyFragmentService } from '../services/WeeklyFragments.service';
+import type { WeeklyFragmentService } from '../services/weekly-fragments';
 
 export interface GetFragmentsRequest extends Request {
   query: {
