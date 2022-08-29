@@ -35,6 +35,7 @@ export const getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB = 
         timestamp_lte: $timestampB
       }
     ) {
+      __typename
       id
       amount
       timestamp
@@ -43,6 +44,7 @@ export const getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB = 
         stakablePair {
           id
           reserveUSD
+          totalSupply
           token0 {
             id
             symbol
@@ -61,6 +63,7 @@ export const getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB = 
         timestamp_lte: $timestampB
       }
     ) {
+      __typename
       id
       amount
       timestamp

@@ -4919,7 +4919,7 @@ export type GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQuer
 }>;
 
 
-export type GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQuery = { __typename?: 'Query', liquidityMiningCampaignDeposits: Array<{ __typename?: 'Deposit', id: string, amount: any, timestamp: any, liquidityMiningCampaign: { __typename?: 'LiquidityMiningCampaign', id: string, stakablePair: { __typename?: 'Pair', id: string, reserveUSD: any, token0: { __typename?: 'Token', id: string, symbol: string }, token1: { __typename?: 'Token', id: string, symbol: string } } } }>, singleSidedStakingCampaignDeposits: Array<{ __typename?: 'SingleSidedStakingCampaignDeposit', id: string, amount: any, timestamp: any, singleSidedStakingCampaign: { __typename?: 'SingleSidedStakingCampaign', stakeToken: { __typename?: 'Token', id: string, symbol: string } } }> };
+export type GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQuery = { __typename?: 'Query', liquidityMiningCampaignDeposits: Array<{ __typename: 'Deposit', id: string, amount: any, timestamp: any, liquidityMiningCampaign: { __typename?: 'LiquidityMiningCampaign', id: string, stakablePair: { __typename?: 'Pair', id: string, reserveUSD: any, totalSupply: any, token0: { __typename?: 'Token', id: string, symbol: string }, token1: { __typename?: 'Token', id: string, symbol: string } } } }>, singleSidedStakingCampaignDeposits: Array<{ __typename: 'SingleSidedStakingCampaignDeposit', id: string, amount: any, timestamp: any, singleSidedStakingCampaign: { __typename?: 'SingleSidedStakingCampaign', stakeToken: { __typename?: 'Token', id: string, symbol: string } } }> };
 
 
 export const GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBDocument = gql`
@@ -4938,6 +4938,7 @@ export const GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBDoc
   liquidityMiningCampaignDeposits: deposits(
     where: {user: $address, timestamp_gte: $timestampA, timestamp_lte: $timestampB}
   ) {
+    __typename
     id
     amount
     timestamp
@@ -4946,6 +4947,7 @@ export const GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBDoc
       stakablePair {
         id
         reserveUSD
+        totalSupply
         token0 {
           id
           symbol
@@ -4960,6 +4962,7 @@ export const GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBDoc
   singleSidedStakingCampaignDeposits(
     where: {user: $address, timestamp_gte: $timestampA, timestamp_lte: $timestampB}
   ) {
+    __typename
     id
     amount
     timestamp
