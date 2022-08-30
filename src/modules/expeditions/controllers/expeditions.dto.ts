@@ -1,39 +1,40 @@
-import Joi from "joi";
-import { address, signature } from '../../routes/validations'
+import Joi from 'joi';
+import { address, signature } from '../../routes/validations';
 
-const apiGeneralResponseDTOCreator = (responseSchema: Joi.SchemaLike) => Joi.object({
-  data: responseSchema
-})
+const apiGeneralResponseDTOCreator = (responseSchema: Joi.SchemaLike) =>
+  Joi.object({
+    data: responseSchema,
+  });
 
 export const AddressWithSignatureDTO = Joi.object({
   address,
-  signature
-})
+  signature,
+});
 
 export const DailyVisitsResponseDTO = apiGeneralResponseDTOCreator(
   Joi.object({
     address,
     allVisits: Joi.number(),
-    lastVisit: Joi.date()
+    lastVisit: Joi.date(),
   })
-  )
+);
 
-export const ClaimWeeklyFragmentsForLiquidityPositionDepositsResponseDTO = apiGeneralResponseDTOCreator(
+export const ClaimWeeklyLiquidityProvisionFragmentsResponseDTO = apiGeneralResponseDTOCreator(
   Joi.object({
-    claimedFragments: Joi.number()
+    claimedFragments: Joi.number(),
   })
-)
+);
 
 const weeklyRewardsFragmentSchema = Joi.object({
   totalAmountUSD: Joi.number(),
-  liquidityDeposits: Joi.array(),
   claimableFragments: Joi.number(),
   claimedFragments: Joi.number(),
-})
+});
 
 export const GetWeeklyRewardsFragmentsResponseDTO = apiGeneralResponseDTOCreator(
   Joi.object({
     liquidityProvision: weeklyRewardsFragmentSchema,
     liquidityStaking: weeklyRewardsFragmentSchema,
   })
-)
+);
+
