@@ -3,9 +3,15 @@ import * as Dom from 'graphql-request/dist/types.dom';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -57,7 +63,7 @@ export type Bundle_Filter = {
 
 export enum Bundle_OrderBy {
   Id = 'id',
-  NativeCurrencyPrice = 'nativeCurrencyPrice'
+  NativeCurrencyPrice = 'nativeCurrencyPrice',
 }
 
 export type Burn = {
@@ -225,7 +231,7 @@ export enum Burn_OrderBy {
   Sender = 'sender',
   Timestamp = 'timestamp',
   To = 'to',
-  Transaction = 'transaction'
+  Transaction = 'transaction',
 }
 
 export type Claim = {
@@ -272,7 +278,9 @@ export type Claim_Filter = {
   liquidityMiningCampaign_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   liquidityMiningCampaign_not_in?: InputMaybe<Array<Scalars['String']>>;
   liquidityMiningCampaign_not_starts_with?: InputMaybe<Scalars['String']>;
-  liquidityMiningCampaign_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  liquidityMiningCampaign_not_starts_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   liquidityMiningCampaign_starts_with?: InputMaybe<Scalars['String']>;
   liquidityMiningCampaign_starts_with_nocase?: InputMaybe<Scalars['String']>;
   timestamp?: InputMaybe<Scalars['BigInt']>;
@@ -296,7 +304,7 @@ export enum Claim_OrderBy {
   Id = 'id',
   LiquidityMiningCampaign = 'liquidityMiningCampaign',
   Timestamp = 'timestamp',
-  User = 'user'
+  User = 'user',
 }
 
 export type Deposit = {
@@ -345,7 +353,9 @@ export type Deposit_Filter = {
   liquidityMiningCampaign_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   liquidityMiningCampaign_not_in?: InputMaybe<Array<Scalars['String']>>;
   liquidityMiningCampaign_not_starts_with?: InputMaybe<Scalars['String']>;
-  liquidityMiningCampaign_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  liquidityMiningCampaign_not_starts_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   liquidityMiningCampaign_starts_with?: InputMaybe<Scalars['String']>;
   liquidityMiningCampaign_starts_with_nocase?: InputMaybe<Scalars['String']>;
   timestamp?: InputMaybe<Scalars['BigInt']>;
@@ -369,7 +379,7 @@ export enum Deposit_OrderBy {
   Id = 'id',
   LiquidityMiningCampaign = 'liquidityMiningCampaign',
   Timestamp = 'timestamp',
-  User = 'user'
+  User = 'user',
 }
 
 export type LiquidityMiningCampaign = {
@@ -393,7 +403,6 @@ export type LiquidityMiningCampaign = {
   withdrawals: Array<Withdrawal>;
 };
 
-
 export type LiquidityMiningCampaignClaimsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Claim_OrderBy>;
@@ -401,7 +410,6 @@ export type LiquidityMiningCampaignClaimsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<Claim_Filter>;
 };
-
 
 export type LiquidityMiningCampaignDepositsArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -411,7 +419,6 @@ export type LiquidityMiningCampaignDepositsArgs = {
   where?: InputMaybe<Deposit_Filter>;
 };
 
-
 export type LiquidityMiningCampaignLiquidityMiningPositionSnapshotsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<LiquidityMiningPositionSnapshot_OrderBy>;
@@ -419,7 +426,6 @@ export type LiquidityMiningCampaignLiquidityMiningPositionSnapshotsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<LiquidityMiningPositionSnapshot_Filter>;
 };
-
 
 export type LiquidityMiningCampaignLiquidityMiningPositionsArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -429,7 +435,6 @@ export type LiquidityMiningCampaignLiquidityMiningPositionsArgs = {
   where?: InputMaybe<LiquidityMiningPosition_Filter>;
 };
 
-
 export type LiquidityMiningCampaignRecoveriesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Recovery_OrderBy>;
@@ -438,7 +443,6 @@ export type LiquidityMiningCampaignRecoveriesArgs = {
   where?: InputMaybe<Recovery_Filter>;
 };
 
-
 export type LiquidityMiningCampaignRewardsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<LiquidityMiningCampaignReward_OrderBy>;
@@ -446,7 +450,6 @@ export type LiquidityMiningCampaignRewardsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<LiquidityMiningCampaignReward_Filter>;
 };
-
 
 export type LiquidityMiningCampaignWithdrawalsArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -508,7 +511,7 @@ export type LiquidityMiningCampaignReward_Filter = {
 export enum LiquidityMiningCampaignReward_OrderBy {
   Amount = 'amount',
   Id = 'id',
-  Token = 'token'
+  Token = 'token',
 }
 
 export type LiquidityMiningCampaign_Filter = {
@@ -629,7 +632,7 @@ export enum LiquidityMiningCampaign_OrderBy {
   StakedAmount = 'stakedAmount',
   StakingCap = 'stakingCap',
   StartsAt = 'startsAt',
-  Withdrawals = 'withdrawals'
+  Withdrawals = 'withdrawals',
 }
 
 export type LiquidityMiningPosition = {
@@ -696,7 +699,9 @@ export type LiquidityMiningPositionSnapshot_Filter = {
   liquidityMiningCampaign_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   liquidityMiningCampaign_not_in?: InputMaybe<Array<Scalars['String']>>;
   liquidityMiningCampaign_not_starts_with?: InputMaybe<Scalars['String']>;
-  liquidityMiningCampaign_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  liquidityMiningCampaign_not_starts_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   liquidityMiningCampaign_starts_with?: InputMaybe<Scalars['String']>;
   liquidityMiningCampaign_starts_with_nocase?: InputMaybe<Scalars['String']>;
   liquidityMiningPosition?: InputMaybe<Scalars['String']>;
@@ -717,7 +722,9 @@ export type LiquidityMiningPositionSnapshot_Filter = {
   liquidityMiningPosition_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   liquidityMiningPosition_not_in?: InputMaybe<Array<Scalars['String']>>;
   liquidityMiningPosition_not_starts_with?: InputMaybe<Scalars['String']>;
-  liquidityMiningPosition_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  liquidityMiningPosition_not_starts_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   liquidityMiningPosition_starts_with?: InputMaybe<Scalars['String']>;
   liquidityMiningPosition_starts_with_nocase?: InputMaybe<Scalars['String']>;
   pair?: InputMaybe<Scalars['String']>;
@@ -842,7 +849,7 @@ export enum LiquidityMiningPositionSnapshot_OrderBy {
   Token0PriceUsd = 'token0PriceUSD',
   Token1PriceUsd = 'token1PriceUSD',
   TotalStakedLiquidityToken = 'totalStakedLiquidityToken',
-  User = 'user'
+  User = 'user',
 }
 
 export type LiquidityMiningPosition_Filter = {
@@ -874,7 +881,9 @@ export type LiquidityMiningPosition_Filter = {
   liquidityMiningCampaign_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   liquidityMiningCampaign_not_in?: InputMaybe<Array<Scalars['String']>>;
   liquidityMiningCampaign_not_starts_with?: InputMaybe<Scalars['String']>;
-  liquidityMiningCampaign_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  liquidityMiningCampaign_not_starts_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   liquidityMiningCampaign_starts_with?: InputMaybe<Scalars['String']>;
   liquidityMiningCampaign_starts_with_nocase?: InputMaybe<Scalars['String']>;
   stakedAmount?: InputMaybe<Scalars['BigDecimal']>;
@@ -934,7 +943,7 @@ export enum LiquidityMiningPosition_OrderBy {
   LiquidityMiningCampaign = 'liquidityMiningCampaign',
   StakedAmount = 'stakedAmount',
   TargetedPair = 'targetedPair',
-  User = 'user'
+  User = 'user',
 }
 
 export type LiquidityPosition = {
@@ -1123,7 +1132,7 @@ export enum LiquidityPositionSnapshot_OrderBy {
   Timestamp = 'timestamp',
   Token0PriceUsd = 'token0PriceUSD',
   Token1PriceUsd = 'token1PriceUSD',
-  User = 'user'
+  User = 'user',
 }
 
 export type LiquidityPosition_Filter = {
@@ -1193,7 +1202,7 @@ export enum LiquidityPosition_OrderBy {
   Id = 'id',
   LiquidityTokenBalance = 'liquidityTokenBalance',
   Pair = 'pair',
-  User = 'user'
+  User = 'user',
 }
 
 export type Mint = {
@@ -1355,13 +1364,13 @@ export enum Mint_OrderBy {
   Sender = 'sender',
   Timestamp = 'timestamp',
   To = 'to',
-  Transaction = 'transaction'
+  Transaction = 'transaction',
 }
 
 /** Defines the order direction, either ascending or descending */
 export enum OrderDirection {
   Asc = 'asc',
-  Desc = 'desc'
+  Desc = 'desc',
 }
 
 export type Pair = {
@@ -1394,7 +1403,6 @@ export type Pair = {
   volumeUSD: Scalars['BigDecimal'];
 };
 
-
 export type PairBurnsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Burn_OrderBy>;
@@ -1402,7 +1410,6 @@ export type PairBurnsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<Burn_Filter>;
 };
-
 
 export type PairLiquidityMiningCampaignsArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -1412,7 +1419,6 @@ export type PairLiquidityMiningCampaignsArgs = {
   where?: InputMaybe<LiquidityMiningCampaign_Filter>;
 };
 
-
 export type PairLiquidityPositionSnapshotsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<LiquidityPositionSnapshot_OrderBy>;
@@ -1420,7 +1426,6 @@ export type PairLiquidityPositionSnapshotsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<LiquidityPositionSnapshot_Filter>;
 };
-
 
 export type PairLiquidityPositionsArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -1430,7 +1435,6 @@ export type PairLiquidityPositionsArgs = {
   where?: InputMaybe<LiquidityPosition_Filter>;
 };
 
-
 export type PairMintsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Mint_OrderBy>;
@@ -1439,7 +1443,6 @@ export type PairMintsArgs = {
   where?: InputMaybe<Mint_Filter>;
 };
 
-
 export type PairPairHourDataArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<PairHourData_OrderBy>;
@@ -1447,7 +1450,6 @@ export type PairPairHourDataArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<PairHourData_Filter>;
 };
-
 
 export type PairSwapsArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -1620,7 +1622,7 @@ export enum PairDayData_OrderBy {
   ReserveUsd = 'reserveUSD',
   Token0 = 'token0',
   Token1 = 'token1',
-  TotalSupply = 'totalSupply'
+  TotalSupply = 'totalSupply',
 }
 
 export type PairHourData = {
@@ -1745,7 +1747,7 @@ export enum PairHourData_OrderBy {
   Pair = 'pair',
   Reserve0 = 'reserve0',
   Reserve1 = 'reserve1',
-  ReserveUsd = 'reserveUSD'
+  ReserveUsd = 'reserveUSD',
 }
 
 export type Pair_Filter = {
@@ -1895,7 +1897,9 @@ export type Pair_Filter = {
   trackedReserveNativeCurrency_lt?: InputMaybe<Scalars['BigDecimal']>;
   trackedReserveNativeCurrency_lte?: InputMaybe<Scalars['BigDecimal']>;
   trackedReserveNativeCurrency_not?: InputMaybe<Scalars['BigDecimal']>;
-  trackedReserveNativeCurrency_not_in?: InputMaybe<Array<Scalars['BigDecimal']>>;
+  trackedReserveNativeCurrency_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']>
+  >;
   txCount?: InputMaybe<Scalars['BigInt']>;
   txCount_gt?: InputMaybe<Scalars['BigInt']>;
   txCount_gte?: InputMaybe<Scalars['BigInt']>;
@@ -1964,7 +1968,7 @@ export enum Pair_OrderBy {
   UntrackedVolumeUsd = 'untrackedVolumeUSD',
   VolumeToken0 = 'volumeToken0',
   VolumeToken1 = 'volumeToken1',
-  VolumeUsd = 'volumeUSD'
+  VolumeUsd = 'volumeUSD',
 }
 
 export type Query = {
@@ -2035,18 +2039,15 @@ export type Query = {
   withdrawals: Array<Withdrawal>;
 };
 
-
 export type Query_MetaArgs = {
   block?: InputMaybe<Block_Height>;
 };
-
 
 export type QueryBundleArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryBundlesArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2058,13 +2059,11 @@ export type QueryBundlesArgs = {
   where?: InputMaybe<Bundle_Filter>;
 };
 
-
 export type QueryBurnArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryBurnsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2076,13 +2075,11 @@ export type QueryBurnsArgs = {
   where?: InputMaybe<Burn_Filter>;
 };
 
-
 export type QueryClaimArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryClaimsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2094,13 +2091,11 @@ export type QueryClaimsArgs = {
   where?: InputMaybe<Claim_Filter>;
 };
 
-
 export type QueryDepositArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryDepositsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2112,20 +2107,17 @@ export type QueryDepositsArgs = {
   where?: InputMaybe<Deposit_Filter>;
 };
 
-
 export type QueryLiquidityMiningCampaignArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type QueryLiquidityMiningCampaignRewardArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryLiquidityMiningCampaignRewardsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2137,7 +2129,6 @@ export type QueryLiquidityMiningCampaignRewardsArgs = {
   where?: InputMaybe<LiquidityMiningCampaignReward_Filter>;
 };
 
-
 export type QueryLiquidityMiningCampaignsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -2148,20 +2139,17 @@ export type QueryLiquidityMiningCampaignsArgs = {
   where?: InputMaybe<LiquidityMiningCampaign_Filter>;
 };
 
-
 export type QueryLiquidityMiningPositionArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type QueryLiquidityMiningPositionSnapshotArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryLiquidityMiningPositionSnapshotsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2173,7 +2161,6 @@ export type QueryLiquidityMiningPositionSnapshotsArgs = {
   where?: InputMaybe<LiquidityMiningPositionSnapshot_Filter>;
 };
 
-
 export type QueryLiquidityMiningPositionsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -2184,20 +2171,17 @@ export type QueryLiquidityMiningPositionsArgs = {
   where?: InputMaybe<LiquidityMiningPosition_Filter>;
 };
 
-
 export type QueryLiquidityPositionArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type QueryLiquidityPositionSnapshotArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryLiquidityPositionSnapshotsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2209,7 +2193,6 @@ export type QueryLiquidityPositionSnapshotsArgs = {
   where?: InputMaybe<LiquidityPositionSnapshot_Filter>;
 };
 
-
 export type QueryLiquidityPositionsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -2220,13 +2203,11 @@ export type QueryLiquidityPositionsArgs = {
   where?: InputMaybe<LiquidityPosition_Filter>;
 };
 
-
 export type QueryMintArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryMintsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2238,20 +2219,17 @@ export type QueryMintsArgs = {
   where?: InputMaybe<Mint_Filter>;
 };
 
-
 export type QueryPairArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type QueryPairDayDataArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryPairDayDatasArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2263,13 +2241,11 @@ export type QueryPairDayDatasArgs = {
   where?: InputMaybe<PairDayData_Filter>;
 };
 
-
 export type QueryPairHourDataArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryPairHourDatasArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2281,7 +2257,6 @@ export type QueryPairHourDatasArgs = {
   where?: InputMaybe<PairHourData_Filter>;
 };
 
-
 export type QueryPairsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -2291,7 +2266,6 @@ export type QueryPairsArgs = {
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Pair_Filter>;
 };
-
 
 export type QueryRecoveriesArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2303,13 +2277,11 @@ export type QueryRecoveriesArgs = {
   where?: InputMaybe<Recovery_Filter>;
 };
 
-
 export type QueryRecoveryArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QuerySingleSidedStakingCampaignArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2317,13 +2289,11 @@ export type QuerySingleSidedStakingCampaignArgs = {
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type QuerySingleSidedStakingCampaignClaimArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QuerySingleSidedStakingCampaignClaimsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2335,13 +2305,11 @@ export type QuerySingleSidedStakingCampaignClaimsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignClaim_Filter>;
 };
 
-
 export type QuerySingleSidedStakingCampaignDepositArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QuerySingleSidedStakingCampaignDepositsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2353,13 +2321,11 @@ export type QuerySingleSidedStakingCampaignDepositsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignDeposit_Filter>;
 };
 
-
 export type QuerySingleSidedStakingCampaignPositionArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QuerySingleSidedStakingCampaignPositionsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2371,7 +2337,6 @@ export type QuerySingleSidedStakingCampaignPositionsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignPosition_Filter>;
 };
 
-
 export type QuerySingleSidedStakingCampaignRecoveriesArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -2382,20 +2347,17 @@ export type QuerySingleSidedStakingCampaignRecoveriesArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignRecovery_Filter>;
 };
 
-
 export type QuerySingleSidedStakingCampaignRecoveryArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type QuerySingleSidedStakingCampaignRewardArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QuerySingleSidedStakingCampaignRewardsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2407,13 +2369,11 @@ export type QuerySingleSidedStakingCampaignRewardsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignReward_Filter>;
 };
 
-
 export type QuerySingleSidedStakingCampaignWithdrawalArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QuerySingleSidedStakingCampaignWithdrawalsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2425,7 +2385,6 @@ export type QuerySingleSidedStakingCampaignWithdrawalsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignWithdrawal_Filter>;
 };
 
-
 export type QuerySingleSidedStakingCampaignsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -2436,20 +2395,17 @@ export type QuerySingleSidedStakingCampaignsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaign_Filter>;
 };
 
-
 export type QuerySwapArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type QuerySwaprDayDataArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QuerySwaprDayDatasArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2461,7 +2417,6 @@ export type QuerySwaprDayDatasArgs = {
   where?: InputMaybe<SwaprDayData_Filter>;
 };
 
-
 export type QuerySwaprFactoriesArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -2472,13 +2427,11 @@ export type QuerySwaprFactoriesArgs = {
   where?: InputMaybe<SwaprFactory_Filter>;
 };
 
-
 export type QuerySwaprFactoryArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QuerySwaprStakingRewardsFactoriesArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2490,13 +2443,11 @@ export type QuerySwaprStakingRewardsFactoriesArgs = {
   where?: InputMaybe<SwaprStakingRewardsFactory_Filter>;
 };
 
-
 export type QuerySwaprStakingRewardsFactoryArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QuerySwapsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2508,20 +2459,17 @@ export type QuerySwapsArgs = {
   where?: InputMaybe<Swap_Filter>;
 };
 
-
 export type QueryTokenArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type QueryTokenDayDataArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryTokenDayDatasArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2533,7 +2481,6 @@ export type QueryTokenDayDatasArgs = {
   where?: InputMaybe<TokenDayData_Filter>;
 };
 
-
 export type QueryTokensArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -2544,13 +2491,11 @@ export type QueryTokensArgs = {
   where?: InputMaybe<Token_Filter>;
 };
 
-
 export type QueryTransactionArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryTransactionsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2562,13 +2507,11 @@ export type QueryTransactionsArgs = {
   where?: InputMaybe<Transaction_Filter>;
 };
 
-
 export type QueryUserArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryUsersArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2580,13 +2523,11 @@ export type QueryUsersArgs = {
   where?: InputMaybe<User_Filter>;
 };
 
-
 export type QueryWithdrawalArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryWithdrawalsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -2641,7 +2582,9 @@ export type Recovery_Filter = {
   liquidityMiningCampaign_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   liquidityMiningCampaign_not_in?: InputMaybe<Array<Scalars['String']>>;
   liquidityMiningCampaign_not_starts_with?: InputMaybe<Scalars['String']>;
-  liquidityMiningCampaign_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  liquidityMiningCampaign_not_starts_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   liquidityMiningCampaign_starts_with?: InputMaybe<Scalars['String']>;
   liquidityMiningCampaign_starts_with_nocase?: InputMaybe<Scalars['String']>;
   timestamp?: InputMaybe<Scalars['BigInt']>;
@@ -2658,7 +2601,7 @@ export enum Recovery_OrderBy {
   Amounts = 'amounts',
   Id = 'id',
   LiquidityMiningCampaign = 'liquidityMiningCampaign',
-  Timestamp = 'timestamp'
+  Timestamp = 'timestamp',
 }
 
 export type SingleSidedStakingCampaign = {
@@ -2681,7 +2624,6 @@ export type SingleSidedStakingCampaign = {
   withdrawals: Array<SingleSidedStakingCampaignWithdrawal>;
 };
 
-
 export type SingleSidedStakingCampaignClaimsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<SingleSidedStakingCampaignClaim_OrderBy>;
@@ -2689,7 +2631,6 @@ export type SingleSidedStakingCampaignClaimsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<SingleSidedStakingCampaignClaim_Filter>;
 };
-
 
 export type SingleSidedStakingCampaignDepositsArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -2699,7 +2640,6 @@ export type SingleSidedStakingCampaignDepositsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignDeposit_Filter>;
 };
 
-
 export type SingleSidedStakingCampaignRecoveriesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<SingleSidedStakingCampaignRecovery_OrderBy>;
@@ -2707,7 +2647,6 @@ export type SingleSidedStakingCampaignRecoveriesArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<SingleSidedStakingCampaignRecovery_Filter>;
 };
-
 
 export type SingleSidedStakingCampaignRewardsArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -2717,7 +2656,6 @@ export type SingleSidedStakingCampaignRewardsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignReward_Filter>;
 };
 
-
 export type SingleSidedStakingCampaignSingleSidedStakingPositionsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<SingleSidedStakingCampaignPosition_OrderBy>;
@@ -2725,7 +2663,6 @@ export type SingleSidedStakingCampaignSingleSidedStakingPositionsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<SingleSidedStakingCampaignPosition_Filter>;
 };
-
 
 export type SingleSidedStakingCampaignWithdrawalsArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -2774,12 +2711,18 @@ export type SingleSidedStakingCampaignClaim_Filter = {
   singleSidedStakingCampaign_lte?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_not?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_not_contains?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_contains_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_not_ends_with?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_ends_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_not_in?: InputMaybe<Array<Scalars['String']>>;
   singleSidedStakingCampaign_not_starts_with?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_starts_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_starts_with?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_starts_with_nocase?: InputMaybe<Scalars['String']>;
   timestamp?: InputMaybe<Scalars['BigInt']>;
@@ -2803,7 +2746,7 @@ export enum SingleSidedStakingCampaignClaim_OrderBy {
   Id = 'id',
   SingleSidedStakingCampaign = 'singleSidedStakingCampaign',
   Timestamp = 'timestamp',
-  User = 'user'
+  User = 'user',
 }
 
 export type SingleSidedStakingCampaignDeposit = {
@@ -2847,12 +2790,18 @@ export type SingleSidedStakingCampaignDeposit_Filter = {
   singleSidedStakingCampaign_lte?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_not?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_not_contains?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_contains_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_not_ends_with?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_ends_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_not_in?: InputMaybe<Array<Scalars['String']>>;
   singleSidedStakingCampaign_not_starts_with?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_starts_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_starts_with?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_starts_with_nocase?: InputMaybe<Scalars['String']>;
   timestamp?: InputMaybe<Scalars['BigInt']>;
@@ -2876,7 +2825,7 @@ export enum SingleSidedStakingCampaignDeposit_OrderBy {
   Id = 'id',
   SingleSidedStakingCampaign = 'singleSidedStakingCampaign',
   Timestamp = 'timestamp',
-  User = 'user'
+  User = 'user',
 }
 
 export type SingleSidedStakingCampaignPosition = {
@@ -2911,12 +2860,18 @@ export type SingleSidedStakingCampaignPosition_Filter = {
   singleSidedStakingCampaign_lte?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_not?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_not_contains?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_contains_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_not_ends_with?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_ends_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_not_in?: InputMaybe<Array<Scalars['String']>>;
   singleSidedStakingCampaign_not_starts_with?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_starts_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_starts_with?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_starts_with_nocase?: InputMaybe<Scalars['String']>;
   stakedAmount?: InputMaybe<Scalars['BigDecimal']>;
@@ -2954,7 +2909,7 @@ export enum SingleSidedStakingCampaignPosition_OrderBy {
   Id = 'id',
   SingleSidedStakingCampaign = 'singleSidedStakingCampaign',
   StakedAmount = 'stakedAmount',
-  User = 'user'
+  User = 'user',
 }
 
 export type SingleSidedStakingCampaignRecovery = {
@@ -2995,12 +2950,18 @@ export type SingleSidedStakingCampaignRecovery_Filter = {
   singleSidedStakingCampaign_lte?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_not?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_not_contains?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_contains_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_not_ends_with?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_ends_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_not_in?: InputMaybe<Array<Scalars['String']>>;
   singleSidedStakingCampaign_not_starts_with?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_starts_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_starts_with?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_starts_with_nocase?: InputMaybe<Scalars['String']>;
   timestamp?: InputMaybe<Scalars['BigInt']>;
@@ -3017,7 +2978,7 @@ export enum SingleSidedStakingCampaignRecovery_OrderBy {
   Amounts = 'amounts',
   Id = 'id',
   SingleSidedStakingCampaign = 'singleSidedStakingCampaign',
-  Timestamp = 'timestamp'
+  Timestamp = 'timestamp',
 }
 
 export type SingleSidedStakingCampaignReward = {
@@ -3072,7 +3033,7 @@ export type SingleSidedStakingCampaignReward_Filter = {
 export enum SingleSidedStakingCampaignReward_OrderBy {
   Amount = 'amount',
   Id = 'id',
-  Token = 'token'
+  Token = 'token',
 }
 
 export type SingleSidedStakingCampaignWithdrawal = {
@@ -3116,12 +3077,18 @@ export type SingleSidedStakingCampaignWithdrawal_Filter = {
   singleSidedStakingCampaign_lte?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_not?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_not_contains?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_contains_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_not_ends_with?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_ends_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_not_in?: InputMaybe<Array<Scalars['String']>>;
   singleSidedStakingCampaign_not_starts_with?: InputMaybe<Scalars['String']>;
-  singleSidedStakingCampaign_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  singleSidedStakingCampaign_not_starts_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   singleSidedStakingCampaign_starts_with?: InputMaybe<Scalars['String']>;
   singleSidedStakingCampaign_starts_with_nocase?: InputMaybe<Scalars['String']>;
   timestamp?: InputMaybe<Scalars['BigInt']>;
@@ -3145,7 +3112,7 @@ export enum SingleSidedStakingCampaignWithdrawal_OrderBy {
   Id = 'id',
   SingleSidedStakingCampaign = 'singleSidedStakingCampaign',
   Timestamp = 'timestamp',
-  User = 'user'
+  User = 'user',
 }
 
 export type SingleSidedStakingCampaign_Filter = {
@@ -3264,7 +3231,7 @@ export enum SingleSidedStakingCampaign_OrderBy {
   StakedAmount = 'stakedAmount',
   StakingCap = 'stakingCap',
   StartsAt = 'startsAt',
-  Withdrawals = 'withdrawals'
+  Withdrawals = 'withdrawals',
 }
 
 export type Subscription = {
@@ -3335,18 +3302,15 @@ export type Subscription = {
   withdrawals: Array<Withdrawal>;
 };
 
-
 export type Subscription_MetaArgs = {
   block?: InputMaybe<Block_Height>;
 };
-
 
 export type SubscriptionBundleArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionBundlesArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3358,13 +3322,11 @@ export type SubscriptionBundlesArgs = {
   where?: InputMaybe<Bundle_Filter>;
 };
 
-
 export type SubscriptionBurnArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionBurnsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3376,13 +3338,11 @@ export type SubscriptionBurnsArgs = {
   where?: InputMaybe<Burn_Filter>;
 };
 
-
 export type SubscriptionClaimArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionClaimsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3394,13 +3354,11 @@ export type SubscriptionClaimsArgs = {
   where?: InputMaybe<Claim_Filter>;
 };
 
-
 export type SubscriptionDepositArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionDepositsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3412,20 +3370,17 @@ export type SubscriptionDepositsArgs = {
   where?: InputMaybe<Deposit_Filter>;
 };
 
-
 export type SubscriptionLiquidityMiningCampaignArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type SubscriptionLiquidityMiningCampaignRewardArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionLiquidityMiningCampaignRewardsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3437,7 +3392,6 @@ export type SubscriptionLiquidityMiningCampaignRewardsArgs = {
   where?: InputMaybe<LiquidityMiningCampaignReward_Filter>;
 };
 
-
 export type SubscriptionLiquidityMiningCampaignsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -3448,20 +3402,17 @@ export type SubscriptionLiquidityMiningCampaignsArgs = {
   where?: InputMaybe<LiquidityMiningCampaign_Filter>;
 };
 
-
 export type SubscriptionLiquidityMiningPositionArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type SubscriptionLiquidityMiningPositionSnapshotArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionLiquidityMiningPositionSnapshotsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3473,7 +3424,6 @@ export type SubscriptionLiquidityMiningPositionSnapshotsArgs = {
   where?: InputMaybe<LiquidityMiningPositionSnapshot_Filter>;
 };
 
-
 export type SubscriptionLiquidityMiningPositionsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -3484,20 +3434,17 @@ export type SubscriptionLiquidityMiningPositionsArgs = {
   where?: InputMaybe<LiquidityMiningPosition_Filter>;
 };
 
-
 export type SubscriptionLiquidityPositionArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type SubscriptionLiquidityPositionSnapshotArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionLiquidityPositionSnapshotsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3509,7 +3456,6 @@ export type SubscriptionLiquidityPositionSnapshotsArgs = {
   where?: InputMaybe<LiquidityPositionSnapshot_Filter>;
 };
 
-
 export type SubscriptionLiquidityPositionsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -3520,13 +3466,11 @@ export type SubscriptionLiquidityPositionsArgs = {
   where?: InputMaybe<LiquidityPosition_Filter>;
 };
 
-
 export type SubscriptionMintArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionMintsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3538,20 +3482,17 @@ export type SubscriptionMintsArgs = {
   where?: InputMaybe<Mint_Filter>;
 };
 
-
 export type SubscriptionPairArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type SubscriptionPairDayDataArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionPairDayDatasArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3563,13 +3504,11 @@ export type SubscriptionPairDayDatasArgs = {
   where?: InputMaybe<PairDayData_Filter>;
 };
 
-
 export type SubscriptionPairHourDataArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionPairHourDatasArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3581,7 +3520,6 @@ export type SubscriptionPairHourDatasArgs = {
   where?: InputMaybe<PairHourData_Filter>;
 };
 
-
 export type SubscriptionPairsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -3591,7 +3529,6 @@ export type SubscriptionPairsArgs = {
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Pair_Filter>;
 };
-
 
 export type SubscriptionRecoveriesArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3603,13 +3540,11 @@ export type SubscriptionRecoveriesArgs = {
   where?: InputMaybe<Recovery_Filter>;
 };
 
-
 export type SubscriptionRecoveryArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionSingleSidedStakingCampaignArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3617,13 +3552,11 @@ export type SubscriptionSingleSidedStakingCampaignArgs = {
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type SubscriptionSingleSidedStakingCampaignClaimArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionSingleSidedStakingCampaignClaimsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3635,13 +3568,11 @@ export type SubscriptionSingleSidedStakingCampaignClaimsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignClaim_Filter>;
 };
 
-
 export type SubscriptionSingleSidedStakingCampaignDepositArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionSingleSidedStakingCampaignDepositsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3653,13 +3584,11 @@ export type SubscriptionSingleSidedStakingCampaignDepositsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignDeposit_Filter>;
 };
 
-
 export type SubscriptionSingleSidedStakingCampaignPositionArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionSingleSidedStakingCampaignPositionsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3671,7 +3600,6 @@ export type SubscriptionSingleSidedStakingCampaignPositionsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignPosition_Filter>;
 };
 
-
 export type SubscriptionSingleSidedStakingCampaignRecoveriesArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -3682,20 +3610,17 @@ export type SubscriptionSingleSidedStakingCampaignRecoveriesArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignRecovery_Filter>;
 };
 
-
 export type SubscriptionSingleSidedStakingCampaignRecoveryArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type SubscriptionSingleSidedStakingCampaignRewardArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionSingleSidedStakingCampaignRewardsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3707,13 +3632,11 @@ export type SubscriptionSingleSidedStakingCampaignRewardsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignReward_Filter>;
 };
 
-
 export type SubscriptionSingleSidedStakingCampaignWithdrawalArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionSingleSidedStakingCampaignWithdrawalsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3725,7 +3648,6 @@ export type SubscriptionSingleSidedStakingCampaignWithdrawalsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaignWithdrawal_Filter>;
 };
 
-
 export type SubscriptionSingleSidedStakingCampaignsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -3736,20 +3658,17 @@ export type SubscriptionSingleSidedStakingCampaignsArgs = {
   where?: InputMaybe<SingleSidedStakingCampaign_Filter>;
 };
 
-
 export type SubscriptionSwapArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type SubscriptionSwaprDayDataArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionSwaprDayDatasArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3761,7 +3680,6 @@ export type SubscriptionSwaprDayDatasArgs = {
   where?: InputMaybe<SwaprDayData_Filter>;
 };
 
-
 export type SubscriptionSwaprFactoriesArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -3772,13 +3690,11 @@ export type SubscriptionSwaprFactoriesArgs = {
   where?: InputMaybe<SwaprFactory_Filter>;
 };
 
-
 export type SubscriptionSwaprFactoryArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionSwaprStakingRewardsFactoriesArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3790,13 +3706,11 @@ export type SubscriptionSwaprStakingRewardsFactoriesArgs = {
   where?: InputMaybe<SwaprStakingRewardsFactory_Filter>;
 };
 
-
 export type SubscriptionSwaprStakingRewardsFactoryArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionSwapsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3808,20 +3722,17 @@ export type SubscriptionSwapsArgs = {
   where?: InputMaybe<Swap_Filter>;
 };
 
-
 export type SubscriptionTokenArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type SubscriptionTokenDayDataArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionTokenDayDatasArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3833,7 +3744,6 @@ export type SubscriptionTokenDayDatasArgs = {
   where?: InputMaybe<TokenDayData_Filter>;
 };
 
-
 export type SubscriptionTokensArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
@@ -3844,13 +3754,11 @@ export type SubscriptionTokensArgs = {
   where?: InputMaybe<Token_Filter>;
 };
 
-
 export type SubscriptionTransactionArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionTransactionsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3862,13 +3770,11 @@ export type SubscriptionTransactionsArgs = {
   where?: InputMaybe<Transaction_Filter>;
 };
 
-
 export type SubscriptionUserArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionUsersArgs = {
   block?: InputMaybe<Block_Height>;
@@ -3880,13 +3786,11 @@ export type SubscriptionUsersArgs = {
   where?: InputMaybe<User_Filter>;
 };
 
-
 export type SubscriptionWithdrawalArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type SubscriptionWithdrawalsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -4057,7 +3961,7 @@ export enum Swap_OrderBy {
   Sender = 'sender',
   Timestamp = 'timestamp',
   To = 'to',
-  Transaction = 'transaction'
+  Transaction = 'transaction',
 }
 
 export type SwaprDayData = {
@@ -4124,7 +4028,9 @@ export type SwaprDayData_Filter = {
   totalLiquidityNativeCurrency_lt?: InputMaybe<Scalars['BigDecimal']>;
   totalLiquidityNativeCurrency_lte?: InputMaybe<Scalars['BigDecimal']>;
   totalLiquidityNativeCurrency_not?: InputMaybe<Scalars['BigDecimal']>;
-  totalLiquidityNativeCurrency_not_in?: InputMaybe<Array<Scalars['BigDecimal']>>;
+  totalLiquidityNativeCurrency_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']>
+  >;
   totalLiquidityUSD?: InputMaybe<Scalars['BigDecimal']>;
   totalLiquidityUSD_gt?: InputMaybe<Scalars['BigDecimal']>;
   totalLiquidityUSD_gte?: InputMaybe<Scalars['BigDecimal']>;
@@ -4169,7 +4075,7 @@ export enum SwaprDayData_OrderBy {
   TotalLiquidityUsd = 'totalLiquidityUSD',
   TotalVolumeNativeCurrency = 'totalVolumeNativeCurrency',
   TotalVolumeUsd = 'totalVolumeUSD',
-  TxCount = 'txCount'
+  TxCount = 'txCount',
 }
 
 export type SwaprFactory = {
@@ -4210,7 +4116,9 @@ export type SwaprFactory_Filter = {
   totalLiquidityNativeCurrency_lt?: InputMaybe<Scalars['BigDecimal']>;
   totalLiquidityNativeCurrency_lte?: InputMaybe<Scalars['BigDecimal']>;
   totalLiquidityNativeCurrency_not?: InputMaybe<Scalars['BigDecimal']>;
-  totalLiquidityNativeCurrency_not_in?: InputMaybe<Array<Scalars['BigDecimal']>>;
+  totalLiquidityNativeCurrency_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']>
+  >;
   totalLiquidityUSD?: InputMaybe<Scalars['BigDecimal']>;
   totalLiquidityUSD_gt?: InputMaybe<Scalars['BigDecimal']>;
   totalLiquidityUSD_gte?: InputMaybe<Scalars['BigDecimal']>;
@@ -4261,7 +4169,7 @@ export enum SwaprFactory_OrderBy {
   TotalVolumeNativeCurrency = 'totalVolumeNativeCurrency',
   TotalVolumeUsd = 'totalVolumeUSD',
   TxCount = 'txCount',
-  UntrackedVolumeUsd = 'untrackedVolumeUSD'
+  UntrackedVolumeUsd = 'untrackedVolumeUSD',
 }
 
 export type SwaprStakingRewardsFactory = {
@@ -4293,7 +4201,7 @@ export type SwaprStakingRewardsFactory_Filter = {
 
 export enum SwaprStakingRewardsFactory_OrderBy {
   Id = 'id',
-  InitializedCampaignsCount = 'initializedCampaignsCount'
+  InitializedCampaignsCount = 'initializedCampaignsCount',
 }
 
 export type Token = {
@@ -4317,7 +4225,6 @@ export type Token = {
   whitelistPairs: Array<Pair>;
 };
 
-
 export type TokenPairBaseArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Pair_OrderBy>;
@@ -4325,7 +4232,6 @@ export type TokenPairBaseArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<Pair_Filter>;
 };
-
 
 export type TokenPairDayDataBaseArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -4335,7 +4241,6 @@ export type TokenPairDayDataBaseArgs = {
   where?: InputMaybe<PairDayData_Filter>;
 };
 
-
 export type TokenPairDayDataQuoteArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<PairDayData_OrderBy>;
@@ -4343,7 +4248,6 @@ export type TokenPairDayDataQuoteArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<PairDayData_Filter>;
 };
-
 
 export type TokenPairQuoteArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -4353,7 +4257,6 @@ export type TokenPairQuoteArgs = {
   where?: InputMaybe<Pair_Filter>;
 };
 
-
 export type TokenTokenDayDataArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<TokenDayData_OrderBy>;
@@ -4361,7 +4264,6 @@ export type TokenTokenDayDataArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<TokenDayData_Filter>;
 };
-
 
 export type TokenWhitelistPairsArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -4473,7 +4375,9 @@ export type TokenDayData_Filter = {
   totalLiquidityNativeCurrency_lt?: InputMaybe<Scalars['BigDecimal']>;
   totalLiquidityNativeCurrency_lte?: InputMaybe<Scalars['BigDecimal']>;
   totalLiquidityNativeCurrency_not?: InputMaybe<Scalars['BigDecimal']>;
-  totalLiquidityNativeCurrency_not_in?: InputMaybe<Array<Scalars['BigDecimal']>>;
+  totalLiquidityNativeCurrency_not_in?: InputMaybe<
+    Array<Scalars['BigDecimal']>
+  >;
   totalLiquidityToken?: InputMaybe<Scalars['BigDecimal']>;
   totalLiquidityToken_gt?: InputMaybe<Scalars['BigDecimal']>;
   totalLiquidityToken_gte?: InputMaybe<Scalars['BigDecimal']>;
@@ -4503,7 +4407,7 @@ export enum TokenDayData_OrderBy {
   Token = 'token',
   TotalLiquidityNativeCurrency = 'totalLiquidityNativeCurrency',
   TotalLiquidityToken = 'totalLiquidityToken',
-  TotalLiquidityUsd = 'totalLiquidityUSD'
+  TotalLiquidityUsd = 'totalLiquidityUSD',
 }
 
 export type Token_Filter = {
@@ -4652,7 +4556,7 @@ export enum Token_OrderBy {
   TradeVolumeUsd = 'tradeVolumeUSD',
   TxCount = 'txCount',
   UntrackedVolumeUsd = 'untrackedVolumeUSD',
-  WhitelistPairs = 'whitelistPairs'
+  WhitelistPairs = 'whitelistPairs',
 }
 
 export type Transaction = {
@@ -4665,7 +4569,6 @@ export type Transaction = {
   timestamp: Scalars['BigInt'];
 };
 
-
 export type TransactionBurnsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Burn_OrderBy>;
@@ -4674,7 +4577,6 @@ export type TransactionBurnsArgs = {
   where?: InputMaybe<Burn_Filter>;
 };
 
-
 export type TransactionMintsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Mint_OrderBy>;
@@ -4682,7 +4584,6 @@ export type TransactionMintsArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<Mint_Filter>;
 };
-
 
 export type TransactionSwapsArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -4748,7 +4649,7 @@ export enum Transaction_OrderBy {
   Id = 'id',
   Mints = 'mints',
   Swaps = 'swaps',
-  Timestamp = 'timestamp'
+  Timestamp = 'timestamp',
 }
 
 export type User = {
@@ -4757,7 +4658,6 @@ export type User = {
   liquidityPositions?: Maybe<Array<LiquidityPosition>>;
   usdSwapped: Scalars['BigDecimal'];
 };
-
 
 export type UserLiquidityPositionsArgs = {
   first?: InputMaybe<Scalars['Int']>;
@@ -4792,7 +4692,7 @@ export type User_Filter = {
 export enum User_OrderBy {
   Id = 'id',
   LiquidityPositions = 'liquidityPositions',
-  UsdSwapped = 'usdSwapped'
+  UsdSwapped = 'usdSwapped',
 }
 
 export type Withdrawal = {
@@ -4841,7 +4741,9 @@ export type Withdrawal_Filter = {
   liquidityMiningCampaign_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   liquidityMiningCampaign_not_in?: InputMaybe<Array<Scalars['String']>>;
   liquidityMiningCampaign_not_starts_with?: InputMaybe<Scalars['String']>;
-  liquidityMiningCampaign_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  liquidityMiningCampaign_not_starts_with_nocase?: InputMaybe<
+    Scalars['String']
+  >;
   liquidityMiningCampaign_starts_with?: InputMaybe<Scalars['String']>;
   liquidityMiningCampaign_starts_with_nocase?: InputMaybe<Scalars['String']>;
   timestamp?: InputMaybe<Scalars['BigInt']>;
@@ -4865,7 +4767,7 @@ export enum Withdrawal_OrderBy {
   Id = 'id',
   LiquidityMiningCampaign = 'liquidityMiningCampaign',
   Timestamp = 'timestamp',
-  User = 'user'
+  User = 'user',
 }
 
 export type _Block_ = {
@@ -4899,96 +4801,190 @@ export enum _SubgraphErrorPolicy_ {
   /** Data will be returned even if the subgraph has indexing errors */
   Allow = 'allow',
   /** If the subgraph has indexing errors, data will be omitted. The default. */
-  Deny = 'deny'
+  Deny = 'deny',
 }
 
-export type GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQueryVariables = Exact<{
-  address: Scalars['Bytes'];
-  minAmountUSD: Scalars['BigDecimal'];
-  timestampA: Scalars['BigInt'];
-  timestampB: Scalars['BigInt'];
-}>;
+export type GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQueryVariables =
+  Exact<{
+    address: Scalars['Bytes'];
+    minAmountUSD: Scalars['BigDecimal'];
+    timestampA: Scalars['BigInt'];
+    timestampB: Scalars['BigInt'];
+  }>;
 
+export type GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQuery = {
+  __typename?: 'Query';
+  mints: Array<{
+    __typename?: 'Mint';
+    amountUSD?: any | null;
+    to: any;
+    timestamp: any;
+  }>;
+};
 
-export type GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQuery = { __typename?: 'Query', mints: Array<{ __typename?: 'Mint', amountUSD?: any | null, to: any, timestamp: any }> };
+export type GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQueryVariables =
+  Exact<{
+    address: Scalars['Bytes'];
+    timestampA: Scalars['BigInt'];
+    timestampB: Scalars['BigInt'];
+  }>;
 
-export type GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQueryVariables = Exact<{
-  address: Scalars['Bytes'];
-  timestampA: Scalars['BigInt'];
-  timestampB: Scalars['BigInt'];
-}>;
-
-
-export type GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQuery = { __typename?: 'Query', liquidityMiningCampaignDeposits: Array<{ __typename: 'Deposit', id: string, amount: any, timestamp: any, liquidityMiningCampaign: { __typename?: 'LiquidityMiningCampaign', id: string, stakablePair: { __typename?: 'Pair', id: string, reserveUSD: any, totalSupply: any, token0: { __typename?: 'Token', id: string, symbol: string }, token1: { __typename?: 'Token', id: string, symbol: string } } } }>, singleSidedStakingCampaignDeposits: Array<{ __typename: 'SingleSidedStakingCampaignDeposit', id: string, amount: any, timestamp: any, singleSidedStakingCampaign: { __typename?: 'SingleSidedStakingCampaign', stakeToken: { __typename?: 'Token', id: string, symbol: string } } }> };
-
+export type GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQuery =
+  {
+    __typename?: 'Query';
+    liquidityMiningCampaignDeposits: Array<{
+      __typename: 'Deposit';
+      id: string;
+      amount: any;
+      timestamp: any;
+      liquidityMiningCampaign: {
+        __typename?: 'LiquidityMiningCampaign';
+        id: string;
+        stakablePair: {
+          __typename?: 'Pair';
+          id: string;
+          reserveUSD: any;
+          totalSupply: any;
+          token0: { __typename?: 'Token'; id: string; symbol: string };
+          token1: { __typename?: 'Token'; id: string; symbol: string };
+        };
+      };
+    }>;
+    singleSidedStakingCampaignDeposits: Array<{
+      __typename: 'SingleSidedStakingCampaignDeposit';
+      id: string;
+      amount: any;
+      timestamp: any;
+      singleSidedStakingCampaign: {
+        __typename?: 'SingleSidedStakingCampaign';
+        stakeToken: { __typename?: 'Token'; id: string; symbol: string };
+      };
+    }>;
+  };
 
 export const GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBDocument = gql`
-    query getLiquidityPositionDepositsBetweenTimestampAAndTimestampB($address: Bytes!, $minAmountUSD: BigDecimal!, $timestampA: BigInt!, $timestampB: BigInt!) {
-  mints(
-    where: {to: $address, amountUSD_gte: $minAmountUSD, timestamp_gte: $timestampA, timestamp_lte: $timestampB}
+  query getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(
+    $address: Bytes!
+    $minAmountUSD: BigDecimal!
+    $timestampA: BigInt!
+    $timestampB: BigInt!
   ) {
-    amountUSD
-    to
-    timestamp
+    mints(
+      where: {
+        to: $address
+        amountUSD_gte: $minAmountUSD
+        timestamp_gte: $timestampA
+        timestamp_lte: $timestampB
+      }
+    ) {
+      amountUSD
+      to
+      timestamp
+    }
   }
-}
-    `;
+`;
 export const GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBDocument = gql`
-    query getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB($address: Bytes!, $timestampA: BigInt!, $timestampB: BigInt!) {
-  liquidityMiningCampaignDeposits: deposits(
-    where: {user: $address, timestamp_gte: $timestampA, timestamp_lte: $timestampB}
+  query getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB(
+    $address: Bytes!
+    $timestampA: BigInt!
+    $timestampB: BigInt!
   ) {
-    __typename
-    id
-    amount
-    timestamp
-    liquidityMiningCampaign {
+    liquidityMiningCampaignDeposits: deposits(
+      where: {
+        user: $address
+        timestamp_gte: $timestampA
+        timestamp_lte: $timestampB
+      }
+    ) {
+      __typename
       id
-      stakablePair {
+      amount
+      timestamp
+      liquidityMiningCampaign {
         id
-        reserveUSD
-        totalSupply
-        token0 {
+        stakablePair {
           id
-          symbol
+          reserveUSD
+          totalSupply
+          token0 {
+            id
+            symbol
+          }
+          token1 {
+            id
+            symbol
+          }
         }
-        token1 {
+      }
+    }
+    singleSidedStakingCampaignDeposits(
+      where: {
+        user: $address
+        timestamp_gte: $timestampA
+        timestamp_lte: $timestampB
+      }
+    ) {
+      __typename
+      id
+      amount
+      timestamp
+      singleSidedStakingCampaign {
+        stakeToken {
           id
           symbol
         }
       }
     }
   }
-  singleSidedStakingCampaignDeposits(
-    where: {user: $address, timestamp_gte: $timestampA, timestamp_lte: $timestampB}
-  ) {
-    __typename
-    id
-    amount
-    timestamp
-    singleSidedStakingCampaign {
-      stakeToken {
-        id
-        symbol
-      }
-    }
-  }
-}
-    `;
+`;
 
-export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
+export type SdkFunctionWrapper = <T>(
+  action: (requestHeaders?: Record<string, string>) => Promise<T>,
+  operationName: string,
+  operationType?: string
+) => Promise<T>;
 
+const defaultWrapper: SdkFunctionWrapper = (
+  action,
+  _operationName,
+  _operationType
+) => action();
 
-const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType) => action();
-
-export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
+export function getSdk(
+  client: GraphQLClient,
+  withWrapper: SdkFunctionWrapper = defaultWrapper
+) {
   return {
-    getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(variables: GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQuery>(GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getLiquidityPositionDepositsBetweenTimestampAAndTimestampB', 'query');
+    getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(
+      variables: GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBQuery>(
+            GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'getLiquidityPositionDepositsBetweenTimestampAAndTimestampB',
+        'query'
+      );
     },
-    getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB(variables: GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQuery>(GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB', 'query');
-    }
+    getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB(
+      variables: GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQuery> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.request<GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBQuery>(
+            GetLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampBDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'getLiquidityMiningCampaignDepositsBetweenTimestampAAndTimestampB',
+        'query'
+      );
+    },
   };
 }
 export type Sdk = ReturnType<typeof getSdk>;

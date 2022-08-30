@@ -93,10 +93,8 @@ describe('Expeditions Controllers', () => {
         expect.arrayContaining(['liquidityProvision', 'liquidityStaking'])
       );
 
-      const {
-        liquidityProvision,
-        liquidityStaking,
-      } = (testRes.result as any).data;
+      const { liquidityProvision, liquidityStaking } = (testRes.result as any)
+        .data;
 
       const expectedValues = expect.objectContaining({
         claimableFragments: expect.any(Number),

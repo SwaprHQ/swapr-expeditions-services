@@ -6,4 +6,3 @@ export interface IVisit {
   createdAt: string;
   updatedAt: string;
 }
-

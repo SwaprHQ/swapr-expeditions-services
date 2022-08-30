@@ -28,4 +28,3 @@ export interface IWeeklyFragmentService {
     params: GetWeeklyRewardsParams
   ): Promise<WeeklyFragmentsBase>;
 }
-

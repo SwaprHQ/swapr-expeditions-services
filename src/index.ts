@@ -53,4 +53,3 @@ startService().catch(error => {
   Sentry.captureException(error);
   process.exit(1);
 });
-

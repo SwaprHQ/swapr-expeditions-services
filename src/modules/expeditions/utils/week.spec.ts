@@ -6,4 +6,3 @@ describe('getCurrentWeekInformation', () => {
     expect(currentWeek.weekDate).toEqual('2022-01-09');
   });
 });
-

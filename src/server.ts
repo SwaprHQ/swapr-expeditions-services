@@ -55,7 +55,9 @@ export async function configure(server: Server): Promise<Server> {
   const swaggerOptions: HapiSwagger.RegisterOptions = {
     info: {
       title: 'Swapr Expeditions API Documentation',
+      version: '1.0',
     },
+    basePath: '/v1.0',
     deReference: true, // works better with codegens
   };
 
@@ -80,4 +82,3 @@ export async function start() {
   await server.start();
   return server;
 }
-

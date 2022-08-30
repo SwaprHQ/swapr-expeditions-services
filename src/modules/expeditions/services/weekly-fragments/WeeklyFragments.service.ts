@@ -50,9 +50,10 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
       timestampB: week.endDate.unix(),
     };
 
-    const liquidityProvisionList = await this.multichainSubgraphService.getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(
-      queryParams
-    );
+    const liquidityProvisionList =
+      await this.multichainSubgraphService.getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(
+        queryParams
+      );
 
     // calculate the total amount of USD deposited
     returnValue.totalAmountUSD = liquidityProvisionList.reduce(
@@ -92,19 +93,18 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
       timestampB: week.endDate.unix(),
     };
 
-    const liquidityStakingDepositList = await this.multichainSubgraphService.getLiquidityStakingPositionBetweenTimestampAAndTimestampB(
-      queryParams
-    );
+    const liquidityStakingDepositList =
+      await this.multichainSubgraphService.getLiquidityStakingPositionBetweenTimestampAAndTimestampB(
+        queryParams
+      );
 
     // calculate the total amount of USD deposited
     returnValue.totalAmountUSD = liquidityStakingDepositList.reduce(
       (total, liquidityStakingDeposit) => {
         // Compute the USD value of the staking position
         if (liquidityStakingDeposit.__typename === 'Deposit') {
-          const {
-            totalSupply,
-            reserveUSD,
-          } = liquidityStakingDeposit.liquidityMiningCampaign.stakablePair;
+          const { totalSupply, reserveUSD } =
+            liquidityStakingDeposit.liquidityMiningCampaign.stakablePair;
 
           total =
             total +
@@ -128,4 +128,3 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
     return returnValue;
   }
 }
-

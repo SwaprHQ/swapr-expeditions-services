@@ -47,4 +47,3 @@ VisitSchema.plugin(MongooseDelete, {
 
 // register the model and export it
 export const VisitModel = model<IVisit>('Visit', VisitSchema);
-

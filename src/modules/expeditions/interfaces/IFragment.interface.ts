@@ -22,4 +22,3 @@ export interface IWeeklyFragment {
    */
   type: WeeklyFragmentType;
 }
-
