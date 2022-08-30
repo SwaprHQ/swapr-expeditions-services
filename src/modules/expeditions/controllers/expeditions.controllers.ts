@@ -130,19 +130,17 @@ export async function getWeeklyFragments(
       weeklyFragmentModel: WeeklyFragmentModel,
     });
 
-    const liquidityProvision = await weeklyFragmentService.getLiquidityProvisionWeekRewards(
-      {
+    const liquidityProvision =
+      await weeklyFragmentService.getLiquidityProvisionWeekRewards({
         address,
         week: currentWeek,
-      }
-    );
+      });
 
-    const liquidityStaking = await weeklyFragmentService.getLiquidityStakingWeekRewards(
-      {
+    const liquidityStaking =
+      await weeklyFragmentService.getLiquidityStakingWeekRewards({
         address,
         week: currentWeek,
-      }
-    );
+      });
 
     return {
       data: {
@@ -179,12 +177,11 @@ export async function claimWeeklyLiquidityProvisionFragments(
       weeklyFragmentModel: WeeklyFragmentModel,
     });
 
-    const weekRewards = await weeklyFragmentService.getLiquidityProvisionWeekRewards(
-      {
+    const weekRewards =
+      await weeklyFragmentService.getLiquidityProvisionWeekRewards({
         address,
         week: currentWeek,
-      }
-    );
+      });
 
     // Store the claimed fragments
     const currentWeeklyFragment = await WeeklyFragmentModel.findOne({
@@ -219,4 +216,3 @@ export async function claimWeeklyLiquidityProvisionFragments(
     throw Boom.badRequest(error);
   }
 }
-

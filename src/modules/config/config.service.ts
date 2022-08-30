@@ -46,3 +46,8 @@ export const FRAGMENTS_PER_WEEK = 50;
  */
 export const SIGNATURE_TEXT_PAYLOAD = 'Swapr Daily Visit';
 
+/**
+ *
+ */
+export const CLAIM_WEEKLY_FRAGMENTS_SIGNATURE_TEXT_PAYLOAD =
+  'Swapr Weekly Fragments Claim';

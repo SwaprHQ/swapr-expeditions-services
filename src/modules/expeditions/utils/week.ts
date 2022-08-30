@@ -44,4 +44,3 @@ export function getWeekInformation(week?: string): WeekInformation {
     weekNumber: thisWeekStart.week(),
   };
 }
-

@@ -26,4 +26,3 @@ export function isValidDate(dateStr: string): boolean {
 
   return date.toISOString().startsWith(dateStr);
 }
-

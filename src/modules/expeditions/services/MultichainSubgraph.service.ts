@@ -8,10 +8,11 @@ export interface GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBParam
   timestampB: number;
 }
 
-export type GetLiquidityStakingPositionBetweenTimestampAAndTimestampBParams = Omit<
-  GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBParams,
-  'minAmountUSD'
->;
+export type GetLiquidityStakingPositionBetweenTimestampAAndTimestampBParams =
+  Omit<
+    GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBParams,
+    'minAmountUSD'
+  >;
 
 enum ChainId {
   MAINNET = 1,
@@ -42,7 +43,7 @@ export class MultichainSubgraphService {
     for (const [chainId, subgraphEndpoint] of Object.entries(
       this.subgraphsEndpoints
     )) {
-      this.subgraphsSDKs[(chainId as unknown) as number] = getSdk(
+      this.subgraphsSDKs[chainId as unknown as number] = getSdk(
         new GraphQLClient(subgraphEndpoint)
       );
     }
@@ -61,16 +62,15 @@ export class MultichainSubgraphService {
     const resultsPerSubgraph = await Promise.all(
       Object.values(this.subgraphsSDKs).map(async subgraphSDK => {
         // Bound results to this week
-        const {
-          mints,
-        } = await subgraphSDK.getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(
-          {
-            address,
-            minAmountUSD,
-            timestampA,
-            timestampB,
-          }
-        );
+        const { mints } =
+          await subgraphSDK.getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(
+            {
+              address,
+              minAmountUSD,
+              timestampA,
+              timestampB,
+            }
+          );
 
         // Filter out results that are not within the time range
         return mints;
@@ -112,4 +112,3 @@ export class MultichainSubgraphService {
     return resultsPerSubgraph.flat();
   }
 }
-

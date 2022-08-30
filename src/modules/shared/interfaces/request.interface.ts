@@ -6,4 +6,3 @@ export interface MongooseDocumentBase {
   createdAt: Date;
   updatedAt: Date;
 }
-

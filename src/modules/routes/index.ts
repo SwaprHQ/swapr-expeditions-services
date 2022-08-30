@@ -96,7 +96,8 @@ async function register(server: Server) {
         schema: ClaimWeeklyLiquidityProvisionFragmentsResponseDTO,
       },
     },
-    handler: claimWeeklyLiquidityProvisionFragmentsController as HandlerDecorations,
+    handler:
+      claimWeeklyLiquidityProvisionFragmentsController as HandlerDecorations,
   });
 }
 

@@ -63,9 +63,10 @@ export type GetWeeklyFragmentsResponse = APIGeneralResponse<{
 /**
  * Claim weekly liquidity provision fragments Response
  */
-export type ClaimWeeklyLiquidityProvisionFragmentsResponse = APIGeneralResponse<{
-  claimedFragments: number;
-}>;
+export type ClaimWeeklyLiquidityProvisionFragmentsResponse =
+  APIGeneralResponse<{
+    claimedFragments: number;
+  }>;
 
 /**
  * Claim weekly liquidity staking fragments Response
@@ -73,4 +74,3 @@ export type ClaimWeeklyLiquidityProvisionFragmentsResponse = APIGeneralResponse<
 export type ClaimWeeklyLiquidityStakingFragmentsResponse = APIGeneralResponse<{
   claimedFragments: number;
 }>;
-

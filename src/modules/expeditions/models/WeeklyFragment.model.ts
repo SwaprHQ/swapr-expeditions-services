@@ -79,4 +79,3 @@ export const WeeklyFragmentModel = model<IWeeklyFragment>(
 );
 
 export type WeeklyFragmentModel = typeof WeeklyFragmentModel;
-
