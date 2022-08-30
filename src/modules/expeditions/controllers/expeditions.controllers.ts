@@ -7,7 +7,7 @@ import { VisitModel } from '../models';
 import { SIGNATURE_TEXT_PAYLOAD } from '../../config/config.service';
 import { MultichainSubgraphService } from '../services/MultichainSubgraph.service';
 import { WeeklyFragmentService } from '../services/weekly-fragments';
-import { getCurrentWeekInformation } from '../utils/week';
+import { getWeekInformation } from '../utils/week';
 import { WeeklyFragmentModel } from '../models/WeeklyFragment.model';
 import { WeeklyFragmentType } from '../interfaces/IFragment.interface';
 import {
@@ -127,7 +127,7 @@ export async function getWeeklyFragments(
       weeklyFragmentModel: WeeklyFragmentModel,
     });
 
-    const currentWeek = getCurrentWeekInformation();
+    const currentWeek = getWeekInformation();
 
     const liquidityProvision = await weeklyFragmentService.getLiquidityProvisionWeekRewards(
       {
@@ -172,7 +172,7 @@ export async function claimWeeklyLiquidityProvisionFragments(
     ).toLowerCase();
 
     // Fetch the weekly fragment informationx
-    const currentWeek = getCurrentWeekInformation();
+    const currentWeek = getWeekInformation();
     const weeklyFragmentService = new WeeklyFragmentService({
       multichainSubgraphService: new MultichainSubgraphService(),
       weeklyFragmentModel: WeeklyFragmentModel,
