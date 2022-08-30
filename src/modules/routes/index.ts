@@ -85,7 +85,7 @@ async function register(server: Server) {
 
   server.route({
     method: 'POST',
-    path: '/expeditions/weekly-fragments/liquiditt-provision/claim',
+    path: '/expeditions/weekly-fragments/liquidity-provision/claim',
     options: {
       description: `Claim all weekly fragments available for an address`,
       validate: {
