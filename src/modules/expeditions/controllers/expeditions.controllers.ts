@@ -120,14 +120,15 @@ export async function getWeeklyFragments(
   req: GetFragmentsRequest
 ): Promise<GetWeeklyFragmentsResponse> {
   try {
-    const { address } = req.query;
+    const { address, week } = req.query;
+
+    // Get this week's information
+    const currentWeek = getWeekInformation(week);
 
     const weeklyFragmentService = new WeeklyFragmentService({
       multichainSubgraphService: new MultichainSubgraphService(),
       weeklyFragmentModel: WeeklyFragmentModel,
     });
-
-    const currentWeek = getWeekInformation();
 
     const liquidityProvision = await weeklyFragmentService.getLiquidityProvisionWeekRewards(
       {

@@ -1,4 +1,5 @@
 import { HandlerDecorations, Server } from '@hapi/hapi';
+import Joi from 'joi';
 
 import {
   claimDailyVisitFragments as claimDailyVisitFragmentsController,
@@ -65,6 +66,7 @@ async function register(server: Server) {
       validate: {
         query: {
           address,
+          week: Joi.string().optional(),
         },
       },
       tags: [
