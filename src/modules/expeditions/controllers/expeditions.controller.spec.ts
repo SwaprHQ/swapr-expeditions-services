@@ -107,5 +107,16 @@ describe('Expeditions Controllers', () => {
       expect(liquidityProvision).toEqual(expectedValues);
       expect(liquidityStaking).toEqual(expectedValues);
     });
+    test('should return an error when ', async () => {
+      const address = testWallet.address;
+
+      const testRes = await server.inject({
+        method: 'GET',
+        url: `/expeditions/weekly-fragments?address=${address}&week=203515-01-01`,
+      });
+
+      expect(testRes.statusCode).toBe(400);
+      console.log(testRes.result);
+    });
   });
 });

@@ -4,6 +4,10 @@ import type { WeeklyFragmentService } from '../services/weekly-fragments';
 export interface GetFragmentsRequest extends Request {
   query: {
     address: string;
+    /**
+     * Week date in ISO format: YYYY-MM-DD
+     */
+    week?: string;
   };
 }
 

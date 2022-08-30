@@ -1,5 +1,5 @@
 import { WeeklyFragmentModel } from '../../models/WeeklyFragment.model';
-import type { CurrentWeekInformation } from '../../utils';
+import type { WeekInformation } from '../../utils';
 import { MultichainSubgraphService } from '../MultichainSubgraph.service';
 
 export interface WeeklyFragmentsBase {
@@ -10,7 +10,7 @@ export interface WeeklyFragmentsBase {
 
 export interface GetWeeklyRewardsParams {
   address: string;
-  week: CurrentWeekInformation;
+  week: WeekInformation;
 }
 
 export interface WeeklyFragmentServiceParams {
