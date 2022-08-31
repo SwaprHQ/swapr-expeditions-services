@@ -7,11 +7,13 @@ import type { MultichainSubgraphService } from '../MultichainSubgraph.service';
 import type { WeeklyFragmentModel } from '../../models/WeeklyFragment.model';
 
 import {
+  GetWeeklyFragmentsParams,
   GetWeeklyRewardsParams,
   IWeeklyFragmentService,
   WeeklyFragmentsBase,
   WeeklyFragmentServiceParams,
 } from './WeeklyFragments.types';
+import { WeeklyFragmentType } from '../../interfaces/IFragment.interface';
 
 export class WeeklyFragmentService implements IWeeklyFragmentService {
   multichainSubgraphService: MultichainSubgraphService;
@@ -126,5 +128,39 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
     }
 
     return returnValue;
+  }
+
+  /**
+   * Returns the weekly rewards for a given address for given week.
+   * @returns Weekly fragment rewards
+   */
+  async getWeeklyFragments({
+    address,
+    week,
+    type,
+  }: GetWeeklyFragmentsParams): Promise<WeeklyFragmentsBase> {
+    if (!address) {
+      throw new Error('Address is required');
+    }
+
+    if (!week) {
+      throw new Error('Week is required');
+    }
+
+    if (type === WeeklyFragmentType.LIQUIDITY_PROVISION) {
+      return this.getLiquidityProvisionWeekRewards({
+        address,
+        week,
+      });
+    }
+
+    if (type === WeeklyFragmentType.LIQUIDITY_STAKING) {
+      return this.getLiquidityStakingWeekRewards({
+        address,
+        week,
+      });
+    }
+
+    throw new Error('Type is required');
   }
 }
