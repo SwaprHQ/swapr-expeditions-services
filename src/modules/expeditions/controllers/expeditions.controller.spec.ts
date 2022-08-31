@@ -39,8 +39,10 @@ describe('Expeditions Controllers', () => {
   });
 
   describe('claimDailyVisitFragments', () => {
+    const signaturePayload = 'Claim Swapr daily visit fragments';
+
     test('should return updated allVisits count after claimng fragment', async () => {
-      const signature = await testWallet.signMessage('Swapr Daily Visit');
+      const signature = await testWallet.signMessage(signaturePayload);
       const testRes = await server.inject({
         method: 'POST',
         url: `/expeditions/daily-visits`,
@@ -63,7 +65,7 @@ describe('Expeditions Controllers', () => {
         lastVisit: testDate,
       }).save();
 
-      const signature = await testWallet.signMessage('Swapr Daily Visit');
+      const signature = await testWallet.signMessage(signaturePayload);
 
       const testRes = await server.inject({
         method: 'POST',
