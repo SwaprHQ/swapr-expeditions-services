@@ -1,3 +1,4 @@
+import { WeeklyFragmentType } from '../../interfaces/IFragment.interface';
 import { WeeklyFragmentModel } from '../../models/WeeklyFragment.model';
 import type { WeekInformation } from '../../utils';
 import { MultichainSubgraphService } from '../MultichainSubgraph.service';
@@ -11,6 +12,12 @@ export interface WeeklyFragmentsBase {
 export interface GetWeeklyRewardsParams {
   address: string;
   week: WeekInformation;
+}
+
+export interface GetWeeklyFragmentsParams {
+  address: string;
+  week: WeekInformation;
+  type: WeeklyFragmentType;
 }
 
 export interface WeeklyFragmentServiceParams {

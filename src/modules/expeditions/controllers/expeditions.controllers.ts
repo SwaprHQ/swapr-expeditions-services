@@ -4,12 +4,12 @@ import { verifyMessage } from '@ethersproject/wallet';
 import dayjs from 'dayjs';
 
 import { VisitModel } from '../models';
-import { SIGNATURE_TEXT_PAYLOAD } from '../../config/config.service';
 import { MultichainSubgraphService } from '../services/MultichainSubgraph.service';
 import { WeeklyFragmentService } from '../services/weekly-fragments';
 import { getWeekInformation } from '../utils/week';
 import { WeeklyFragmentModel } from '../models/WeeklyFragment.model';
-import { WeeklyFragmentType } from '../interfaces/IFragment.interface';
+
+import { CLAIM_DAILY_VISIT_FRAGMENTS_MESSAGE } from '../constants';
 import {
   ClaimFragmentsRequest,
   ClaimWeeklyFragmentsResponse,
@@ -17,7 +17,9 @@ import {
   GetFragmentsRequest,
   ClaimDailyVisitFragmentsResponse,
   GetWeeklyFragmentsResponse,
+  ClaimWeeklyFragmentsRequest,
 } from './types';
+import { getWeeklyFragmentMessageByType } from '../utils/messages';
 
 /**
  * Get daily visits for a given address
@@ -58,7 +60,7 @@ export async function claimDailyVisitFragments(
   try {
     const { signature, address } = req.payload;
     const addressFromSignature = verifyMessage(
-      SIGNATURE_TEXT_PAYLOAD,
+      CLAIM_DAILY_VISIT_FRAGMENTS_MESSAGE,
       signature
     );
 
@@ -158,40 +160,54 @@ export async function getWeeklyFragments(
 /**
  * Claims the weekly fragments for liquidity position deposits
  */
-export async function claimWeeklyLiquidityProvisionFragments(
-  req: ClaimFragmentsRequest
+export async function claimWeeklyFragments(
+  req: ClaimWeeklyFragmentsRequest
 ): Promise<ClaimWeeklyFragmentsResponse> {
   try {
-    const { signature } = req.payload;
+    const type = req.payload.type;
 
-    // Get the address and use the lowercase version
-    const address = verifyMessage(
-      SIGNATURE_TEXT_PAYLOAD,
-      signature
+    // Verify the type
+    const message = getWeeklyFragmentMessageByType(type);
+
+    if (!message) {
+      throw new Error('Invalid type');
+    }
+
+    // Verify the signature
+    const address = req.payload.address.toLowerCase();
+
+    const addressFromSignature = verifyMessage(
+      CLAIM_DAILY_VISIT_FRAGMENTS_MESSAGE,
+      req.payload.signature
     ).toLowerCase();
+
+    if (addressFromSignature !== address) {
+      throw new Error('Invalid signature');
+    }
 
     // Fetch the weekly fragment informationx
     const currentWeek = getWeekInformation();
+
     const weeklyFragmentService = new WeeklyFragmentService({
       multichainSubgraphService: new MultichainSubgraphService(),
       weeklyFragmentModel: WeeklyFragmentModel,
     });
 
-    const weekRewards =
-      await weeklyFragmentService.getLiquidityProvisionWeekRewards({
-        address,
-        week: currentWeek,
-      });
+    const weekRewards = await weeklyFragmentService.getWeeklyFragments({
+      address,
+      week: currentWeek,
+      type,
+    });
 
     // Store the claimed fragments
     const currentWeeklyFragment = await WeeklyFragmentModel.findOne({
       address,
       week: currentWeek.weekNumber,
-      fragmentType: WeeklyFragmentType.LIQUIDITY_PROVISION,
+      fragmentType: type,
     });
 
     if (currentWeeklyFragment != null) {
-      throw new Error('Weekly fragment already claimed');
+      throw new Error(`Weekly fragment for ${type} already claimed`);
     }
 
     if (weekRewards.claimableFragments === 0) {
@@ -200,7 +216,7 @@ export async function claimWeeklyLiquidityProvisionFragments(
 
     await new WeeklyFragmentModel({
       address,
-      type: WeeklyFragmentType.LIQUIDITY_PROVISION,
+      type,
       week: currentWeek.weekNumber,
       fragments: weekRewards.claimableFragments,
     }).save();

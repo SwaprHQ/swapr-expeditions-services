@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { address, signature } from '../../routes/validations';
+import { WeeklyFragmentType } from '../interfaces/IFragment.interface';
 
 const apiGeneralResponseDTOCreator = (responseSchema: Joi.SchemaLike) =>
   Joi.object({
@@ -9,6 +10,12 @@ const apiGeneralResponseDTOCreator = (responseSchema: Joi.SchemaLike) =>
 export const AddressWithSignatureDTO = Joi.object({
   address,
   signature,
+});
+
+export const ClaimWeeklyFragmentsDTO = AddressWithSignatureDTO.keys({
+  type: Joi.string()
+    .valid(...Object.values(WeeklyFragmentType))
+    .required(),
 });
 
 export const DailyVisitsResponseDTO = apiGeneralResponseDTOCreator(

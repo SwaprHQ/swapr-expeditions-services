@@ -1,4 +1,5 @@
 import { APIGeneralResponse } from 'src/modules/shared/interfaces/response.interface';
+import { WeeklyFragmentType } from '../interfaces/IFragment.interface';
 import type { WeeklyFragmentService } from '../services/weekly-fragments';
 
 export interface GetFragmentsRequest extends Request {
@@ -19,6 +20,12 @@ export interface ClaimFragmentsRequest extends Request {
   payload: {
     address: string;
     signature: string;
+  };
+}
+
+export interface ClaimWeeklyFragmentsRequest extends ClaimFragmentsRequest {
+  payload: ClaimFragmentsRequest['payload'] & {
+    type: WeeklyFragmentType;
   };
 }
 

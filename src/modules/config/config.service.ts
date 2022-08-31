@@ -40,14 +40,3 @@ export const PAST_WEEK_ADDITIONAL_FRAGMENT = 50;
  * Base number of fragments per week.
  */
 export const FRAGMENTS_PER_WEEK = 50;
-
-/**
- * A shared text payload used to verify the signature of a message.
- */
-export const SIGNATURE_TEXT_PAYLOAD = 'Swapr Daily Visit';
-
-/**
- *
- */
-export const CLAIM_WEEKLY_FRAGMENTS_SIGNATURE_TEXT_PAYLOAD =
-  'Swapr Weekly Fragments Claim';

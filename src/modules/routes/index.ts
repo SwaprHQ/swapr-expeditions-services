@@ -5,11 +5,12 @@ import {
   claimDailyVisitFragments as claimDailyVisitFragmentsController,
   getDailyVisitFragments as getDailyVisitFragmentsController,
   getWeeklyFragments as getWeeklyFragmentsController,
-  claimWeeklyLiquidityProvisionFragments as claimWeeklyLiquidityProvisionFragmentsController,
+  claimWeeklyFragments as claimWeeklyFragmentsController,
 } from '../expeditions';
 
 import {
   AddressWithSignatureDTO,
+  ClaimWeeklyFragmentsDTO,
   ClaimWeeklyLiquidityProvisionFragmentsResponseDTO,
   DailyVisitsResponseDTO,
   GetWeeklyRewardsFragmentsResponseDTO,
@@ -85,19 +86,18 @@ async function register(server: Server) {
 
   server.route({
     method: 'POST',
-    path: '/expeditions/weekly-fragments/liquidity-provision/claim',
+    path: '/expeditions/weekly-fragments/claim',
     options: {
       description: `Claim weekly liquidity provision fragments for an address`,
       validate: {
-        payload: AddressWithSignatureDTO,
+        payload: ClaimWeeklyFragmentsDTO,
       },
       tags: ['api', 'expeditions', 'weekly liquidity'],
       response: {
         schema: ClaimWeeklyLiquidityProvisionFragmentsResponseDTO,
       },
     },
-    handler:
-      claimWeeklyLiquidityProvisionFragmentsController as HandlerDecorations,
+    handler: claimWeeklyFragmentsController as HandlerDecorations,
   });
 }
 
