@@ -34,4 +34,7 @@ export interface IWeeklyFragmentService {
   getLiquidityStakingWeekRewards(
     params: GetWeeklyRewardsParams
   ): Promise<WeeklyFragmentsBase>;
+  getWeeklyFragments(
+    params: GetWeeklyFragmentsParams
+  ): Promise<WeeklyFragmentsBase>;
 }

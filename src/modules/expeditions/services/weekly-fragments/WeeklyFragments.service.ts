@@ -14,6 +14,7 @@ import {
   WeeklyFragmentServiceParams,
 } from './WeeklyFragments.types';
 import { WeeklyFragmentType } from '../../interfaces/IFragment.interface';
+import { calculateLiquidityStakingDepositUSDValue } from './WeeklyFragments.utils';
 
 export class WeeklyFragmentService implements IWeeklyFragmentService {
   multichainSubgraphService: MultichainSubgraphService;
@@ -38,12 +39,27 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
     address,
     week,
   }: GetWeeklyRewardsParams): Promise<WeeklyFragmentsBase> {
+    // use lowercase
+    address = address.toLowerCase();
+
     // Return value
     const returnValue: WeeklyFragmentsBase = {
       totalAmountUSD: 0,
       claimableFragments: 0,
       claimedFragments: 0,
     };
+
+    // Check database
+    const weeklyFragmentDocument = await this.weeklyFragmentModel.findOne({
+      address,
+      week: week.weekNumber,
+      year: week.year,
+      type: WeeklyFragmentType.LIQUIDITY_PROVISION,
+    });
+
+    if (weeklyFragmentDocument != null) {
+      returnValue.claimedFragments = weeklyFragmentDocument.fragments;
+    }
 
     const queryParams = {
       address,
@@ -81,6 +97,9 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
     address,
     week,
   }: GetWeeklyRewardsParams): Promise<WeeklyFragmentsBase> {
+    // use lowercase
+    address = address.toLowerCase();
+
     // Return value
     const returnValue: WeeklyFragmentsBase = {
       totalAmountUSD: 0,
@@ -88,6 +107,20 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
       claimedFragments: 0,
     };
 
+    // Check database for claimed fragments
+    const weeklyFragmentDocument = await this.weeklyFragmentModel.findOne({
+      address,
+      week: week.weekNumber,
+      year: week.year,
+      type: WeeklyFragmentType.LIQUIDITY_STAKING,
+    });
+
+    if (weeklyFragmentDocument !== null) {
+      returnValue.claimedFragments = weeklyFragmentDocument.fragments;
+    }
+
+    // Fetch and compute the total amount of USD
+    // deposited during the week from all subgraphs
     const queryParams = {
       address,
       minAmountUSD: ADD_LIQUIDITY_MIN_USD_AMOUNT.toString(),
@@ -100,30 +133,17 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
         queryParams
       );
 
-    // calculate the total amount of USD deposited
-    returnValue.totalAmountUSD = liquidityStakingDepositList.reduce(
-      (total, liquidityStakingDeposit) => {
-        // Compute the USD value of the staking position
-        if (liquidityStakingDeposit.__typename === 'Deposit') {
-          const { totalSupply, reserveUSD } =
-            liquidityStakingDeposit.liquidityMiningCampaign.stakablePair;
-
-          total =
-            total +
-            (parseFloat(liquidityStakingDeposit.amount) /
-              parseFloat(totalSupply)) *
-              reserveUSD;
-        }
-
-        return total;
-      },
-      0
+    returnValue.totalAmountUSD = calculateLiquidityStakingDepositUSDValue(
+      liquidityStakingDepositList
     );
 
     // Calculate claimable fragments for this week.
     // Add the base 50 fragments for this week
     // if the provided liquidity deposits are more than $50 USD
-    if (returnValue.totalAmountUSD > ADD_LIQUIDITY_MIN_USD_AMOUNT) {
+    if (
+      weeklyFragmentDocument === null &&
+      returnValue.totalAmountUSD > ADD_LIQUIDITY_MIN_USD_AMOUNT
+    ) {
       returnValue.claimableFragments = FRAGMENTS_PER_WEEK;
     }
 
