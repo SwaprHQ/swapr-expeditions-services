@@ -2,47 +2,34 @@ import Joi from 'joi';
 import { address, signature } from '../../routes/validations';
 import { WeeklyFragmentType } from '../interfaces/IFragment.interface';
 
-const apiGeneralResponseDTOCreator = (responseSchema: Joi.SchemaLike) =>
-  Joi.object({
-    data: responseSchema,
-  });
-
-export const AddressWithSignatureDTO = Joi.object({
+export const DailyVisitsRequestDTO = Joi.object({
   address,
   signature,
-});
+}).label('DailyVisitsRequestDTO');
 
-export const ClaimWeeklyFragmentsDTO = AddressWithSignatureDTO.keys({
+export const ClaimWeeklyFragmentsDTO = DailyVisitsRequestDTO.keys({
   type: Joi.string()
     .valid(...Object.values(WeeklyFragmentType))
     .required(),
-});
+}).label('ClaimWeeklyFragmentsResponseDTO');
 
-export const DailyVisitsResponseDTO = apiGeneralResponseDTOCreator(
-  Joi.object({
-    address,
-    allVisits: Joi.number(),
-    lastVisit: Joi.date(),
-  })
-);
+export const DailyVisitsResponseDTO = Joi.object({
+  address,
+  allVisits: Joi.number(),
+  lastVisit: Joi.date(),
+}).label('DailyVisitsResponseDTO');
 
-export const ClaimWeeklyLiquidityProvisionFragmentsResponseDTO =
-  apiGeneralResponseDTOCreator(
-    Joi.object({
-      claimedFragments: Joi.number(),
-    })
-  );
+export const ClaimWeeklyLiquidityProvisionFragmentsResponseDTO = Joi.object({
+  claimedFragments: Joi.number(),
+}).label('ClaimWeeklyLiquidityProvisionFragmentsResponseDTO');
 
 const weeklyRewardsFragmentSchema = Joi.object({
   totalAmountUSD: Joi.number(),
   claimableFragments: Joi.number(),
   claimedFragments: Joi.number(),
-});
+}).label('WeeklyRewardsFragments');
 
-export const GetWeeklyRewardsFragmentsResponseDTO =
-  apiGeneralResponseDTOCreator(
-    Joi.object({
-      liquidityProvision: weeklyRewardsFragmentSchema,
-      liquidityStaking: weeklyRewardsFragmentSchema,
-    })
-  );
+export const GetWeeklyRewardsFragmentsResponseDTO = Joi.object({
+  liquidityProvision: weeklyRewardsFragmentSchema,
+  liquidityStaking: weeklyRewardsFragmentSchema,
+}).label('GetWeeklyRewardsFragmentsResponseDTO');

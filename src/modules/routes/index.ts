@@ -9,7 +9,7 @@ import {
 } from '../expeditions';
 
 import {
-  AddressWithSignatureDTO,
+  DailyVisitsRequestDTO,
   ClaimWeeklyFragmentsDTO,
   ClaimWeeklyLiquidityProvisionFragmentsResponseDTO,
   DailyVisitsResponseDTO,
@@ -49,7 +49,7 @@ async function register(server: Server) {
     options: {
       description: `Claim all daily fragments available for an address`,
       validate: {
-        payload: AddressWithSignatureDTO,
+        payload: DailyVisitsRequestDTO,
       },
       tags: ['api', 'expeditions', 'daily visits'],
       response: {

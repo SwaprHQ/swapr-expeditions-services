@@ -30,7 +30,7 @@ describe('Expeditions Controllers', () => {
         url: `/expeditions/daily-visits?address=${testWallet.address}`,
       });
       expect(signupRes.statusCode).toBe(200);
-      expect((signupRes.result as any).data).toEqual({
+      expect(signupRes.result as any).toEqual({
         address: testWallet.address,
         allVisits: 0,
         lastVisit: 0,
@@ -52,7 +52,7 @@ describe('Expeditions Controllers', () => {
         },
       });
       expect(testRes.statusCode).toBe(200);
-      expect((testRes.result as any).data.allVisits).toEqual(1);
+      expect((testRes.result as any).allVisits).toEqual(1);
     });
 
     test('should increase visits by one when address has previous visits', async () => {
@@ -77,7 +77,7 @@ describe('Expeditions Controllers', () => {
       });
 
       expect(testRes.statusCode).toBe(200);
-      expect((testRes.result as any).data.allVisits).toEqual(5);
+      expect((testRes.result as any).allVisits).toEqual(5);
     });
   });
 
@@ -91,12 +91,11 @@ describe('Expeditions Controllers', () => {
       });
 
       expect(testRes.statusCode).toBe(200);
-      expect(Object.keys((testRes.result as any).data)).toEqual(
+      expect(Object.keys(testRes.result as any)).toEqual(
         expect.arrayContaining(['liquidityProvision', 'liquidityStaking'])
       );
 
-      const { liquidityProvision, liquidityStaking } = (testRes.result as any)
-        .data;
+      const { liquidityProvision, liquidityStaking } = testRes.result as any;
 
       const expectedValues = expect.objectContaining({
         claimableFragments: expect.any(Number),
