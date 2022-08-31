@@ -132,17 +132,19 @@ export async function getWeeklyFragments(
       weeklyFragmentModel: WeeklyFragmentModel,
     });
 
-    const liquidityProvision =
-      await weeklyFragmentService.getLiquidityProvisionWeekRewards({
-        address,
-        week: currentWeek,
-      });
+    const getWeeklyFragmentsParams = {
+      address,
+      week: currentWeek,
+    };
 
-    const liquidityStaking =
-      await weeklyFragmentService.getLiquidityStakingWeekRewards({
-        address,
-        week: currentWeek,
-      });
+    const [liquidityProvision, liquidityStaking] = await Promise.all([
+      weeklyFragmentService.getLiquidityProvisionWeekRewards(
+        getWeeklyFragmentsParams
+      ),
+      weeklyFragmentService.getLiquidityStakingWeekRewards(
+        getWeeklyFragmentsParams
+      ),
+    ]);
 
     return {
       data: {
@@ -177,7 +179,7 @@ export async function claimWeeklyFragments(
     const address = req.payload.address.toLowerCase();
 
     const addressFromSignature = verifyMessage(
-      CLAIM_DAILY_VISIT_FRAGMENTS_MESSAGE,
+      message,
       req.payload.signature
     ).toLowerCase();
 
@@ -199,26 +201,32 @@ export async function claimWeeklyFragments(
       type,
     });
 
-    // Store the claimed fragments
-    const currentWeeklyFragment = await WeeklyFragmentModel.findOne({
-      address,
-      week: currentWeek.weekNumber,
-      fragmentType: type,
-    });
-
-    if (currentWeeklyFragment != null) {
-      throw new Error(`Weekly fragment for ${type} already claimed`);
-    }
-
     if (weekRewards.claimableFragments === 0) {
       throw new Error('No claimable fragments');
     }
 
-    await new WeeklyFragmentModel({
+    // Criteria for claiming the weekly fragments
+    const searchParams = {
       address,
-      type,
       week: currentWeek.weekNumber,
-      fragments: weekRewards.claimableFragments,
+      year: currentWeek.year,
+      fragmentType: type,
+    };
+
+    // Search for existing weekly fragment
+    const currentWeeklyFragment = await WeeklyFragmentModel.findOne(
+      searchParams
+    );
+
+    if (currentWeeklyFragment != null) {
+      throw new Error(
+        `Weekly fragment for ${type} for ${currentWeek.weekDate} already claimed`
+      );
+    }
+
+    await new WeeklyFragmentModel({
+      ...searchParams,
+      type,
     }).save();
 
     return {
