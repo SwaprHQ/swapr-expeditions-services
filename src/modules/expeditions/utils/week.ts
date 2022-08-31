@@ -34,13 +34,13 @@ export function getWeekInformation(week?: string): WeekInformation {
   }
 
   // Get this week's Sunday 11:59:00 UTC
-  const thisWeekEnd = thisWeekStart.clone().endOf('week');
+  const thisWeekEnd = thisWeekStart.endOf('week');
 
   return {
     weekDate: thisWeekStart.format('YYYY-MM-DD'),
     startDate: thisWeekStart,
     endDate: thisWeekEnd,
     year: thisWeekStart.year(),
-    weekNumber: thisWeekStart.week(),
+    weekNumber: thisWeekStart.week() - 1, // see: https://github.com/iamkun/dayjs/issues/2049
   };
 }

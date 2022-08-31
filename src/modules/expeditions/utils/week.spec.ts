@@ -5,4 +5,9 @@ describe('getCurrentWeekInformation', () => {
     const currentWeek = getWeekInformation('2022-01-11');
     expect(currentWeek.weekDate).toEqual('2022-01-09');
   });
+
+  test('should return the week number for 2022-12-31', async () => {
+    const currentWeek = getWeekInformation('2022-12-31');
+    expect(currentWeek.weekNumber).toEqual(52);
+  });
 });
