@@ -11,9 +11,9 @@ import {
 import {
   DailyVisitsRequestDTO,
   ClaimWeeklyFragmentsDTO,
-  ClaimWeeklyLiquidityProvisionFragmentsResponseDTO,
   DailyVisitsResponseDTO,
-  GetWeeklyRewardsFragmentsResponseDTO,
+  GetWeeklyFragmentsResponseDTO,
+  ClaimWeeklyFragmentsResponseDTO,
 } from '../expeditions/controllers/expeditions.dto';
 
 import { address } from './validations';
@@ -78,7 +78,7 @@ async function register(server: Server) {
         'weekly fragments',
       ],
       response: {
-        schema: GetWeeklyRewardsFragmentsResponseDTO,
+        schema: GetWeeklyFragmentsResponseDTO,
       },
     },
     handler: getWeeklyFragmentsController as HandlerDecorations,
@@ -88,13 +88,13 @@ async function register(server: Server) {
     method: 'POST',
     path: '/expeditions/weekly-fragments/claim',
     options: {
-      description: `Claim weekly liquidity provision fragments for an address`,
+      description: `Claim weekly fragments for an address`,
       validate: {
         payload: ClaimWeeklyFragmentsDTO,
       },
-      tags: ['api', 'expeditions', 'weekly liquidity'],
+      tags: ['api', 'expeditions', 'liquidity provision', 'liquidity staking'],
       response: {
-        schema: ClaimWeeklyLiquidityProvisionFragmentsResponseDTO,
+        schema: ClaimWeeklyFragmentsResponseDTO,
       },
     },
     handler: claimWeeklyFragmentsController as HandlerDecorations,
