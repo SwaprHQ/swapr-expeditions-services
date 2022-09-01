@@ -227,6 +227,7 @@ export async function claimWeeklyFragments(
     await new WeeklyFragmentModel({
       ...searchParams,
       type,
+      fragments: weekRewards.claimableFragments,
     }).save();
 
     return {
