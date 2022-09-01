@@ -1,4 +1,3 @@
-import { APIGeneralResponse } from 'src/modules/shared/interfaces/response.interface';
 import { WeeklyFragmentType } from '../interfaces/IFragment.interface';
 import type { WeeklyFragmentService } from '../services/weekly-fragments';
 
@@ -29,11 +28,11 @@ export interface ClaimWeeklyFragmentsRequest extends ClaimFragmentsRequest {
   };
 }
 
-export type GetDailyVisitFragmentsResponse = APIGeneralResponse<{
+export interface GetDailyVisitFragmentsResponse {
   address: string;
   allVisits: number;
   lastVisit: Date | number;
-}>;
+}
 
 /**
  * Claim daily visits fragments response interface.
@@ -43,14 +42,14 @@ export type ClaimDailyVisitFragmentsResponse = GetDailyVisitFragmentsResponse;
 /**
  * Claim weekly rewards for a given address
  */
-export type ClaimWeeklyFragmentsResponse = APIGeneralResponse<{
+export interface ClaimWeeklyFragmentsResponse {
   claimedFragments: number;
-}>;
+}
 
 /**
  * Describes a weekly fragment response.
  */
-export type GetWeeklyFragmentsResponse = APIGeneralResponse<{
+export interface GetWeeklyFragmentsResponse {
   liquidityProvision: Awaited<
     ReturnType<
       InstanceType<
@@ -65,19 +64,18 @@ export type GetWeeklyFragmentsResponse = APIGeneralResponse<{
       >['getLiquidityStakingWeekRewards']
     >
   >;
-}>;
+}
 
 /**
  * Claim weekly liquidity provision fragments Response
  */
-export type ClaimWeeklyLiquidityProvisionFragmentsResponse =
-  APIGeneralResponse<{
-    claimedFragments: number;
-  }>;
+export interface ClaimWeeklyLiquidityProvisionFragmentsResponse {
+  claimedFragments: number;
+}
 
 /**
  * Claim weekly liquidity staking fragments Response
  */
-export type ClaimWeeklyLiquidityStakingFragmentsResponse = APIGeneralResponse<{
+export interface ClaimWeeklyLiquidityStakingFragmentsResponse {
   claimedFragments: number;
-}>;
+}

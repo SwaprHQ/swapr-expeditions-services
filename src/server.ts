@@ -58,7 +58,7 @@ export async function configure(server: Server): Promise<Server> {
       version: '1.0',
     },
     basePath: '/v1.0',
-    deReference: true, // works better with codegens
+    definitionPrefix: 'useLabel',
   };
 
   const SwaggerPlugins: Array<ServerRegisterPluginObject<any>> = [

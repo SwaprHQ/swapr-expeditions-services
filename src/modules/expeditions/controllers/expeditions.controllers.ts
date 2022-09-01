@@ -38,11 +38,9 @@ export async function getDailyVisitFragments(
     const allVisits = lastVisitDocument?.allVisits || 0;
 
     return {
-      data: {
-        address,
-        allVisits,
-        lastVisit,
-      },
+      address,
+      allVisits,
+      lastVisit,
     };
   } catch (error) {
     console.log(error);
@@ -102,11 +100,9 @@ export async function claimDailyVisitFragments(
 
     // Return the new visit
     return {
-      data: {
-        address,
-        lastVisit,
-        allVisits,
-      },
+      address,
+      lastVisit,
+      allVisits,
     };
   } catch (error) {
     console.log(error);
@@ -147,10 +143,8 @@ export async function getWeeklyFragments(
     ]);
 
     return {
-      data: {
-        liquidityProvision,
-        liquidityStaking,
-      },
+      liquidityProvision,
+      liquidityStaking,
     };
   } catch (error) {
     console.log(error);
@@ -231,9 +225,7 @@ export async function claimWeeklyFragments(
     }).save();
 
     return {
-      data: {
-        claimedFragments: weekRewards.claimableFragments,
-      },
+      claimedFragments: weekRewards.claimableFragments,
     };
   } catch (error) {
     console.log(error);
