@@ -82,7 +82,7 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
     // Calculate claimable fragments for this week.
     // Add the base 50 fragments for this week
     // if the provided liquidity deposits are more than $50 USD
-    if (returnValue.totalAmountUSD > ADD_LIQUIDITY_MIN_USD_AMOUNT) {
+    if (returnValue.totalAmountUSD >= ADD_LIQUIDITY_MIN_USD_AMOUNT) {
       returnValue.claimableFragments = FRAGMENTS_PER_WEEK;
     }
 
@@ -142,7 +142,7 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
     // if the provided liquidity deposits are more than $50 USD
     if (
       weeklyFragmentDocument === null &&
-      returnValue.totalAmountUSD > ADD_LIQUIDITY_MIN_USD_AMOUNT
+      returnValue.totalAmountUSD >= ADD_LIQUIDITY_MIN_USD_AMOUNT
     ) {
       returnValue.claimableFragments = FRAGMENTS_PER_WEEK;
     }
