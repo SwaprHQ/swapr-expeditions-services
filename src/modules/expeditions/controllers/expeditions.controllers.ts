@@ -20,6 +20,8 @@ import {
   ClaimWeeklyFragmentsRequest,
 } from './types';
 import { getWeeklyFragmentMessageByType } from '../utils/messages';
+import { IWeeklyFragment } from '../interfaces/IFragment.interface';
+import { FilterQuery } from 'mongoose';
 
 /**
  * Get daily visits for a given address
@@ -200,11 +202,11 @@ export async function claimWeeklyFragments(
     }
 
     // Criteria for claiming the weekly fragments
-    const searchParams = {
+    const searchParams: FilterQuery<IWeeklyFragment> = {
       address,
       week: currentWeek.weekNumber,
       year: currentWeek.year,
-      fragmentType: type,
+      type,
     };
 
     // Search for existing weekly fragment
