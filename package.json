@@ -8,6 +8,7 @@
     "build": "tsc",
     "dev": "cross-env DEBUG=*,-nodemon:*,-eslint:*,-eslintrc:*,-typescript-eslint:*,-nodemon nodemon -x ./node_modules/.bin/ts-node src/index.ts",
     "lint": "eslint src/ --ext .ts",
+    "lint:fix": "eslint src/ --ext .ts --fix",
     "dockerize": "sh ./docker/build.sh",
     "graphql:codegen": "graphql-codegen --config graphql-codegen.yml",
     "prepare": "node -e \"if (process.env.NODE_ENV !== 'production'){process.exit(1)} \" || husky install"

@@ -1,10 +1,13 @@
-import { Server } from '@hapi/hapi';
+import { Server, ServerInjectResponse } from '@hapi/hapi';
 import dayjs from 'dayjs';
-import { Wallet } from 'ethers';
+import { ethers, Wallet } from 'ethers';
 import mongoose from 'mongoose';
 // Modules
 import { create, configure } from '../../../server';
+import { ADD_CAMPAIGN_MESSAGE } from '../constants';
 import { VisitModel } from '../models';
+import { CampaignModel } from '../models/Campaign.model';
+import { AddCampaignRequest } from './types';
 
 describe('Expeditions Controllers', () => {
   let server: Server;
@@ -116,6 +119,143 @@ describe('Expeditions Controllers', () => {
 
       expect(testRes.statusCode).toBe(400);
       console.log(testRes.result);
+    });
+  });
+
+  describe('addCampaign', () => {
+    let res: ServerInjectResponse;
+    let makeRequest: (
+      payload: Omit<AddCampaignRequest['payload'], 'address' | 'signature'>
+    ) => Promise<ServerInjectResponse>;
+
+    beforeAll(async () => {
+      const signature = await testWallet.signMessage(ADD_CAMPAIGN_MESSAGE);
+
+      makeRequest = async (
+        payload: Omit<AddCampaignRequest['payload'], 'address' | 'signature'>
+      ) => {
+        return await server.inject({
+          method: 'POST',
+          url: `/expeditions/campaigns/add`,
+          payload: {
+            signature,
+            address: testWallet.address,
+            ...payload,
+          } as AddCampaignRequest['payload'],
+        });
+      };
+    });
+
+    test('should validate payload', async () => {
+      const baseDates = {
+        startDate: new Date('2022-01-03'),
+        endDate: new Date('2022-01-09'),
+        redeemEndDate: new Date('2022-01-16'),
+      };
+
+      res = await makeRequest({
+        ...baseDates,
+        startDate: new Date('2022-01-02'), // Other than Monday
+      });
+
+      expect(res.statusCode === 400);
+      res = await makeRequest({
+        ...baseDates,
+        endDate: new Date('2022-01-08'), // Other than Sunday
+      });
+
+      expect(res.statusCode === 400);
+
+      res = await makeRequest({
+        ...baseDates,
+        endDate: new Date('2022-01-01'), // Earlier than startDate
+      });
+
+      expect(res.statusCode === 400);
+
+      res = await makeRequest({
+        ...baseDates,
+        redeemEndDate: new Date('2022-01-01'), // Earlier than endDate
+      });
+
+      expect(res.statusCode === 400);
+    });
+
+    test('should prevent adding campaign if there is overlapping one', async () => {
+      const overlapError = {
+        statusCode: 400,
+        error: 'Bad Request',
+        message: 'Overlapping campaign already exists.',
+      };
+
+      await CampaignModel.insertMany([
+        {
+          startDate: new Date('2022-01-10'),
+          endDate: new Date('2022-01-16'),
+          redeemEndDate: new Date('2022-01-30'),
+          initiatorAddress: ethers.constants.AddressZero,
+        },
+      ]);
+
+      // Req:  <===>
+      // DB :  <===>
+      res = await makeRequest({
+        startDate: new Date('2022-01-10'),
+        endDate: new Date('2022-01-16'),
+        redeemEndDate: new Date('2022-01-30'),
+      });
+
+      expect(res.result).toEqual(overlapError);
+
+      // Req: <===>
+      // DB :   <===>
+      res = await makeRequest({
+        startDate: new Date('2022-01-03'),
+        endDate: new Date('2022-01-09'),
+        redeemEndDate: new Date('2022-01-16'),
+      });
+
+      expect(res.result).toEqual(overlapError);
+
+      // Req:   <===>
+      // DB : <===>
+      res = await makeRequest({
+        startDate: new Date('2022-01-17'),
+        endDate: new Date('2022-01-23'),
+        redeemEndDate: new Date('2022-02-06'),
+      });
+
+      expect(res.result).toEqual(overlapError);
+
+      // Req:  <=====>
+      // DB :   <===>
+      res = await makeRequest({
+        startDate: new Date('2022-01-03'),
+        endDate: new Date('2022-01-09'),
+        redeemEndDate: new Date('2022-02-06'),
+      });
+
+      expect(res.result).toEqual(overlapError);
+
+      // Req:  <===>
+      // DB :  <=====>
+      res = await makeRequest({
+        startDate: new Date('2022-01-10'),
+        endDate: new Date('2022-01-16'),
+        redeemEndDate: new Date('2022-01-23'),
+      });
+
+      expect(res.result).toEqual(overlapError);
+
+      // Req:  <===>
+      // DB :       <===>
+      res = await makeRequest({
+        startDate: new Date('2022-02-07'),
+        endDate: new Date('2022-02-13'),
+        redeemEndDate: new Date('2022-02-20'),
+      });
+
+      expect(res.statusCode).toEqual(200);
     });
   });
 });

@@ -6,6 +6,7 @@ import {
   getDailyVisitFragments as getDailyVisitFragmentsController,
   getWeeklyFragments as getWeeklyFragmentsController,
   claimWeeklyFragments as claimWeeklyFragmentsController,
+  addCampaign as addCampaignController,
 } from '../expeditions';
 
 import {
@@ -14,6 +15,7 @@ import {
   DailyVisitsResponseDTO,
   GetWeeklyFragmentsResponseDTO,
   ClaimWeeklyFragmentsResponseDTO,
+  AddCampaignDTO,
 } from '../expeditions/controllers/expeditions.dto';
 
 import { address } from './validations';
@@ -98,6 +100,22 @@ async function register(server: Server) {
       },
     },
     handler: claimWeeklyFragmentsController as HandlerDecorations,
+  });
+
+  server.route({
+    method: 'POST',
+    path: '/expeditions/campaigns/add',
+    options: {
+      description: `Adds new campaign`,
+      validate: {
+        payload: AddCampaignDTO,
+      },
+      tags: ['api', 'expeditions', 'campaign'],
+      // response: {
+      //   schema: ClaimWeeklyFragmentsResponseDTO,
+      // },
+    },
+    handler: addCampaignController as HandlerDecorations,
   });
 }
 

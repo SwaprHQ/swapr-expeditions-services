@@ -28,6 +28,14 @@ export interface ClaimWeeklyFragmentsRequest extends ClaimFragmentsRequest {
   };
 }
 
+export interface AddCampaignRequest extends ClaimFragmentsRequest {
+  payload: ClaimFragmentsRequest['payload'] & {
+    startDate: Date;
+    endDate: Date;
+    redeemEndDate: Date;
+  };
+}
+
 export interface GetDailyVisitFragmentsResponse {
   address: string;
   allVisits: number;

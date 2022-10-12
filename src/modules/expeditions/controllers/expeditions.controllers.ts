@@ -1,6 +1,5 @@
 import { captureException } from '@sentry/node';
 import Boom from '@hapi/boom';
-import { verifyMessage } from '@ethersproject/wallet';
 import dayjs from 'dayjs';
 
 import { VisitModel } from '../models';
@@ -9,7 +8,10 @@ import { WeeklyFragmentService } from '../services/weekly-fragments';
 import { getWeekInformation } from '../utils/week';
 import { WeeklyFragmentModel } from '../models/WeeklyFragment.model';
 
-import { CLAIM_DAILY_VISIT_FRAGMENTS_MESSAGE } from '../constants';
+import {
+  ADD_CAMPAIGN_MESSAGE,
+  CLAIM_DAILY_VISIT_FRAGMENTS_MESSAGE,
+} from '../constants';
 import {
   ClaimFragmentsRequest,
   ClaimWeeklyFragmentsResponse,
@@ -18,10 +20,13 @@ import {
   ClaimDailyVisitFragmentsResponse,
   GetWeeklyFragmentsResponse,
   ClaimWeeklyFragmentsRequest,
+  AddCampaignRequest,
 } from './types';
 import { getWeeklyFragmentMessageByType } from '../utils/messages';
 import { IWeeklyFragment } from '../interfaces/IFragment.interface';
 import { FilterQuery } from 'mongoose';
+import { CampaignModel } from '../models/Campaign.model';
+import { validateSignature } from '../utils/validateSignature';
 
 /**
  * Get daily visits for a given address
@@ -59,14 +64,12 @@ export async function claimDailyVisitFragments(
 ): Promise<ClaimDailyVisitFragmentsResponse> {
   try {
     const { signature, address } = req.payload;
-    const addressFromSignature = verifyMessage(
-      CLAIM_DAILY_VISIT_FRAGMENTS_MESSAGE,
-      signature
-    );
 
-    if (addressFromSignature !== address) {
-      throw new Error('Invalid signature');
-    }
+    validateSignature({
+      address,
+      signature,
+      message: CLAIM_DAILY_VISIT_FRAGMENTS_MESSAGE,
+    });
 
     const lastVisitDocument = await VisitModel.findOne({
       address,
@@ -171,17 +174,13 @@ export async function claimWeeklyFragments(
       throw new Error('Invalid type');
     }
 
-    // Verify the signature
     const address = req.payload.address.toLowerCase();
 
-    const addressFromSignature = verifyMessage(
+    validateSignature({
+      address: req.payload.address,
+      signature: req.payload.signature,
       message,
-      req.payload.signature
-    ).toLowerCase();
-
-    if (addressFromSignature !== address) {
-      throw new Error('Invalid signature');
-    }
+    });
 
     // Fetch the weekly fragment informationx
     const currentWeek = getWeekInformation();
@@ -229,6 +228,67 @@ export async function claimWeeklyFragments(
     return {
       claimedFragments: weekRewards.claimableFragments,
     };
+  } catch (error) {
+    console.log(error);
+    captureException(error);
+    throw Boom.badRequest(error);
+  }
+}
+
+export async function addCampaign(req: AddCampaignRequest): Promise<object> {
+  try {
+    const { signature, address, startDate, endDate, redeemEndDate } =
+      req.payload;
+
+    validateSignature({
+      address,
+      signature,
+      message: ADD_CAMPAIGN_MESSAGE,
+    });
+
+    const overlappingCampaigns = await CampaignModel.find({
+      $or: [
+        {
+          $and: [
+            { startDate: { $gte: startDate } },
+            { redeemEndDate: { $lte: redeemEndDate } },
+          ],
+        },
+        {
+          $and: [
+            { redeemEndDate: { $gte: startDate } },
+            { redeemEndDate: { $lte: redeemEndDate } },
+          ],
+        },
+        {
+          $and: [
+            { startDate: { $gte: startDate } },
+            { startDate: { $lte: redeemEndDate } },
+          ],
+        },
+        {
+          $and: [
+            { startDate: { $lte: startDate } },
+            { redeemEndDate: { $gte: redeemEndDate } },
+          ],
+        },
+      ],
+    });
+
+    if (overlappingCampaigns.length > 0) {
+      throw new Error('Overlapping campaign already exists.');
+    }
+
+    const newCampaign = new CampaignModel({
+      startDate,
+      endDate,
+      redeemEndDate,
+      initiatorAddress: address,
+    });
+
+    await newCampaign.save();
+
+    return {};
   } catch (error) {
     console.log(error);
     captureException(error);

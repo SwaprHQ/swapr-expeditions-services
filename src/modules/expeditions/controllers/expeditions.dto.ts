@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import Joi from 'joi';
 import { address, signature } from '../../routes/validations';
 import { WeeklyFragmentType } from '../interfaces/IFragment.interface';
@@ -36,3 +37,26 @@ export const ClaimWeeklyFragmentsDTO = DailyVisitsRequestDTO.keys({
 export const ClaimWeeklyFragmentsResponseDTO = Joi.object({
   claimedFragments: Joi.number().required(),
 }).label('ClaimWeeklyFragmentsResponse');
+
+export const AddCampaignDTO = Joi.object({
+  address,
+  signature,
+  startDate: Joi.date()
+    .required()
+    .custom((value, helper) => {
+      if (dayjs(value).get('d') !== 1) {
+        return helper.message({ custom: 'startDate must be Monday' });
+      }
+      return value;
+    }),
+  endDate: Joi.date()
+    .required()
+    .min(Joi.ref('startDate'))
+    .custom((value, helper) => {
+      if (dayjs(value).get('d') !== 0) {
+        return helper.message({ custom: 'endDate must be Sunday' });
+      }
+      return value;
+    }),
+  redeemEndDate: Joi.date().required().min(Joi.ref('endDate')),
+}).options({ abortEarly: false });

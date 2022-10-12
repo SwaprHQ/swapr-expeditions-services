@@ -14,3 +14,5 @@ export const CLAIM_WEEKLY_LIQUIDITY_PROVISION_FRAGMENTS_MESSAGE =
 
 export const CLAIM_WEEKLY_LIQUIDITY_STAKING_FRAGMENTS_MESSAGE =
   'Claim Swapr weekly liquidity staking fragments';
+
+export const ADD_CAMPAIGN_MESSAGE = 'Add Campaign';
