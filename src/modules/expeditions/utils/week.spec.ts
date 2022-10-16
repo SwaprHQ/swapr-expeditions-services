@@ -10,4 +10,9 @@ describe('getCurrentWeekInformation', () => {
     const currentWeek = getWeekInformation('2022-12-31');
     expect(currentWeek.weekNumber).toEqual(52);
   });
+
+  test('should return week information when no input is provided', async () => {
+    const currentWeek = getWeekInformation();
+    expect(currentWeek).toBeDefined();
+  });
 });
