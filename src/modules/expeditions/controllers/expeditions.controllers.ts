@@ -3,8 +3,7 @@ import Boom from '@hapi/boom';
 import dayjs from 'dayjs';
 
 import { VisitModel } from '../models';
-import { MultichainSubgraphService } from '../services/MultichainSubgraph.service';
-import { WeeklyFragmentService } from '../services/weekly-fragments';
+import { weeklyFragmentService } from '../services/weekly-fragments';
 import { getWeekInformation } from '../utils/week';
 import { WeeklyFragmentModel } from '../models/WeeklyFragment.model';
 
@@ -25,9 +24,8 @@ import {
 import { getWeeklyFragmentMessageByType } from '../utils/messages';
 import { IWeeklyFragment } from '../interfaces/IFragment.interface';
 import { FilterQuery } from 'mongoose';
-import { CampaignModel } from '../models/Campaign.model';
 import { validateSignature } from '../utils/validateSignature';
-
+import { CampaignModel } from '../models/Campaign.model';
 /**
  * Get daily visits for a given address
  */
@@ -128,11 +126,6 @@ export async function getWeeklyFragments(
     // Get this week's information
     const currentWeek = getWeekInformation(week);
 
-    const weeklyFragmentService = new WeeklyFragmentService({
-      multichainSubgraphService: new MultichainSubgraphService(),
-      weeklyFragmentModel: WeeklyFragmentModel,
-    });
-
     const getWeeklyFragmentsParams = {
       address,
       week: currentWeek,
@@ -184,12 +177,6 @@ export async function claimWeeklyFragments(
 
     // Fetch the weekly fragment informationx
     const currentWeek = getWeekInformation();
-
-    const weeklyFragmentService = new WeeklyFragmentService({
-      multichainSubgraphService: new MultichainSubgraphService(),
-      weeklyFragmentModel: WeeklyFragmentModel,
-    });
-
     const weekRewards = await weeklyFragmentService.getWeeklyFragments({
       address,
       week: currentWeek,

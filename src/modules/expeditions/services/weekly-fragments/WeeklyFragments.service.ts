@@ -3,8 +3,11 @@ import {
   FRAGMENTS_PER_WEEK,
 } from '../../../config/config.service';
 
-import type { MultichainSubgraphService } from '../MultichainSubgraph.service';
-import type { WeeklyFragmentModel } from '../../models/WeeklyFragment.model';
+import {
+  multichainSubgraphService,
+  MultichainSubgraphService,
+} from '../MultichainSubgraph.service';
+import { WeeklyFragmentModel } from '../../models/WeeklyFragment.model';
 
 import {
   GetWeeklyFragmentsParams,
@@ -184,3 +187,8 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
     throw new Error('Type is required');
   }
 }
+
+export const weeklyFragmentService = new WeeklyFragmentService({
+  multichainSubgraphService,
+  weeklyFragmentModel: WeeklyFragmentModel,
+});

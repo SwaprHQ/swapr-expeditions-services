@@ -112,3 +112,5 @@ export class MultichainSubgraphService {
     return resultsPerSubgraph.flat();
   }
 }
+
+export const multichainSubgraphService = new MultichainSubgraphService();
