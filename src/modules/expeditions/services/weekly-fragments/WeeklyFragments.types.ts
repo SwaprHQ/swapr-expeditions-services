@@ -1,7 +1,7 @@
 import { WeeklyFragmentType } from '../../interfaces/IFragment.interface';
 import { WeeklyFragmentModel } from '../../models/WeeklyFragment.model';
 import type { WeekInformation } from '../../utils';
-import { MultichainSubgraphService } from '../MultichainSubgraph.service';
+import { MultichainSubgraphService } from '../multichainSubgraph/MultichainSubgraph.service';
 
 export interface WeeklyFragmentsBase {
   claimableFragments: number;

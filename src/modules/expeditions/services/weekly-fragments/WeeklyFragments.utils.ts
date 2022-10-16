@@ -1,4 +1,4 @@
-import { MultichainSubgraphService } from '../MultichainSubgraph.service';
+import { MultichainSubgraphService } from '../multichainSubgraph/MultichainSubgraph.service';
 
 type CalculateLiquidityStakingDepositUSDValueParam = Awaited<
   ReturnType<

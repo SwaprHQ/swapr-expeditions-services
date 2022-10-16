@@ -1,5 +1,5 @@
 import { GraphQLClient } from 'graphql-request';
-import { getSdk, Sdk } from '../generated/graphql/queries';
+import { getSdk, Sdk } from '../../generated/graphql/queries';
 
 export interface GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBParams {
   address: string;

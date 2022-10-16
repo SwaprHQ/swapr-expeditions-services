@@ -6,7 +6,7 @@ import {
 import {
   multichainSubgraphService,
   MultichainSubgraphService,
-} from '../MultichainSubgraph.service';
+} from '../multichainSubgraph/MultichainSubgraph.service';
 import { WeeklyFragmentModel } from '../../models/WeeklyFragment.model';
 
 import {
