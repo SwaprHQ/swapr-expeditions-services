@@ -25,7 +25,7 @@ import { getWeeklyFragmentMessageByType } from '../utils/messages';
 import { IWeeklyFragment } from '../interfaces/IFragment.interface';
 import { FilterQuery } from 'mongoose';
 import { validateSignature } from '../utils/validateSignature';
-import { CampaignModel } from '../models/Campaign.model';
+import { campaignsService } from '../services/campaigns/Campaigns.service';
 /**
  * Get daily visits for a given address
  */
@@ -233,47 +233,12 @@ export async function addCampaign(req: AddCampaignRequest): Promise<object> {
       message: ADD_CAMPAIGN_MESSAGE,
     });
 
-    const overlappingCampaigns = await CampaignModel.find({
-      $or: [
-        {
-          $and: [
-            { startDate: { $gte: startDate } },
-            { redeemEndDate: { $lte: redeemEndDate } },
-          ],
-        },
-        {
-          $and: [
-            { redeemEndDate: { $gte: startDate } },
-            { redeemEndDate: { $lte: redeemEndDate } },
-          ],
-        },
-        {
-          $and: [
-            { startDate: { $gte: startDate } },
-            { startDate: { $lte: redeemEndDate } },
-          ],
-        },
-        {
-          $and: [
-            { startDate: { $lte: startDate } },
-            { redeemEndDate: { $gte: redeemEndDate } },
-          ],
-        },
-      ],
-    });
-
-    if (overlappingCampaigns.length > 0) {
-      throw new Error('Overlapping campaign already exists.');
-    }
-
-    const newCampaign = new CampaignModel({
-      startDate,
+    await campaignsService.addCampaign({
+      address,
       endDate,
+      startDate,
       redeemEndDate,
-      initiatorAddress: address,
     });
-
-    await newCampaign.save();
 
     return {};
   } catch (error) {
