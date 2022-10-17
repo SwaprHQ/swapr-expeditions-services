@@ -1,8 +1,5 @@
 import { captureException } from '@sentry/node';
 import Boom from '@hapi/boom';
-import dayjs from 'dayjs';
-
-import { VisitModel } from '../models';
 import { weeklyFragmentService } from '../services/weeklyFragments';
 import { getWeekInformation } from '../utils/week';
 
@@ -23,6 +20,7 @@ import {
 import { getWeeklyFragmentMessageByType } from '../utils/messages';
 import { validateSignature } from '../utils/validateSignature';
 import { campaignsService } from '../services/campaigns/Campaigns.service';
+import { dailyFragmentsService } from '../services/dailyFragments/DailyFragments.service';
 /**
  * Get daily visits for a given address
  */
@@ -32,18 +30,7 @@ export async function getDailyVisitFragments(
   try {
     const { address } = req.query;
 
-    const lastVisitDocument = await VisitModel.findOne({
-      address,
-    });
-
-    const lastVisit = lastVisitDocument?.lastVisit || 0;
-    const allVisits = lastVisitDocument?.allVisits || 0;
-
-    return {
-      address,
-      allVisits,
-      lastVisit,
-    };
+    return dailyFragmentsService.getDailyFragments({ address });
   } catch (error) {
     console.log(error);
     captureException(error);
@@ -66,44 +53,7 @@ export async function claimDailyVisitFragments(
       message: CLAIM_DAILY_VISIT_FRAGMENTS_MESSAGE,
     });
 
-    const lastVisitDocument = await VisitModel.findOne({
-      address,
-    });
-
-    if (lastVisitDocument != null) {
-      const diffBetweenLastVisitAndNow = dayjs
-        .utc()
-        .diff(lastVisitDocument.lastVisit);
-      if (diffBetweenLastVisitAndNow < 24 * 60 * 60 * 1000) {
-        throw new Error('Daily visit already recorded');
-      }
-    }
-
-    const lastVisit = dayjs.utc().toDate();
-    const allVisits = lastVisitDocument ? lastVisitDocument.allVisits + 1 : 1;
-
-    // Record the new visit
-    await VisitModel.updateOne(
-      {
-        address,
-      },
-      {
-        address,
-        lastVisit,
-        allVisits,
-      },
-      {
-        upsert: true,
-        setDefaultsOnInsert: true,
-      }
-    );
-
-    // Return the new visit
-    return {
-      address,
-      lastVisit,
-      allVisits,
-    };
+    return dailyFragmentsService.claimDailyFragments({ address });
   } catch (error) {
     console.log(error);
     captureException(error);
