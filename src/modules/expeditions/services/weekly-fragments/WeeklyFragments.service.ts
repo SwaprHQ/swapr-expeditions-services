@@ -16,8 +16,13 @@ import {
   WeeklyFragmentsBase,
   WeeklyFragmentServiceParams,
 } from './WeeklyFragments.types';
-import { WeeklyFragmentType } from '../../interfaces/IFragment.interface';
+import {
+  IWeeklyFragment,
+  WeeklyFragmentType,
+} from '../../interfaces/IFragment.interface';
 import { calculateLiquidityStakingDepositUSDValue } from './WeeklyFragments.utils';
+import { getWeekInformation } from '../../utils';
+import { FilterQuery } from 'mongoose';
 
 export class WeeklyFragmentService implements IWeeklyFragmentService {
   multichainSubgraphService: MultichainSubgraphService;
@@ -185,6 +190,58 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
     }
 
     throw new Error('Type is required');
+  }
+
+  async claimWeeklyFragments({
+    address,
+    type,
+  }: {
+    address: string;
+    type: WeeklyFragmentType;
+  }) {
+    // Fetch the weekly fragment informationx
+    const currentWeek = getWeekInformation();
+    const weekRewards = await weeklyFragmentService.getWeeklyFragments({
+      address,
+      week: currentWeek,
+      type,
+    });
+
+    if (weekRewards.claimableFragments === 0) {
+      throw new Error('No claimable fragments');
+    }
+
+    // Criteria for claiming the weekly fragments
+    const searchParams: FilterQuery<IWeeklyFragment> = {
+      address,
+      week: currentWeek.weekNumber,
+      year: currentWeek.year,
+      type,
+    };
+
+    // Search for existing weekly fragment
+    const currentWeeklyFragment = await WeeklyFragmentModel.findOne({
+      address,
+      week: currentWeek.weekNumber,
+      year: currentWeek.year,
+      type,
+    });
+
+    if (currentWeeklyFragment != null) {
+      throw new Error(
+        `Weekly fragment for ${type} for ${currentWeek.weekDate} already claimed`
+      );
+    }
+
+    await new WeeklyFragmentModel({
+      ...searchParams,
+      type,
+      fragments: weekRewards.claimableFragments,
+    }).save();
+
+    return {
+      claimedFragments: weekRewards.claimableFragments,
+    };
   }
 }
 

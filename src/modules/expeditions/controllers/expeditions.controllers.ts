@@ -5,7 +5,6 @@ import dayjs from 'dayjs';
 import { VisitModel } from '../models';
 import { weeklyFragmentService } from '../services/weekly-fragments';
 import { getWeekInformation } from '../utils/week';
-import { WeeklyFragmentModel } from '../models/WeeklyFragment.model';
 
 import {
   ADD_CAMPAIGN_MESSAGE,
@@ -22,8 +21,6 @@ import {
   AddCampaignRequest,
 } from './types';
 import { getWeeklyFragmentMessageByType } from '../utils/messages';
-import { IWeeklyFragment } from '../interfaces/IFragment.interface';
-import { FilterQuery } from 'mongoose';
 import { validateSignature } from '../utils/validateSignature';
 import { campaignsService } from '../services/campaigns/Campaigns.service';
 /**
@@ -175,46 +172,7 @@ export async function claimWeeklyFragments(
       message,
     });
 
-    // Fetch the weekly fragment informationx
-    const currentWeek = getWeekInformation();
-    const weekRewards = await weeklyFragmentService.getWeeklyFragments({
-      address,
-      week: currentWeek,
-      type,
-    });
-
-    if (weekRewards.claimableFragments === 0) {
-      throw new Error('No claimable fragments');
-    }
-
-    // Criteria for claiming the weekly fragments
-    const searchParams: FilterQuery<IWeeklyFragment> = {
-      address,
-      week: currentWeek.weekNumber,
-      year: currentWeek.year,
-      type,
-    };
-
-    // Search for existing weekly fragment
-    const currentWeeklyFragment = await WeeklyFragmentModel.findOne(
-      searchParams
-    );
-
-    if (currentWeeklyFragment != null) {
-      throw new Error(
-        `Weekly fragment for ${type} for ${currentWeek.weekDate} already claimed`
-      );
-    }
-
-    await new WeeklyFragmentModel({
-      ...searchParams,
-      type,
-      fragments: weekRewards.claimableFragments,
-    }).save();
-
-    return {
-      claimedFragments: weekRewards.claimableFragments,
-    };
+    return weeklyFragmentService.claimWeeklyFragments({ address, type });
   } catch (error) {
     console.log(error);
     captureException(error);
