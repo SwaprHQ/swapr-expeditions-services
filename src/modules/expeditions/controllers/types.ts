@@ -1,5 +1,5 @@
 import { WeeklyFragmentType } from '../interfaces/IFragment.interface';
-import type { WeeklyFragmentService } from '../services/weekly-fragments';
+import type { WeeklyFragmentService } from '../services/weeklyFragments';
 
 export interface GetFragmentsRequest extends Request {
   query: {

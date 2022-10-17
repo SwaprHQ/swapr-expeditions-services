@@ -3,7 +3,7 @@ import Boom from '@hapi/boom';
 import dayjs from 'dayjs';
 
 import { VisitModel } from '../models';
-import { weeklyFragmentService } from '../services/weekly-fragments';
+import { weeklyFragmentService } from '../services/weeklyFragments';
 import { getWeekInformation } from '../utils/week';
 
 import {
