@@ -1,24 +1,21 @@
 import { HandlerDecorations, Server } from '@hapi/hapi';
-import Joi from 'joi';
 
 import {
-  claimDailyVisitFragments as claimDailyVisitFragmentsController,
-  getDailyVisitFragments as getDailyVisitFragmentsController,
-  getWeeklyFragments as getWeeklyFragmentsController,
-  claimWeeklyFragments as claimWeeklyFragmentsController,
-  addCampaign as addCampaignController,
-} from '../expeditions';
-
+  AddCampaignRequestDTO,
+  AddCampaignResponseDTO,
+  GetCampaignProgressRequestDTO,
+  GetCampaignProgressResponseDTO,
+} from '../expeditions/services/campaigns/Campaigns.dto';
 import {
-  DailyVisitsRequestDTO,
-  ClaimWeeklyFragmentsDTO,
-  DailyVisitsResponseDTO,
-  GetWeeklyFragmentsResponseDTO,
-  ClaimWeeklyFragmentsResponseDTO,
-  AddCampaignDTO,
-} from '../expeditions/controllers/expeditions.dto';
+  addCampaign,
+  getCampaignProgress,
+} from '../expeditions/services/campaigns/Campaigns.controller';
+import {
+  ClaimRequestDTO,
+  ClaimResponseDTO,
+} from '../expeditions/services/tasks/Tasks.dto';
+import { claim } from '../expeditions/services/tasks/Tasks.controller';
 
-import { address } from './validations';
 async function register(server: Server) {
   // Return nothing
   server.route({
@@ -28,94 +25,51 @@ async function register(server: Server) {
   });
 
   server.route({
-    method: 'GET',
-    path: '/expeditions/daily-visits',
-    options: {
-      description: `Get daily rewards (fragments) state for an address`,
-      validate: {
-        query: {
-          address,
-        },
-      },
-      tags: ['api', 'expeditions', 'daily visit', 'fragments'],
-      response: {
-        schema: DailyVisitsResponseDTO,
-      },
-    },
-    handler: getDailyVisitFragmentsController as HandlerDecorations,
-  });
-
-  server.route({
     method: 'POST',
-    path: '/expeditions/daily-visits',
+    path: '/expeditions/add-campaign',
     options: {
-      description: `Claim all daily fragments available for an address`,
+      description: `Adds new campaign for a given date. Initiator must be on verified address list`,
       validate: {
-        payload: DailyVisitsRequestDTO,
-      },
-      tags: ['api', 'expeditions', 'daily visits'],
-      response: {
-        schema: DailyVisitsResponseDTO,
-      },
-    },
-    handler: claimDailyVisitFragmentsController as HandlerDecorations,
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/expeditions/weekly-fragments',
-    options: {
-      description: `Get weekly rewards (fragments) state for an address`,
-      validate: {
-        query: {
-          address,
-          week: Joi.string().optional(),
-        },
-      },
-      tags: [
-        'api',
-        'expeditions',
-        'weekly liquidity',
-        'weekly rewards',
-        'weekly fragments',
-      ],
-      response: {
-        schema: GetWeeklyFragmentsResponseDTO,
-      },
-    },
-    handler: getWeeklyFragmentsController as HandlerDecorations,
-  });
-
-  server.route({
-    method: 'POST',
-    path: '/expeditions/weekly-fragments/claim',
-    options: {
-      description: `Claim weekly fragments for an address`,
-      validate: {
-        payload: ClaimWeeklyFragmentsDTO,
-      },
-      tags: ['api', 'expeditions', 'liquidity provision', 'liquidity staking'],
-      response: {
-        schema: ClaimWeeklyFragmentsResponseDTO,
-      },
-    },
-    handler: claimWeeklyFragmentsController as HandlerDecorations,
-  });
-
-  server.route({
-    method: 'POST',
-    path: '/expeditions/campaigns/add',
-    options: {
-      description: `Adds new campaign`,
-      validate: {
-        payload: AddCampaignDTO,
+        payload: AddCampaignRequestDTO,
       },
       tags: ['api', 'expeditions', 'campaign'],
-      // response: {
-      //   schema: ClaimWeeklyFragmentsResponseDTO,
-      // },
+      response: {
+        schema: AddCampaignResponseDTO,
+      },
     },
-    handler: addCampaignController as HandlerDecorations,
+    handler: addCampaign as HandlerDecorations,
+  });
+
+  server.route({
+    method: 'POST',
+    path: '/expeditions/claim',
+    options: {
+      description: `Claim rewards (fragments) for specified type of task`,
+      validate: {
+        payload: ClaimRequestDTO,
+      },
+      tags: ['api', 'expeditions', 'claim'],
+      response: {
+        schema: ClaimResponseDTO,
+      },
+    },
+    handler: claim as HandlerDecorations,
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/expeditions/progress',
+    options: {
+      description: `Get campaign status for a given address`,
+      validate: {
+        query: GetCampaignProgressRequestDTO,
+      },
+      tags: ['api', 'expeditions', 'progress'],
+      response: {
+        schema: GetCampaignProgressResponseDTO,
+      },
+    },
+    handler: getCampaignProgress as HandlerDecorations,
   });
 }
 

@@ -1,8 +1,6 @@
 import { Types } from 'mongoose';
 
-export interface IVisit {
+export interface AddressWithId {
   address: string;
-  lastVisit: Date;
-  allVisits: number;
   campaign_id: Types.ObjectId;
 }

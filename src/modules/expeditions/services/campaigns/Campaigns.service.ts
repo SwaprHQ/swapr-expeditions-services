@@ -1,21 +1,46 @@
-import { ICampaign } from '../../interfaces/ICampaign.interface';
+import {
+  AddCampaignParams,
+  CampaignProgress,
+  CampaignServiceParams,
+} from './Campaigns.types';
+import { AddressWithId } from '../../interfaces/shared';
 import { CampaignModel } from '../../models/Campaign.model';
+import { TasksService, tasksService } from '../tasks/Tasks.service';
 
 export class CampaignsService {
   private campaignModel: CampaignModel;
+  private tasksService: TasksService;
 
-  constructor({ campaignModel }: { campaignModel: CampaignModel }) {
+  constructor({ campaignModel, tasksService }: CampaignServiceParams) {
     this.campaignModel = campaignModel;
+    this.tasksService = tasksService;
   }
 
-  async addCampaign(params: {
-    address: string;
-    startDate: Date;
-    endDate: Date;
-    redeemEndDate: Date;
-  }): Promise<ICampaign> {
-    const { address, startDate, endDate, redeemEndDate } = params;
+  async getCampaignProgress({
+    address,
+    campaign_id,
+  }: AddressWithId): Promise<CampaignProgress> {
+    const tasks = await this.tasksService.getActiveTasks({
+      address,
+      campaign_id,
+    });
+    const claimedFragments = await this.tasksService.getClaimedFragments({
+      address,
+      campaign_id,
+    });
 
+    return {
+      claimedFragments,
+      tasks,
+    };
+  }
+
+  async addCampaign({
+    endDate,
+    address,
+    startDate,
+    redeemEndDate,
+  }: AddCampaignParams) {
     const overlappingCampaigns = await this.campaignModel.find({
       $or: [
         {
@@ -49,17 +74,18 @@ export class CampaignsService {
       throw new Error('Overlapping campaign already exists.');
     }
 
-    const newCampaign = new CampaignModel({
+    const newCampaign = await new CampaignModel({
       startDate,
       endDate,
       redeemEndDate,
       initiatorAddress: address,
-    });
+    }).save();
 
-    return newCampaign.save();
+    return newCampaign;
   }
 }
 
 export const campaignsService = new CampaignsService({
   campaignModel: CampaignModel,
+  tasksService: tasksService,
 });

@@ -1,32 +1,11 @@
 import { GraphQLClient } from 'graphql-request';
+import {
+  ChainId,
+  GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBParams,
+  GetLiquidityStakingPositionBetweenTimestampAAndTimestampBParams,
+  Mint,
+} from './MultichainSubgraph.types';
 import { getSdk, Sdk } from '../../generated/graphql/queries';
-
-export interface GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBParams {
-  address: string;
-  minAmountUSD: string;
-  timestampA: number;
-  timestampB: number;
-}
-
-export type GetLiquidityStakingPositionBetweenTimestampAAndTimestampBParams =
-  Omit<
-    GetLiquidityPositionDepositsBetweenTimestampAAndTimestampBParams,
-    'minAmountUSD'
-  >;
-
-enum ChainId {
-  MAINNET = 1,
-  GNOSIS_CHAIN = 100,
-  ARBTIRUM_ONE = 42161,
-}
-
-interface Mint {
-  __typename?: 'Mint' | undefined;
-  amountUSD?: string;
-  to: string;
-  timestamp: string;
-}
-
 export class MultichainSubgraphService {
   readonly subgraphsEndpoints: Record<number, string> = {
     [ChainId.MAINNET]:

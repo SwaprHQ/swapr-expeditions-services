@@ -46,6 +46,11 @@ CampaignSchema.plugin(MongooseDelete, {
 });
 
 // register the model and export it
-export const CampaignModel = model<ICampaign>('Campaign', CampaignSchema);
+export const CampaignModelName = 'Campaign';
+
+export const CampaignModel = model<ICampaign>(
+  CampaignModelName,
+  CampaignSchema
+);
 
 export type CampaignModel = typeof CampaignModel;

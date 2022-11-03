@@ -5,10 +5,33 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:prettier/recommended"
   ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js",".ts"]
+      }
+    }
+  },
   "rules": {
-    "@typescript-eslint/explicit-module-boundary-types": 0
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "import/order": [
+      1, 
+    { "groups": 
+        [
+          "external", 
+          "builtin", 
+          "internal", 
+          "sibling", 
+          "parent", 
+          "index"
+        ]
+    } 
+    ]
+    
   },
   "overrides": [
     {
@@ -20,6 +43,6 @@
       }
     }
   ],
-  "ignorePatterns": ["**/generated/*/**"]
+  "ignorePatterns": ["**/generated/*/**"],
 }
 

@@ -1,3 +1,10 @@
+import { FilterQuery, HydratedDocument } from 'mongoose';
+import {
+  RewardsBaseParams,
+  WeeklyFragmentsBase,
+  WeeklyFragmentServiceParams,
+} from './WeeklyFragments.types';
+import { calculateLiquidityStakingDepositUSDValue } from './WeeklyFragments.utils';
 import {
   ADD_LIQUIDITY_MIN_USD_AMOUNT,
   FRAGMENTS_PER_WEEK,
@@ -10,27 +17,18 @@ import {
 import { WeeklyFragmentModel } from '../../models/WeeklyFragment.model';
 
 import {
-  GetWeeklyFragmentsParams,
-  GetWeeklyRewardsParams,
-  IWeeklyFragmentService,
-  WeeklyFragmentsBase,
-  WeeklyFragmentServiceParams,
-} from './WeeklyFragments.types';
-import {
   IWeeklyFragment,
-  WeeklyFragmentType,
+  WeeklyFragmentsType,
 } from '../../interfaces/IFragment.interface';
-import { calculateLiquidityStakingDepositUSDValue } from './WeeklyFragments.utils';
 import { getWeekInformation } from '../../utils';
-import { FilterQuery } from 'mongoose';
+import { calculateStreakBonus } from '../../utils/calculateStreakBonus';
+import { AddressWithId } from '../../interfaces/shared';
+import { ClaimResult } from '../tasks/Tasks.types';
 
-export class WeeklyFragmentService implements IWeeklyFragmentService {
-  multichainSubgraphService: MultichainSubgraphService;
-  weeklyFragmentModel: WeeklyFragmentModel;
+export class WeeklyFragmentsService {
+  private multichainSubgraphService: MultichainSubgraphService;
+  private weeklyFragmentModel: WeeklyFragmentModel;
 
-  /**
-   * Create a new `WeeklyFragmentService` instance.
-   */
   constructor({
     multichainSubgraphService,
     weeklyFragmentModel,
@@ -39,46 +37,68 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
     this.weeklyFragmentModel = weeklyFragmentModel;
   }
 
-  /**
-   * Returns the weekly rewards for a given address for current week. All times are in UTC.
-   * @returns {Promise<WeeklyFragmentRewards>}
-   */
-  async getLiquidityProvisionWeekRewards({
+  private async getWeeklyRewardsBaseData({
     address,
-    week,
-  }: GetWeeklyRewardsParams): Promise<WeeklyFragmentsBase> {
-    // use lowercase
-    address = address.toLowerCase();
+    type,
+    campaign_id,
+  }: RewardsBaseParams) {
+    const week = getWeekInformation();
 
-    // Return value
     const returnValue: WeeklyFragmentsBase = {
       totalAmountUSD: 0,
       claimableFragments: 0,
       claimedFragments: 0,
     };
 
-    // Check database
-    const weeklyFragmentDocument = await this.weeklyFragmentModel.findOne({
+    const weeklyFragmentDocuments = await this.weeklyFragmentModel.find({
       address,
-      week: week.weekNumber,
-      year: week.year,
-      type: WeeklyFragmentType.LIQUIDITY_PROVISION,
+      type,
+      campaign_id,
     });
 
-    if (weeklyFragmentDocument != null) {
+    const weeklyFragmentDocument:
+      | HydratedDocument<IWeeklyFragment>
+      | undefined = weeklyFragmentDocuments.find(
+      ({ week: weekNumber }) => weekNumber === week.weekNumber
+    );
+
+    if (weeklyFragmentDocument) {
       returnValue.claimedFragments = weeklyFragmentDocument.fragments;
     }
 
+    const streakBonus = calculateStreakBonus(weeklyFragmentDocuments, week);
+
     const queryParams = {
       address,
-      minAmountUSD: ADD_LIQUIDITY_MIN_USD_AMOUNT.toString(),
       timestampA: week.startDate.unix(),
       timestampB: week.endDate.unix(),
     };
 
+    return {
+      queryParams,
+      returnValue,
+      weeklyFragmentDocument,
+      streakBonus,
+    };
+  }
+
+  private async getLiquidityProvisionWeekRewards({
+    address,
+    campaign_id,
+  }: AddressWithId): Promise<WeeklyFragmentsBase> {
+    const { queryParams, returnValue, streakBonus } =
+      await this.getWeeklyRewardsBaseData({
+        address,
+        campaign_id,
+        type: WeeklyFragmentsType.LIQUIDITY_PROVISION,
+      });
+
     const liquidityProvisionList =
       await this.multichainSubgraphService.getLiquidityPositionDepositsBetweenTimestampAAndTimestampB(
-        queryParams
+        {
+          ...queryParams,
+          minAmountUSD: ADD_LIQUIDITY_MIN_USD_AMOUNT.toString(),
+        }
       );
 
     // calculate the total amount of USD deposited
@@ -91,50 +111,22 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
     // Add the base 50 fragments for this week
     // if the provided liquidity deposits are more than $50 USD
     if (returnValue.totalAmountUSD >= ADD_LIQUIDITY_MIN_USD_AMOUNT) {
-      returnValue.claimableFragments = FRAGMENTS_PER_WEEK;
+      returnValue.claimableFragments = FRAGMENTS_PER_WEEK + streakBonus;
     }
 
     return returnValue;
   }
 
-  /**
-   * Returns the weekly rewards for a given address for current week. All times are in UTC.
-   * @returns {Promise<WeeklyFragmentRewards>}
-   */
-  async getLiquidityStakingWeekRewards({
+  private async getLiquidityStakingWeekRewards({
     address,
-    week,
-  }: GetWeeklyRewardsParams): Promise<WeeklyFragmentsBase> {
-    // use lowercase
-    address = address.toLowerCase();
-
-    // Return value
-    const returnValue: WeeklyFragmentsBase = {
-      totalAmountUSD: 0,
-      claimableFragments: 0,
-      claimedFragments: 0,
-    };
-
-    // Check database for claimed fragments
-    const weeklyFragmentDocument = await this.weeklyFragmentModel.findOne({
-      address,
-      week: week.weekNumber,
-      year: week.year,
-      type: WeeklyFragmentType.LIQUIDITY_STAKING,
-    });
-
-    if (weeklyFragmentDocument !== null) {
-      returnValue.claimedFragments = weeklyFragmentDocument.fragments;
-    }
-
-    // Fetch and compute the total amount of USD
-    // deposited during the week from all subgraphs
-    const queryParams = {
-      address,
-      minAmountUSD: ADD_LIQUIDITY_MIN_USD_AMOUNT.toString(),
-      timestampA: week.startDate.unix(),
-      timestampB: week.endDate.unix(),
-    };
+    campaign_id,
+  }: AddressWithId): Promise<WeeklyFragmentsBase> {
+    const { queryParams, returnValue, streakBonus } =
+      await this.getWeeklyRewardsBaseData({
+        address,
+        campaign_id,
+        type: WeeklyFragmentsType.LIQUIDITY_STAKING,
+      });
 
     const liquidityStakingDepositList =
       await this.multichainSubgraphService.getLiquidityStakingPositionBetweenTimestampAAndTimestampB(
@@ -148,11 +140,8 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
     // Calculate claimable fragments for this week.
     // Add the base 50 fragments for this week
     // if the provided liquidity deposits are more than $50 USD
-    if (
-      weeklyFragmentDocument === null &&
-      returnValue.totalAmountUSD >= ADD_LIQUIDITY_MIN_USD_AMOUNT
-    ) {
-      returnValue.claimableFragments = FRAGMENTS_PER_WEEK;
+    if (returnValue.totalAmountUSD >= ADD_LIQUIDITY_MIN_USD_AMOUNT) {
+      returnValue.claimableFragments = FRAGMENTS_PER_WEEK + streakBonus;
     }
 
     return returnValue;
@@ -162,49 +151,66 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
    * Returns the weekly rewards for a given address for given week.
    * @returns Weekly fragment rewards
    */
-  async getWeeklyFragments({
+  private async getWeeklyFragmentsByType({
     address,
-    week,
     type,
-  }: GetWeeklyFragmentsParams): Promise<WeeklyFragmentsBase> {
-    if (!address) {
-      throw new Error('Address is required');
+    campaign_id,
+  }: RewardsBaseParams) {
+    switch (type) {
+      case WeeklyFragmentsType.LIQUIDITY_PROVISION:
+        return this.getLiquidityProvisionWeekRewards({
+          address,
+          campaign_id,
+        });
+      case WeeklyFragmentsType.LIQUIDITY_STAKING:
+        return this.getLiquidityStakingWeekRewards({
+          address,
+          campaign_id,
+        });
+      default:
+        throw Error('Invalid type');
     }
+  }
 
-    if (!week) {
-      throw new Error('Week is required');
-    }
+  async getWeeklyFragments({ address, campaign_id }: AddressWithId) {
+    const liquidityStaking = await this.getWeeklyFragmentsByType({
+      address,
+      campaign_id,
+      type: WeeklyFragmentsType.LIQUIDITY_STAKING,
+    });
+    const liquidityProvision = await this.getWeeklyFragmentsByType({
+      address,
+      campaign_id,
+      type: WeeklyFragmentsType.LIQUIDITY_PROVISION,
+    });
 
-    if (type === WeeklyFragmentType.LIQUIDITY_PROVISION) {
-      return this.getLiquidityProvisionWeekRewards({
-        address,
-        week,
-      });
-    }
+    return { liquidityStaking, liquidityProvision };
+  }
 
-    if (type === WeeklyFragmentType.LIQUIDITY_STAKING) {
-      return this.getLiquidityStakingWeekRewards({
-        address,
-        week,
-      });
-    }
+  async getTotalClaimedFragments({ address, campaign_id }: AddressWithId) {
+    const weeklyFragmentDocuments = await this.weeklyFragmentModel.find({
+      address,
+      campaign_id,
+    });
 
-    throw new Error('Type is required');
+    return weeklyFragmentDocuments.reduce(
+      (claimedFragments, weeklyFragment) =>
+        (claimedFragments += weeklyFragment.fragments),
+      0
+    );
   }
 
   async claimWeeklyFragments({
     address,
     type,
-  }: {
-    address: string;
-    type: WeeklyFragmentType;
-  }) {
-    // Fetch the weekly fragment informationx
+    campaign_id,
+  }: RewardsBaseParams): Promise<ClaimResult> {
+    // Fetch the weekly fragment information
     const currentWeek = getWeekInformation();
-    const weekRewards = await weeklyFragmentService.getWeeklyFragments({
+    const weekRewards = await this.getWeeklyFragmentsByType({
       address,
-      week: currentWeek,
       type,
+      campaign_id,
     });
 
     if (weekRewards.claimableFragments === 0) {
@@ -217,15 +223,13 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
       week: currentWeek.weekNumber,
       year: currentWeek.year,
       type,
+      campaign_id,
     };
 
     // Search for existing weekly fragment
-    const currentWeeklyFragment = await WeeklyFragmentModel.findOne({
-      address,
-      week: currentWeek.weekNumber,
-      year: currentWeek.year,
-      type,
-    });
+    const currentWeeklyFragment = await WeeklyFragmentModel.findOne(
+      searchParams
+    );
 
     if (currentWeeklyFragment != null) {
       throw new Error(
@@ -240,12 +244,13 @@ export class WeeklyFragmentService implements IWeeklyFragmentService {
     }).save();
 
     return {
+      type,
       claimedFragments: weekRewards.claimableFragments,
     };
   }
 }
 
-export const weeklyFragmentService = new WeeklyFragmentService({
+export const weeklyFragmentsService = new WeeklyFragmentsService({
   multichainSubgraphService,
   weeklyFragmentModel: WeeklyFragmentModel,
 });
