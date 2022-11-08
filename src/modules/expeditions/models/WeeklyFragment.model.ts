@@ -2,9 +2,10 @@ import MongooseDelete from 'mongoose-delete';
 import { model, Schema } from 'mongoose';
 import { isAddress } from '@ethersproject/address';
 
+import { CampaignModelName } from './Campaign.model';
 import {
   IWeeklyFragment,
-  WeeklyFragmentType,
+  WeeklyFragmentsType,
 } from '../interfaces/IFragment.interface';
 import { MAX_WEEKLY_CLAIM_FRAGMENT } from '../../config/config.service';
 
@@ -37,8 +38,8 @@ export const WeelyFragmentSchema = new Schema<IWeeklyFragment>(
     type: {
       type: Schema.Types.String,
       enum: [
-        WeeklyFragmentType.LIQUIDITY_PROVISION,
-        WeeklyFragmentType.LIQUIDITY_STAKING,
+        WeeklyFragmentsType.LIQUIDITY_PROVISION,
+        WeeklyFragmentsType.LIQUIDITY_STAKING,
       ],
       required: true,
     },
@@ -47,6 +48,11 @@ export const WeelyFragmentSchema = new Schema<IWeeklyFragment>(
       required: true,
       max: MAX_WEEKLY_CLAIM_FRAGMENT,
       min: 0,
+    },
+    campaign_id: {
+      type: Schema.Types.ObjectId,
+      ref: CampaignModelName,
+      required: true,
     },
   },
   {
@@ -73,8 +79,9 @@ WeelyFragmentSchema.plugin(MongooseDelete, {
 });
 
 // register the model and export it
+export const WeeklyFragmentModelName = 'WeelyFragment';
 export const WeeklyFragmentModel = model<IWeeklyFragment>(
-  'WeelyFragment',
+  WeeklyFragmentModelName,
   WeelyFragmentSchema
 );
 

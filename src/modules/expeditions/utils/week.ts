@@ -1,11 +1,5 @@
-import dayjs from 'dayjs';
-import dayjsUtcPlugin from 'dayjs/plugin/utc';
-import dayWeekOfYearPlugin from 'dayjs/plugin/weekOfYear';
 import { isValidDate } from './validators';
-
-// Extend dayjs
-dayjs.extend(dayjsUtcPlugin);
-dayjs.extend(dayWeekOfYearPlugin);
+import { dayjs } from '../../shared/dayjs';
 
 export interface WeekInformation {
   year: number;
@@ -27,20 +21,20 @@ export function getWeekInformation(week?: string): WeekInformation {
   }
 
   // Get this week's Monday 00:00:00 UTC
-  const thisWeekStart = dayjs.utc(week).startOf('week');
+  const thisWeekStart = dayjs.utc(week).startOf('isoWeek');
 
   if (!thisWeekStart.isValid()) {
     throw new Error('Invalid week');
   }
 
   // Get this week's Sunday 11:59:00 UTC
-  const thisWeekEnd = thisWeekStart.endOf('week');
+  const thisWeekEnd = thisWeekStart.endOf('isoWeek');
 
   return {
     weekDate: thisWeekStart.format('YYYY-MM-DD'),
     startDate: thisWeekStart,
     endDate: thisWeekEnd,
     year: thisWeekStart.year(),
-    weekNumber: thisWeekStart.week() - 1, // see: https://github.com/iamkun/dayjs/issues/2049
+    weekNumber: thisWeekStart.isoWeek(),
   };
 }

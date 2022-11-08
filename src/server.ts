@@ -61,6 +61,7 @@ export async function configure(server: Server): Promise<Server> {
     definitionPrefix: 'useLabel',
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const SwaggerPlugins: Array<ServerRegisterPluginObject<any>> = [
     { plugin: Inert },
     { plugin: Vision },

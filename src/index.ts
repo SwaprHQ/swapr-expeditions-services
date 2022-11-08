@@ -1,16 +1,9 @@
 import * as Sentry from '@sentry/node';
 import Mongoose from 'mongoose';
-import dayjs from 'dayjs';
 import chalk from 'chalk';
-import dayjsUtcPlugin from 'dayjs/plugin/utc';
-import dayWeekOfYearPlugin from 'dayjs/plugin/weekOfYear';
-
+import './modules/shared/dayjs';
 import { SENTRY_DSN, MONGO_URI } from './modules/config/config.service';
 import { start as startServer } from './server';
-
-// Extend dayjs
-dayjs.extend(dayjsUtcPlugin);
-dayjs.extend(dayWeekOfYearPlugin);
 
 async function startService() {
   if (SENTRY_DSN) {

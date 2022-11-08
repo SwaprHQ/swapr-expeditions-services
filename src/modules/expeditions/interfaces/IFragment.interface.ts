@@ -1,4 +1,6 @@
-export enum WeeklyFragmentType {
+import { Types } from 'mongoose';
+
+export enum WeeklyFragmentsType {
   LIQUIDITY_PROVISION = 'LIQUIDITY_PROVISION',
   LIQUIDITY_STAKING = 'LIQUIDITY_STAKING',
 }
@@ -20,5 +22,7 @@ export interface IWeeklyFragment {
   /**
    *
    */
-  type: WeeklyFragmentType;
+  type: WeeklyFragmentsType;
+
+  campaign_id: Types.ObjectId;
 }

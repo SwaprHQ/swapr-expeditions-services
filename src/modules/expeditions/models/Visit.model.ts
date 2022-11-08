@@ -1,7 +1,8 @@
 import MongooseDelete from 'mongoose-delete';
 import { model, Schema } from 'mongoose';
-import { IVisit } from '../interfaces/IVisit.interface';
 import { isAddress } from '@ethersproject/address';
+import { CampaignModelName } from './Campaign.model';
+import { IVisit } from '../interfaces/IVisit.interface';
 
 export const VisitSchema = new Schema<IVisit>(
   {
@@ -21,6 +22,11 @@ export const VisitSchema = new Schema<IVisit>(
       type: Schema.Types.Number,
       required: true,
       default: 0,
+    },
+    campaign_id: {
+      type: Schema.Types.ObjectId,
+      ref: CampaignModelName,
+      required: true,
     },
   },
   {
@@ -46,4 +52,6 @@ VisitSchema.plugin(MongooseDelete, {
 });
 
 // register the model and export it
-export const VisitModel = model<IVisit>('Visit', VisitSchema);
+export const VisitModelName = 'Visit';
+export const VisitModel = model<IVisit>(VisitModelName, VisitSchema);
+export type VisitModel = typeof VisitModel;
