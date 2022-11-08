@@ -27,18 +27,20 @@ export const AddCampaignRequestDTO = Joi.object({
 }).label('AddCampaignRequest');
 
 export const AddCampaignResponseDTO = Joi.object({
-  startDate: Joi.date(),
-  endDate: Joi.date(),
-  redeemEndDate: Joi.date(),
+  startDate: Joi.date().required(),
+  endDate: Joi.date().required(),
+  redeemEndDate: Joi.date().required(),
   initiatorAddress: address,
 }).label('AddCampaignResponse');
 
 export const GetCampaignProgressRequestDTO = { address };
 
 const activeTaskBase = {
-  startDate: Joi.date(),
-  endDate: Joi.date(),
-  type: Joi.string().valid(...Object.values(TasksTypes)),
+  startDate: Joi.date().required(),
+  endDate: Joi.date().required(),
+  type: Joi.string()
+    .valid(...Object.values(TasksTypes))
+    .required(),
 };
 
 const weeklyFragments = Joi.object({
@@ -52,13 +54,17 @@ const dailyVisit = Joi.object({
   allVisits: Joi.number().required(),
   lastVisit: Joi.date().required(),
   ...activeTaskBase,
-}).label('DailyVisit');
+})
+  .required()
+  .label('DailyVisit');
 
 export const GetCampaignProgressResponseDTO = Joi.object({
-  claimedFragments: Joi.number(),
+  claimedFragments: Joi.number().required(),
   tasks: Joi.object({
     dailyVisit,
-    liquidityProvision: weeklyFragments,
-    liquidityStaking: weeklyFragments,
-  }).label('Tasks'),
+    liquidityProvision: weeklyFragments.required(),
+    liquidityStaking: weeklyFragments.required(),
+  })
+    .required()
+    .label('Tasks'),
 }).label('GetCampaignProgressResponse');

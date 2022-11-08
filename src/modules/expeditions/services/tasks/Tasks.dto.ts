@@ -14,6 +14,6 @@ export const ClaimRequestDTO = Joi.object({
 }).label('ClaimRequest');
 
 export const ClaimResponseDTO = Joi.object({
-  claimedFragments: Joi.number(),
+  claimedFragments: Joi.number().required(),
   type,
 }).label('ClaimResponse');

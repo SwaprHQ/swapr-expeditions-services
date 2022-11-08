@@ -36,16 +36,3 @@ export function calculateLiquidityStakingDepositUSDValue(
     0
   );
 }
-
-[
-  {
-    __typename: 'Deposit',
-    amount: 50,
-    liquidityMiningCampaign: {
-      stakablePair: {
-        totalSupply: '1',
-        reserveUSD: '1',
-      },
-    },
-  },
-];

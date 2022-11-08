@@ -43,6 +43,6 @@
       }
     }
   ],
-  "ignorePatterns": ["**/generated/*/**"],
+  "ignorePatterns": ["**/generated/*/**"]
 }
 
