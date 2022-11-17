@@ -214,8 +214,8 @@ describe('Campaigns controller', () => {
             dailyVisit: {
               allVisits: 0,
               lastVisit: 0,
-              startDate: dayjs().startOf('day').toDate(),
-              endDate: dayjs().endOf('day').toDate(),
+              fragments: 0,
+              nextVisit: new Date(0),
               type: TasksTypes.VISIT,
             },
             liquidityProvision: {
@@ -272,7 +272,8 @@ describe('Campaigns controller', () => {
       await new VisitModel({
         address: testWallet.address,
         campaign_id: campaign._id,
-        allVisits: 10,
+        fragments: 1 + 2 + 3 + 4 + 5,
+        allVisits: 5,
         lastVisit,
       }).save();
 
@@ -282,13 +283,13 @@ describe('Campaigns controller', () => {
 
       expect(res.result).toEqual(
         expect.objectContaining({
-          claimedFragments: 400,
+          claimedFragments: 415,
           tasks: {
             dailyVisit: {
-              allVisits: 10,
+              allVisits: 5,
               lastVisit,
-              startDate: dayjs().startOf('day').toDate(),
-              endDate: dayjs().endOf('day').toDate(),
+              nextVisit: dayjs.utc(lastVisit).add(1, 'day').toDate(),
+              fragments: 15,
               type: TasksTypes.VISIT,
             },
             liquidityProvision: {

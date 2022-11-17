@@ -3,7 +3,7 @@ import { AddressWithId } from '../../interfaces/shared';
 import { WeeklyFragmentModel } from '../../models/WeeklyFragment.model';
 import { MultichainSubgraphService } from '../multichainSubgraph/MultichainSubgraph.service';
 
-export interface RewardsBaseParams extends AddressWithId {
+export interface WeeklyRewardsBaseParams extends AddressWithId {
   type: WeeklyFragmentsType;
 }
 export interface WeeklyFragmentsBase {

@@ -23,6 +23,11 @@ export const VisitSchema = new Schema<IVisit>(
       required: true,
       default: 0,
     },
+    fragments: {
+      type: Schema.Types.Number,
+      required: true,
+      min: 0,
+    },
     campaign_id: {
       type: Schema.Types.ObjectId,
       ref: CampaignModelName,

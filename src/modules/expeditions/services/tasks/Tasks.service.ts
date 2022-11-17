@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import {
   ActiveTasks,
   ClaimParams,
@@ -34,7 +33,6 @@ export class TasksService {
     campaign_id,
   }: AddressWithId): Promise<ActiveTasks> {
     const currentWeek = getWeekInformation();
-    const today = dayjs.utc();
     const { liquidityProvision, liquidityStaking } =
       await this.weeklyFragmentsService.getWeeklyFragments({
         address,
@@ -48,8 +46,6 @@ export class TasksService {
     return {
       dailyVisit: {
         ...dailyVisit,
-        startDate: today.startOf('day').toDate(),
-        endDate: today.endOf('day').toDate(),
         type: TasksTypes.VISIT,
       },
       liquidityProvision: {
@@ -77,7 +73,13 @@ export class TasksService {
         campaign_id,
       });
 
-    return weeklyFragments;
+    const dailyFragments =
+      await this.dailyFragmentsService.getTotalClaimedFragments({
+        address,
+        campaign_id,
+      });
+
+    return weeklyFragments + dailyFragments;
   }
 
   async claim({

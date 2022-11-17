@@ -1,6 +1,6 @@
 import { FilterQuery, HydratedDocument } from 'mongoose';
 import {
-  RewardsBaseParams,
+  WeeklyRewardsBaseParams,
   WeeklyFragmentsBase,
   WeeklyFragmentServiceParams,
 } from './WeeklyFragments.types';
@@ -41,7 +41,7 @@ export class WeeklyFragmentsService {
     address,
     type,
     campaign_id,
-  }: RewardsBaseParams) {
+  }: WeeklyRewardsBaseParams) {
     const week = getWeekInformation();
 
     const returnValue: WeeklyFragmentsBase = {
@@ -155,7 +155,7 @@ export class WeeklyFragmentsService {
     address,
     type,
     campaign_id,
-  }: RewardsBaseParams) {
+  }: WeeklyRewardsBaseParams) {
     switch (type) {
       case WeeklyFragmentsType.LIQUIDITY_PROVISION:
         return this.getLiquidityProvisionWeekRewards({
@@ -204,7 +204,7 @@ export class WeeklyFragmentsService {
     address,
     type,
     campaign_id,
-  }: RewardsBaseParams): Promise<ClaimResult> {
+  }: WeeklyRewardsBaseParams): Promise<ClaimResult> {
     // Fetch the weekly fragment information
     const currentWeek = getWeekInformation();
     const weekRewards = await this.getWeeklyFragmentsByType({

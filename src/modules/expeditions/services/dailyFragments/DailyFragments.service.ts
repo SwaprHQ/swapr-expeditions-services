@@ -7,6 +7,8 @@ import {
 import { AddressWithId } from '../../interfaces/shared';
 import { VisitModel } from '../../models/Visit.model';
 import { ClaimResult } from '../tasks/Tasks.types';
+import { addFragmentsWithMultiplier } from '../../utils/addFragmentsWithMultiplier';
+import { DAILY_VISIT_MULTIPLAND } from '../../../config/config.service';
 
 export class DailyFragmentsService {
   private visitModel: VisitModel;
@@ -19,17 +21,23 @@ export class DailyFragmentsService {
     address,
     campaign_id,
   }: AddressWithId): Promise<DailyFragments> {
-    const lastVisitDocument = await VisitModel.findOne({
+    const dailyVisitDocument = await VisitModel.findOne({
       address,
       campaign_id,
     });
 
-    const lastVisit = lastVisitDocument?.lastVisit || 0;
-    const allVisits = lastVisitDocument?.allVisits || 0;
+    const lastVisit = dailyVisitDocument?.lastVisit || 0;
+    const nextVisit = lastVisit
+      ? dayjs.utc(lastVisit).add(1, 'day').toDate()
+      : new Date(0);
+    const allVisits = dailyVisitDocument?.allVisits || 0;
+    const fragments = dailyVisitDocument?.fragments || 0;
 
     return {
       allVisits,
       lastVisit,
+      nextVisit,
+      fragments,
     };
   }
 
@@ -37,22 +45,27 @@ export class DailyFragmentsService {
     address,
     campaign_id,
   }: AddressWithId): Promise<ClaimResult> {
-    const lastVisitDocument = await VisitModel.findOne({
+    const dailyVisitDocument = await VisitModel.findOne({
       address,
       campaign_id,
     });
 
-    if (lastVisitDocument != null) {
+    if (dailyVisitDocument != null) {
       const diffBetweenLastVisitAndNow = dayjs
         .utc()
-        .diff(lastVisitDocument.lastVisit);
+        .diff(dailyVisitDocument.lastVisit);
       if (diffBetweenLastVisitAndNow < 24 * 60 * 60 * 1000) {
         throw new Error('Daily visit already recorded');
       }
     }
 
     const lastVisit = dayjs.utc().toDate();
-    const allVisits = lastVisitDocument ? lastVisitDocument.allVisits + 1 : 1;
+    const allVisits = (dailyVisitDocument?.allVisits || 0) + 1;
+    const { claimedFragments, totalFragments } = addFragmentsWithMultiplier({
+      fragmentsHeld: dailyVisitDocument?.fragments,
+      countOfCompletions: dailyVisitDocument?.allVisits,
+      fragmentsMultiplicand: DAILY_VISIT_MULTIPLAND,
+    });
 
     // Record the new visit
     await this.visitModel.updateOne(
@@ -64,6 +77,7 @@ export class DailyFragmentsService {
         address,
         lastVisit,
         allVisits,
+        fragments: totalFragments,
         campaign_id,
       },
       {
@@ -73,9 +87,17 @@ export class DailyFragmentsService {
     );
 
     return {
-      claimedFragments: 0,
+      claimedFragments: claimedFragments,
       type: DailyFragmentsTypes.VISIT,
     };
+  }
+
+  async getTotalClaimedFragments({ address, campaign_id }: AddressWithId) {
+    const { fragments } = await this.getDailyVisitFragments({
+      address,
+      campaign_id,
+    });
+    return fragments;
   }
 }
 
