@@ -35,9 +35,17 @@ export const AddCampaignResponseDTO = Joi.object({
 
 export const GetCampaignProgressRequestDTO = { address };
 
-const activeTaskBase = {
+const activeWeeklyTaskBase = {
   startDate: Joi.date().required(),
   endDate: Joi.date().required(),
+  type: Joi.string()
+    .valid(...Object.values(TasksTypes))
+    .required(),
+};
+
+const activeDailyTaskBase = {
+  lastVisit: Joi.date().required(),
+  nextVisit: Joi.date().required(),
   type: Joi.string()
     .valid(...Object.values(TasksTypes))
     .required(),
@@ -47,13 +55,13 @@ const weeklyFragments = Joi.object({
   totalAmountUSD: Joi.number().required(),
   claimableFragments: Joi.number().required(),
   claimedFragments: Joi.number().required(),
-  ...activeTaskBase,
+  ...activeWeeklyTaskBase,
 }).label('WeeklyFragments');
 
 const dailyVisit = Joi.object({
   allVisits: Joi.number().required(),
-  lastVisit: Joi.date().required(),
-  ...activeTaskBase,
+  fragments: Joi.number().required(),
+  ...activeDailyTaskBase,
 })
   .required()
   .label('DailyVisit');

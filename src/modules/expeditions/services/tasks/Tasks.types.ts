@@ -35,14 +35,20 @@ export interface TasksServiceParams {
   dailyFragmentsService: DailyFragmentsService;
 }
 
-type ActiveTask<Task> = Task & {
+type ActiveWeeklyTask<Task> = Task & {
   startDate: Date;
   endDate: Date;
   type: TasksTypes;
 };
 
+type ActiveDailyTask<Task> = Task & {
+  lastVisit: Date | number;
+  nextVisit: Date;
+  type: TasksTypes;
+};
+
 export interface ActiveTasks {
-  dailyVisit: ActiveTask<DailyFragments>;
-  liquidityProvision: ActiveTask<WeeklyFragmentsBase>;
-  liquidityStaking: ActiveTask<WeeklyFragmentsBase>;
+  dailyVisit: ActiveDailyTask<DailyFragments>;
+  liquidityProvision: ActiveWeeklyTask<WeeklyFragmentsBase>;
+  liquidityStaking: ActiveWeeklyTask<WeeklyFragmentsBase>;
 }

@@ -112,7 +112,7 @@ describe('Tasks controller', () => {
         signature = await testWallet.signMessage(TasksTypes.VISIT);
       });
 
-      test('should return updated allVisits count after claimng fragment', async () => {
+      test('should return updated claimed fragments after visit', async () => {
         const testRes = await makeClaimRequest({
           signature,
 
@@ -124,7 +124,7 @@ describe('Tasks controller', () => {
         expect(testRes.statusCode).toBe(200);
 
         expect(testRes.result).toEqual<ClaimResult>({
-          claimedFragments: 0,
+          claimedFragments: 1,
 
           type: TasksTypes.VISIT,
         });
@@ -137,6 +137,8 @@ describe('Tasks controller', () => {
           address: testWallet.address,
 
           allVisits: 4,
+
+          fragments: 40 * 4 + 40 * (0 + 1 + 2 + 3),
 
           lastVisit: testDate,
 

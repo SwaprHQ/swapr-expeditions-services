@@ -40,3 +40,5 @@ export const PAST_WEEK_ADDITIONAL_FRAGMENT = 50;
  * Base number of fragments per week.
  */
 export const FRAGMENTS_PER_WEEK = 50;
+
+export const DAILY_VISIT_MULTIPLAND = 1;
