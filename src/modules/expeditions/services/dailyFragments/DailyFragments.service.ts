@@ -3,7 +3,6 @@ import {
   DailyFragmentsTypes,
   DailyFragmentsServiceParams,
   DailyFragments,
-  DailyRewardsBaseParams,
 } from './DailyFragments.types';
 import { AddressWithId } from '../../interfaces/shared';
 import { VisitModel } from '../../models/Visit.model';
