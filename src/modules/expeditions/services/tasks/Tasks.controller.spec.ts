@@ -25,6 +25,7 @@ import {
 import { multichainSubgraphService } from '../multichainSubgraph/MultichainSubgraph.service';
 
 import { WeeklyFragmentModel } from '../../models/WeeklyFragment.model';
+import { FRAGMENTS_PER_WEEK } from '../../../config/config.service';
 
 const generateProvisionData = (positions: number[]) =>
   positions.map(position => ({ amountUSD: position.toString() }));
@@ -59,7 +60,7 @@ describe('Tasks controller', () => {
     week = getWeekInformation();
 
     campaign = await new CampaignModel({
-      startDate: week.startDate.subtract(2, 'weeks').toDate(),
+      startDate: week.startDate.subtract(3, 'weeks').toDate(),
 
       endDate: week.endDate.add(2, 'weeks').toDate(),
 
@@ -212,7 +213,7 @@ describe('Tasks controller', () => {
 
           type: TasksTypes.LIQUIDITY_PROVISION,
 
-          fragments: 50,
+          fragments: FRAGMENTS_PER_WEEK,
 
           campaign_id: campaign._id,
 
@@ -238,7 +239,7 @@ describe('Tasks controller', () => {
         });
       });
 
-      it('applies streak bonus', async () => {
+      it('applies bonus', async () => {
         provisionMock.mockResolvedValue(generateProvisionData([50]));
 
         await new WeeklyFragmentModel({
@@ -246,7 +247,21 @@ describe('Tasks controller', () => {
 
           type: TasksTypes.LIQUIDITY_PROVISION,
 
-          fragments: 50,
+          fragments: FRAGMENTS_PER_WEEK,
+
+          campaign_id: campaign._id,
+
+          week: week.weekNumber - 3,
+
+          year: week.year,
+        }).save();
+
+        await new WeeklyFragmentModel({
+          address: testWallet.address,
+
+          type: TasksTypes.LIQUIDITY_PROVISION,
+
+          fragments: FRAGMENTS_PER_WEEK + FRAGMENTS_PER_WEEK * 1,
 
           campaign_id: campaign._id,
 
@@ -260,7 +275,7 @@ describe('Tasks controller', () => {
 
           type: TasksTypes.LIQUIDITY_PROVISION,
 
-          fragments: 100,
+          fragments: FRAGMENTS_PER_WEEK + FRAGMENTS_PER_WEEK * 2,
 
           campaign_id: campaign._id,
 
@@ -278,7 +293,7 @@ describe('Tasks controller', () => {
         });
 
         expect(testRes.result).toEqual<ClaimResult>({
-          claimedFragments: 150,
+          claimedFragments: FRAGMENTS_PER_WEEK + FRAGMENTS_PER_WEEK * 3,
 
           type: TasksTypes.LIQUIDITY_PROVISION,
         });
@@ -332,7 +347,7 @@ describe('Tasks controller', () => {
 
           type: TasksTypes.LIQUIDITY_STAKING,
 
-          fragments: 50,
+          fragments: FRAGMENTS_PER_WEEK,
 
           campaign_id: campaign._id,
 
@@ -366,7 +381,21 @@ describe('Tasks controller', () => {
 
           type: TasksTypes.LIQUIDITY_STAKING,
 
-          fragments: 50,
+          fragments: FRAGMENTS_PER_WEEK,
+
+          campaign_id: campaign._id,
+
+          week: week.weekNumber - 3,
+
+          year: week.year,
+        }).save();
+
+        await new WeeklyFragmentModel({
+          address: testWallet.address,
+
+          type: TasksTypes.LIQUIDITY_STAKING,
+
+          fragments: FRAGMENTS_PER_WEEK + FRAGMENTS_PER_WEEK * 1,
 
           campaign_id: campaign._id,
 
@@ -380,7 +409,7 @@ describe('Tasks controller', () => {
 
           type: TasksTypes.LIQUIDITY_STAKING,
 
-          fragments: 100,
+          fragments: FRAGMENTS_PER_WEEK + FRAGMENTS_PER_WEEK * 2,
 
           campaign_id: campaign._id,
 
@@ -398,7 +427,7 @@ describe('Tasks controller', () => {
         });
 
         expect(testRes.result).toEqual<ClaimResult>({
-          claimedFragments: 150,
+          claimedFragments: FRAGMENTS_PER_WEEK + FRAGMENTS_PER_WEEK * 3,
 
           type: TasksTypes.LIQUIDITY_STAKING,
         });

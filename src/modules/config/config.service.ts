@@ -27,18 +27,8 @@ export const ADD_LIQUIDITY_MIN_USD_AMOUNT = 50;
 export const STAKE_LIQUIDITY_MIN_USD_AMOUNT = 50;
 
 /**
- * The maximum number of fragments that can be claimed by a user in a week.
- */
-export const MAX_WEEKLY_CLAIM_FRAGMENT = 750;
-
-/**
- * Past completed week adds 50 fragments to the total fragments.
- */
-export const PAST_WEEK_ADDITIONAL_FRAGMENT = 50;
-
-/**
  * Base number of fragments per week.
  */
-export const FRAGMENTS_PER_WEEK = 50;
+export const FRAGMENTS_PER_WEEK = 40;
 
 export const DAILY_VISIT_MULTIPLAND = 1;

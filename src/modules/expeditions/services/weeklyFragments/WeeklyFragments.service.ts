@@ -21,9 +21,9 @@ import {
   WeeklyFragmentsType,
 } from '../../interfaces/IFragment.interface';
 import { getWeekInformation } from '../../utils';
-import { calculateStreakBonus } from '../../utils/calculateStreakBonus';
 import { AddressWithId } from '../../interfaces/shared';
 import { ClaimResult } from '../tasks/Tasks.types';
+import { addFragmentsWithMultiplier } from '../../utils/addFragmentsWithMultiplier';
 
 export class WeeklyFragmentsService {
   private multichainSubgraphService: MultichainSubgraphService;
@@ -66,7 +66,10 @@ export class WeeklyFragmentsService {
       returnValue.claimedFragments = weeklyFragmentDocument.fragments;
     }
 
-    const streakBonus = calculateStreakBonus(weeklyFragmentDocuments, week);
+    const claimableFragments = addFragmentsWithMultiplier({
+      fragmentsMultiplicand: FRAGMENTS_PER_WEEK,
+      countOfCompletions: weeklyFragmentDocuments.length,
+    }).claimedFragments;
 
     const queryParams = {
       address,
@@ -78,7 +81,7 @@ export class WeeklyFragmentsService {
       queryParams,
       returnValue,
       weeklyFragmentDocument,
-      streakBonus,
+      claimableFragments,
     };
   }
 
@@ -86,7 +89,7 @@ export class WeeklyFragmentsService {
     address,
     campaign_id,
   }: AddressWithId): Promise<WeeklyFragmentsBase> {
-    const { queryParams, returnValue, streakBonus } =
+    const { queryParams, returnValue, claimableFragments } =
       await this.getWeeklyRewardsBaseData({
         address,
         campaign_id,
@@ -111,7 +114,7 @@ export class WeeklyFragmentsService {
     // Add the base 50 fragments for this week
     // if the provided liquidity deposits are more than $50 USD
     if (returnValue.totalAmountUSD >= ADD_LIQUIDITY_MIN_USD_AMOUNT) {
-      returnValue.claimableFragments = FRAGMENTS_PER_WEEK + streakBonus;
+      returnValue.claimableFragments = claimableFragments;
     }
 
     return returnValue;
@@ -121,7 +124,7 @@ export class WeeklyFragmentsService {
     address,
     campaign_id,
   }: AddressWithId): Promise<WeeklyFragmentsBase> {
-    const { queryParams, returnValue, streakBonus } =
+    const { queryParams, returnValue, claimableFragments } =
       await this.getWeeklyRewardsBaseData({
         address,
         campaign_id,
@@ -141,7 +144,7 @@ export class WeeklyFragmentsService {
     // Add the base 50 fragments for this week
     // if the provided liquidity deposits are more than $50 USD
     if (returnValue.totalAmountUSD >= ADD_LIQUIDITY_MIN_USD_AMOUNT) {
-      returnValue.claimableFragments = FRAGMENTS_PER_WEEK + streakBonus;
+      returnValue.claimableFragments = claimableFragments;
     }
 
     return returnValue;

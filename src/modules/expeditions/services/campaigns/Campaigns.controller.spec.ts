@@ -19,6 +19,7 @@ import {
   TypedRequestCreator,
 } from '../../utils/tests/setup';
 import { TasksTypes } from '../tasks/Tasks.types';
+import { FRAGMENTS_PER_WEEK } from '../../../config/config.service';
 
 describe('Campaigns controller', () => {
   const testWallet = Wallet.createRandom();
@@ -248,22 +249,29 @@ describe('Campaigns controller', () => {
 
       await new WeeklyFragmentModel({
         ...base,
+        week: week.weekNumber - 2,
+        fragments: FRAGMENTS_PER_WEEK,
+        type: TasksTypes.LIQUIDITY_PROVISION,
+      }).save();
+
+      await new WeeklyFragmentModel({
+        ...base,
         week: week.weekNumber - 1,
-        fragments: 150,
+        fragments: FRAGMENTS_PER_WEEK + FRAGMENTS_PER_WEEK * 1,
         type: TasksTypes.LIQUIDITY_PROVISION,
       }).save();
 
       await new WeeklyFragmentModel({
         ...base,
         week: week.weekNumber,
-        fragments: 50,
+        fragments: FRAGMENTS_PER_WEEK + FRAGMENTS_PER_WEEK * 2,
         type: TasksTypes.LIQUIDITY_PROVISION,
       }).save();
 
       await new WeeklyFragmentModel({
         ...base,
         week: week.weekNumber,
-        fragments: 200,
+        fragments: FRAGMENTS_PER_WEEK,
         type: TasksTypes.LIQUIDITY_STAKING,
       }).save();
 
@@ -283,7 +291,7 @@ describe('Campaigns controller', () => {
 
       expect(res.result).toEqual(
         expect.objectContaining({
-          claimedFragments: 415,
+          claimedFragments: 240 + 40 + 15,
           tasks: {
             dailyVisit: {
               allVisits: 5,
@@ -295,7 +303,7 @@ describe('Campaigns controller', () => {
             liquidityProvision: {
               totalAmountUSD: 0,
               claimableFragments: 0,
-              claimedFragments: 50,
+              claimedFragments: 120,
               startDate: week.startDate.toDate(),
               endDate: week.endDate.toDate(),
               type: TasksTypes.LIQUIDITY_PROVISION,
@@ -303,7 +311,7 @@ describe('Campaigns controller', () => {
             liquidityStaking: {
               totalAmountUSD: 0,
               claimableFragments: 0,
-              claimedFragments: 200,
+              claimedFragments: 40,
               startDate: week.startDate.toDate(),
               endDate: week.endDate.toDate(),
               type: TasksTypes.LIQUIDITY_STAKING,
