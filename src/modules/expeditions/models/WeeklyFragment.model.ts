@@ -7,7 +7,6 @@ import {
   IWeeklyFragment,
   WeeklyFragmentsType,
 } from '../interfaces/IFragment.interface';
-import { MAX_WEEKLY_CLAIM_FRAGMENT } from '../../config/config.service';
 
 export const WeelyFragmentSchema = new Schema<IWeeklyFragment>(
   {
@@ -46,7 +45,6 @@ export const WeelyFragmentSchema = new Schema<IWeeklyFragment>(
     fragments: {
       type: Schema.Types.Number,
       required: true,
-      max: MAX_WEEKLY_CLAIM_FRAGMENT,
       min: 0,
     },
     campaign_id: {
