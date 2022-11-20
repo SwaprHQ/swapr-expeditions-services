@@ -17,3 +17,13 @@ export const ClaimResponseDTO = Joi.object({
   claimedFragments: Joi.number().required(),
   type,
 }).label('ClaimResponse');
+
+export const RegisterDailySwapRequestDTO = Joi.object({
+  address,
+  tradeUSDValue: Joi.number().required(),
+}).label('RegisterDailySwapRequest');
+
+export const RegisterDailySwapResponseDTO = Joi.object({
+  claimedFragments: Joi.number().required(),
+  totalTradeUSDValue: Joi.number().required(),
+}).label('RegisterDailySwapResponse');

@@ -20,6 +20,7 @@ import {
 } from '../../utils/tests/setup';
 import { TasksTypes } from '../tasks/Tasks.types';
 import { FRAGMENTS_PER_WEEK } from '../../../config/config.service';
+import { DailySwapsModel } from '../../models/DailySwaps.model';
 
 describe('Campaigns controller', () => {
   const testWallet = Wallet.createRandom();
@@ -285,13 +286,29 @@ describe('Campaigns controller', () => {
         lastVisit,
       }).save();
 
+      await new DailySwapsModel({
+        address: testWallet.address,
+        campaign_id: campaign._id,
+        fragments: 50,
+        date: dayjs.utc().startOf('day').toDate(),
+        totalTradeUSDValue: 10,
+      }).save();
+
+      await new DailySwapsModel({
+        address: testWallet.address,
+        campaign_id: campaign._id,
+        fragments: 20,
+        date: dayjs.utc().add(1, 'day').startOf('day').toDate(),
+        totalTradeUSDValue: 10,
+      }).save();
+
       res = await makeGetCampaignProgressRequest({
         address: testWallet.address,
       });
 
       expect(res.result).toEqual(
         expect.objectContaining({
-          claimedFragments: 240 + 40 + 15,
+          claimedFragments: 240 + 40 + 15 + 70,
           tasks: {
             dailyVisit: {
               allVisits: 5,

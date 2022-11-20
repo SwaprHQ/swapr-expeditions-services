@@ -15,6 +15,7 @@ import {
   weeklyFragmentsService,
   WeeklyFragmentsService,
 } from '../weeklyFragments/WeeklyFragments.service';
+import { RegisterDailySwapParams } from '../dailyFragments/DailyFragments.types';
 
 export class TasksService {
   private weeklyFragmentsService: WeeklyFragmentsService;
@@ -43,6 +44,9 @@ export class TasksService {
       campaign_id,
     });
 
+    const startDate = currentWeek.startDate.toDate();
+    const endDate = currentWeek.endDate.toDate();
+
     return {
       dailyVisit: {
         ...dailyVisit,
@@ -50,14 +54,14 @@ export class TasksService {
       },
       liquidityProvision: {
         ...liquidityProvision,
-        startDate: currentWeek.startDate.toDate(),
-        endDate: currentWeek.endDate.toDate(),
+        startDate,
+        endDate,
         type: TasksTypes.LIQUIDITY_PROVISION,
       },
       liquidityStaking: {
         ...liquidityStaking,
-        startDate: currentWeek.startDate.toDate(),
-        endDate: currentWeek.endDate.toDate(),
+        startDate,
+        endDate,
         type: TasksTypes.LIQUIDITY_STAKING,
       },
     };
@@ -101,8 +105,12 @@ export class TasksService {
           campaign_id,
         });
       default:
-        throw new Error('Task not found');
+        throw new Error('Task not claimable');
     }
+  }
+
+  async registerDailySwap(params: RegisterDailySwapParams) {
+    return await this.dailyFragmentsService.registerDailySwap(params);
   }
 }
 

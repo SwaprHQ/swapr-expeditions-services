@@ -32,3 +32,7 @@ export const STAKE_LIQUIDITY_MIN_USD_AMOUNT = 50;
 export const FRAGMENTS_PER_WEEK = 40;
 
 export const DAILY_VISIT_MULTIPLAND = 1;
+
+export const DAILY_SWAPS_MULTIPLAND = 1;
+
+export const DAILY_SWAPS_MIN_USD_AMOUNT = 10;

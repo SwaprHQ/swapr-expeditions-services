@@ -13,8 +13,13 @@ import {
 import {
   ClaimRequestDTO,
   ClaimResponseDTO,
+  RegisterDailySwapRequestDTO,
+  RegisterDailySwapResponseDTO,
 } from '../expeditions/services/tasks/Tasks.dto';
-import { claim } from '../expeditions/services/tasks/Tasks.controller';
+import {
+  claim,
+  registerDailySwap,
+} from '../expeditions/services/tasks/Tasks.controller';
 
 async function register(server: Server) {
   // Return nothing
@@ -70,6 +75,22 @@ async function register(server: Server) {
       },
     },
     handler: getCampaignProgress as HandlerDecorations,
+  });
+
+  server.route({
+    method: 'POST',
+    path: '/expeditions/registerDailySwap',
+    options: {
+      description: 'Registers a trade made through swapr dapp',
+      validate: {
+        payload: RegisterDailySwapRequestDTO,
+      },
+      tags: ['api', 'expeditions', 'dailySwap'],
+      response: {
+        schema: RegisterDailySwapResponseDTO,
+      },
+    },
+    handler: registerDailySwap as HandlerDecorations,
   });
 }
 

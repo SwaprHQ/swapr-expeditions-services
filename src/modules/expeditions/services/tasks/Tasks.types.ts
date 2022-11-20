@@ -4,6 +4,7 @@ import { DailyFragmentsService } from '../dailyFragments/DailyFragments.service'
 import {
   DailyFragments,
   DailyFragmentsTypes,
+  RegisterDailySwapParams,
 } from '../dailyFragments/DailyFragments.types';
 import { WeeklyFragmentsBase } from '../weeklyFragments';
 import { WeeklyFragmentsService } from '../weeklyFragments/WeeklyFragments.service';
@@ -20,6 +21,15 @@ export interface ClaimRequest {
 }
 
 export type ClaimResponse = Promise<ClaimResult>;
+
+export interface RegisterDailySwapRequest {
+  payload: Omit<RegisterDailySwapParams, 'campaign_id'>;
+}
+
+export type RegisterDailySwapResponse = Promise<{
+  claimedFragments: number;
+  totalTradeUSDValue: number;
+}>;
 
 export interface ClaimParams extends AddressWithId {
   type: TasksTypes;
