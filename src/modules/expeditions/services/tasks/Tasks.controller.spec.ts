@@ -1,10 +1,16 @@
-import { Server } from '@hapi/hapi';
+import { Server, ServerInjectResponse } from '@hapi/hapi';
 
 import { constants, Wallet } from 'ethers';
 
 import { HydratedDocument } from 'mongoose';
 
-import { ClaimRequest, ClaimResult, TasksTypes } from './Tasks.types';
+import {
+  ClaimRequest,
+  ClaimResult,
+  RegisterDailySwapRequest,
+  RegisterDailySwapResponse,
+  TasksTypes,
+} from './Tasks.types';
 import { dayjs } from '../../../shared/dayjs';
 
 import { ICampaign } from '../../interfaces/ICampaign.interface';
@@ -12,6 +18,8 @@ import { ICampaign } from '../../interfaces/ICampaign.interface';
 import { CampaignModel } from '../../models/Campaign.model';
 
 import { VisitModel } from '../../models/Visit.model';
+
+import { DailySwapsModel } from '../../models/DailySwaps.model';
 
 import { getWeekInformation, WeekInformation } from '../../utils';
 
@@ -25,7 +33,11 @@ import {
 import { multichainSubgraphService } from '../multichainSubgraph/MultichainSubgraph.service';
 
 import { WeeklyFragmentModel } from '../../models/WeeklyFragment.model';
-import { FRAGMENTS_PER_WEEK } from '../../../config/config.service';
+import {
+  DAILY_SWAPS_MULTIPLAND,
+  FRAGMENTS_PER_WEEK,
+} from '../../../config/config.service';
+import { IDailySwaps } from '../../interfaces/IDailySwaps.interface';
 
 const generateProvisionData = (positions: number[]) =>
   positions.map(position => ({ amountUSD: position.toString() }));
@@ -55,6 +67,7 @@ describe('Tasks controller', () => {
   let week: WeekInformation;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     server = await startMockServer();
 
     week = getWeekInformation();
@@ -431,6 +444,205 @@ describe('Tasks controller', () => {
 
           type: TasksTypes.LIQUIDITY_STAKING,
         });
+      });
+    });
+  });
+
+  describe('registerDailySwap', () => {
+    let makeRegisterRequest: TypedRequestCreator<
+      RegisterDailySwapRequest['payload']
+    >;
+
+    beforeEach(() => {
+      makeRegisterRequest = createMakeRequest<
+        RegisterDailySwapRequest['payload']
+      >(server, {
+        method: 'POST',
+        url: '/expeditions/registerDailySwap',
+      });
+    });
+
+    it('creates new entry', async () => {
+      const testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 2,
+      });
+
+      expect(testRes.result).toEqual<Awaited<RegisterDailySwapResponse>>({
+        claimedFragments: 0,
+        totalTradeUSDValue: 2,
+      });
+
+      const dailySwapsDocument = await DailySwapsModel.findOne({
+        address: testWallet.address,
+      });
+
+      expect(dailySwapsDocument).toEqual(
+        expect.objectContaining<IDailySwaps>({
+          address: testWallet.address,
+          campaign_id: campaign._id,
+          date: dayjs.utc().startOf('day').toDate(),
+          fragments: 0,
+          totalTradeUSDValue: 2,
+        })
+      );
+    });
+
+    it('adds fragments in single swap tx', async () => {
+      const testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 10,
+      });
+
+      expect(testRes.result).toEqual<Awaited<RegisterDailySwapResponse>>({
+        claimedFragments: DAILY_SWAPS_MULTIPLAND,
+        totalTradeUSDValue: 10,
+      });
+    });
+
+    it('adds fragments in multiple swaps txs', async () => {
+      let testRes: ServerInjectResponse;
+      testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 2,
+      });
+
+      expect(testRes.result).toEqual<Awaited<RegisterDailySwapResponse>>({
+        claimedFragments: 0,
+        totalTradeUSDValue: 2,
+      });
+
+      testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 2,
+      });
+
+      expect(testRes.result).toEqual<Awaited<RegisterDailySwapResponse>>({
+        claimedFragments: 0,
+        totalTradeUSDValue: 4,
+      });
+
+      testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 6,
+      });
+
+      expect(testRes.result).toEqual<Awaited<RegisterDailySwapResponse>>({
+        claimedFragments: DAILY_SWAPS_MULTIPLAND,
+        totalTradeUSDValue: 10,
+      });
+    });
+
+    it('grants fragments only once per day', async () => {
+      let testRes: ServerInjectResponse;
+      testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 11,
+      });
+
+      expect(testRes.result).toEqual<Awaited<RegisterDailySwapResponse>>({
+        claimedFragments: DAILY_SWAPS_MULTIPLAND,
+        totalTradeUSDValue: 11,
+      });
+
+      testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 50.11,
+      });
+
+      expect(testRes.result).toEqual<Awaited<RegisterDailySwapResponse>>({
+        claimedFragments: 0,
+        totalTradeUSDValue: 61.11,
+      });
+    });
+
+    it('works correctly across different days', async () => {
+      const mockDayjs = jest.spyOn(dayjs, 'utc');
+
+      const currentDay = dayjs.utc();
+      const nextDay = currentDay.add(1, 'day');
+
+      let testRes: ServerInjectResponse;
+      testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 11,
+      });
+
+      expect(testRes.result).toEqual<Awaited<RegisterDailySwapResponse>>({
+        claimedFragments: DAILY_SWAPS_MULTIPLAND,
+        totalTradeUSDValue: 11,
+      });
+
+      mockDayjs.mockReturnValue(nextDay);
+      testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 5,
+      });
+
+      expect(testRes.result).toEqual<Awaited<RegisterDailySwapResponse>>({
+        claimedFragments: 0,
+        totalTradeUSDValue: 5,
+      });
+
+      const currentDaySwaps = await DailySwapsModel.findOne({
+        address: testWallet.address,
+        date: currentDay.startOf('day').toDate(),
+      });
+
+      expect(currentDaySwaps).toEqual(
+        expect.objectContaining<Partial<IDailySwaps>>({
+          date: currentDay.startOf('day').toDate(),
+          totalTradeUSDValue: 11,
+        })
+      );
+
+      const nextDaySwaps = await DailySwapsModel.findOne({
+        address: testWallet.address,
+        date: nextDay.startOf('day').toDate(),
+      });
+
+      expect(nextDaySwaps).toEqual(
+        expect.objectContaining<Partial<IDailySwaps>>({
+          date: nextDay.startOf('day').toDate(),
+          totalTradeUSDValue: 5,
+        })
+      );
+    });
+
+    it('applies bonus', async () => {
+      const mockDayjs = jest.spyOn(dayjs, 'utc');
+
+      let testRes: ServerInjectResponse;
+      testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 10,
+      });
+
+      expect(testRes.result).toEqual<Awaited<RegisterDailySwapResponse>>({
+        claimedFragments: DAILY_SWAPS_MULTIPLAND,
+        totalTradeUSDValue: 10,
+      });
+
+      mockDayjs.mockReturnValue(dayjs.utc().add(1, 'day'));
+      testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 10,
+      });
+
+      expect(testRes.result).toEqual<Awaited<RegisterDailySwapResponse>>({
+        claimedFragments: 2,
+        totalTradeUSDValue: 10,
+      });
+
+      mockDayjs.mockReturnValue(dayjs.utc().add(2, 'days'));
+      testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 10,
+      });
+
+      expect(testRes.result).toEqual<Awaited<RegisterDailySwapResponse>>({
+        claimedFragments: 3,
+        totalTradeUSDValue: 10,
       });
     });
   });

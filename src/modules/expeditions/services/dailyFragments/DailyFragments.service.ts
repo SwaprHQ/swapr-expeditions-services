@@ -1,20 +1,30 @@
 import dayjs from 'dayjs';
+import { HydratedDocument } from 'mongoose';
 import {
   DailyFragmentsTypes,
   DailyFragmentsServiceParams,
   DailyFragments,
+  RegisterDailySwapParams,
 } from './DailyFragments.types';
 import { AddressWithId } from '../../interfaces/shared';
 import { VisitModel } from '../../models/Visit.model';
 import { ClaimResult } from '../tasks/Tasks.types';
 import { addFragmentsWithMultiplier } from '../../utils/addFragmentsWithMultiplier';
-import { DAILY_VISIT_MULTIPLAND } from '../../../config/config.service';
+import {
+  DAILY_SWAPS_MIN_USD_AMOUNT,
+  DAILY_SWAPS_MULTIPLAND,
+  DAILY_VISIT_MULTIPLAND,
+} from '../../../config/config.service';
+import { DailySwapsModel } from '../../models/DailySwaps.model';
+import { IDailySwaps } from '../../interfaces/IDailySwaps.interface';
 
 export class DailyFragmentsService {
   private visitModel: VisitModel;
+  private dailySwapsModel: DailySwapsModel;
 
-  constructor({ visitModel }: DailyFragmentsServiceParams) {
+  constructor({ visitModel, dailySwapsModel }: DailyFragmentsServiceParams) {
     this.visitModel = visitModel;
+    this.dailySwapsModel = dailySwapsModel;
   }
 
   async getDailyVisitFragments({
@@ -92,15 +102,100 @@ export class DailyFragmentsService {
     };
   }
 
-  async getTotalClaimedFragments({ address, campaign_id }: AddressWithId) {
-    const { fragments } = await this.getDailyVisitFragments({
+  async getDailySwapsFragments({ address, campaign_id }: AddressWithId) {
+    const dailySwapsDocuments = await this.dailySwapsModel.find({
       address,
       campaign_id,
     });
-    return fragments;
+
+    return dailySwapsDocuments.reduce(
+      (total, dailySwaps) => {
+        if (dailySwaps.fragments) {
+          total.fragments += dailySwaps.fragments;
+          total.numberOfCompletions += 1;
+        }
+
+        return total;
+      },
+      {
+        fragments: 0,
+        numberOfCompletions: 0,
+      }
+    );
+  }
+
+  async registerDailySwap({
+    address,
+    campaign_id,
+    tradeUSDValue,
+  }: RegisterDailySwapParams) {
+    const currentDay = dayjs.utc().startOf('day').toDate();
+
+    let currentDaySwapsDocument: HydratedDocument<IDailySwaps> | undefined;
+    let claimedFragments = 0;
+
+    const dailySwapsDocuments = await this.dailySwapsModel.find({
+      address,
+      campaign_id,
+    });
+
+    currentDaySwapsDocument = dailySwapsDocuments.find(
+      dailySwaps => +dailySwaps.date === +currentDay
+    );
+
+    if (!currentDaySwapsDocument) {
+      currentDaySwapsDocument = new DailySwapsModel({
+        address,
+        campaign_id,
+        date: currentDay,
+        fragments: 0,
+        totalTradeUSDValue: 0,
+      });
+    }
+
+    currentDaySwapsDocument.totalTradeUSDValue += tradeUSDValue;
+
+    if (
+      currentDaySwapsDocument.totalTradeUSDValue >=
+        DAILY_SWAPS_MIN_USD_AMOUNT &&
+      currentDaySwapsDocument.fragments === 0
+    ) {
+      const countOfCompletions = dailySwapsDocuments.filter(
+        dailySwaps => dailySwaps.fragments > 0
+      ).length;
+
+      claimedFragments = addFragmentsWithMultiplier({
+        countOfCompletions,
+        fragmentsMultiplicand: DAILY_SWAPS_MULTIPLAND,
+      }).claimedFragments;
+
+      currentDaySwapsDocument.fragments = claimedFragments;
+    }
+
+    await currentDaySwapsDocument.save();
+
+    return {
+      claimedFragments,
+      totalTradeUSDValue: currentDaySwapsDocument.totalTradeUSDValue,
+    };
+  }
+
+  async getTotalClaimedFragments({ address, campaign_id }: AddressWithId) {
+    const { fragments: visitsFragments } = await this.getDailyVisitFragments({
+      address,
+      campaign_id,
+    });
+
+    const { fragments: swapsFragments } = await this.getDailySwapsFragments({
+      address,
+      campaign_id,
+    });
+
+    return visitsFragments + swapsFragments;
   }
 }
 
 export const dailyFragmentsService = new DailyFragmentsService({
   visitModel: VisitModel,
+  dailySwapsModel: DailySwapsModel,
 });
