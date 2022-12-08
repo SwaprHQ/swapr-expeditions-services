@@ -21,6 +21,8 @@ import {
 import { TasksTypes } from '../tasks/Tasks.types';
 import { FRAGMENTS_PER_WEEK } from '../../../config/config.service';
 import { DailySwapsModel } from '../../models/DailySwaps.model';
+import { seedRewards } from '../../utils/tests/rewardsSeed';
+import { ActiveReward } from '../rewards/Rewards.types';
 
 describe('Campaigns controller', () => {
   const testWallet = Wallet.createRandom();
@@ -185,6 +187,7 @@ describe('Campaigns controller', () => {
     >;
     let campaign: HydratedDocument<ICampaign>;
     let week: WeekInformation;
+    let rewards: ActiveReward[];
 
     beforeEach(async () => {
       week = getWeekInformation();
@@ -195,6 +198,8 @@ describe('Campaigns controller', () => {
         redeemEndDate: week.endDate.add(3, 'weeks').toDate(),
         initiatorAddress: constants.AddressZero,
       }).save();
+
+      rewards = await seedRewards({ campaign_id: campaign._id });
 
       makeGetCampaignProgressRequest = createMakeRequest<
         GetCampaignProgressRequest['payload']
@@ -212,6 +217,7 @@ describe('Campaigns controller', () => {
       expect(res.result).toEqual(
         expect.objectContaining({
           claimedFragments: 0,
+          rewards,
           tasks: {
             dailyVisit: {
               allVisits: 0,

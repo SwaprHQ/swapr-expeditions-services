@@ -1,20 +1,25 @@
 import Boom from '@hapi/boom';
 import { captureException } from '@sentry/node';
+import dayjs from 'dayjs';
 import { tasksService } from './Tasks.service';
 import {
-  ClaimRequest,
-  ClaimResponse,
+  ClaimTaskRequest,
+  ClaimTaskResponse,
   RegisterDailySwapRequest,
   RegisterDailySwapResponse,
 } from './Tasks.types';
 import { getActiveCampaign } from '../../utils/getActiveCampaign';
 import { validateSignature } from '../../utils/validateSignature';
 
-export async function claim(req: ClaimRequest): ClaimResponse {
+export async function claimTask(req: ClaimTaskRequest): ClaimTaskResponse {
   try {
     const { address, signature, type } = req.payload;
 
     const campaign = await getActiveCampaign();
+
+    if (dayjs.utc().isAfter(campaign.endDate)) {
+      throw Error('Campaign end date has passed');
+    }
 
     validateSignature({
       address,
@@ -41,6 +46,10 @@ export async function registerDailySwap(
     const { address, tradeUSDValue } = req.payload;
 
     const campaign = await getActiveCampaign();
+
+    if (dayjs.utc().isAfter(campaign.endDate)) {
+      throw Error('Campaign end date has passed');
+    }
 
     return await tasksService.registerDailySwap({
       address,

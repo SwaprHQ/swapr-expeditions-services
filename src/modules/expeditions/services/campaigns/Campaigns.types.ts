@@ -1,6 +1,8 @@
 import { Request } from '@hapi/hapi';
 import { ICampaign } from '../../interfaces/ICampaign.interface';
 import { CampaignModel } from '../../models/Campaign.model';
+import { RewardsService } from '../rewards/Rewards.service';
+import { ActiveReward } from '../rewards/Rewards.types';
 import { TasksService } from '../tasks/Tasks.service';
 import { ActiveTasks } from '../tasks/Tasks.types';
 
@@ -19,6 +21,7 @@ export type AddCampaignResponse = Promise<ICampaign>;
 export interface CampaignServiceParams {
   campaignModel: CampaignModel;
   tasksService: TasksService;
+  rewardsService: RewardsService;
 }
 
 export interface AddCampaignParams {
@@ -37,6 +40,7 @@ export interface GetCampaignProgressRequest extends Request {
 export interface CampaignProgress {
   claimedFragments: number;
   tasks: ActiveTasks;
+  rewards: ActiveReward[];
 }
 
 export type GetCampaignProgressResponse = CampaignProgress;

@@ -1,7 +1,7 @@
 import {
   ActiveTasks,
-  ClaimParams,
-  ClaimResult,
+  ClaimTaskParams,
+  ClaimTaskResult,
   TasksServiceParams,
   TasksTypes,
 } from './Tasks.types';
@@ -90,7 +90,7 @@ export class TasksService {
     address,
     type,
     campaign_id,
-  }: ClaimParams): Promise<ClaimResult> {
+  }: ClaimTaskParams): Promise<ClaimTaskResult> {
     switch (type) {
       case TasksTypes.VISIT:
         return this.dailyFragmentsService.claimDailyVisitFragments({

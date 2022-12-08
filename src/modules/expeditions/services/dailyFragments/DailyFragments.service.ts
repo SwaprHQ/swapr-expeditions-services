@@ -8,7 +8,7 @@ import {
 } from './DailyFragments.types';
 import { AddressWithId } from '../../interfaces/shared';
 import { VisitModel } from '../../models/Visit.model';
-import { ClaimResult } from '../tasks/Tasks.types';
+import { ClaimTaskResult } from '../tasks/Tasks.types';
 import { addFragmentsWithMultiplier } from '../../utils/addFragmentsWithMultiplier';
 import {
   DAILY_SWAPS_MIN_USD_AMOUNT,
@@ -54,7 +54,7 @@ export class DailyFragmentsService {
   async claimDailyVisitFragments({
     address,
     campaign_id,
-  }: AddressWithId): Promise<ClaimResult> {
+  }: AddressWithId): Promise<ClaimTaskResult> {
     const dailyVisitDocument = await VisitModel.findOne({
       address,
       campaign_id,

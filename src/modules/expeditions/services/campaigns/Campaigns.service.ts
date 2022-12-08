@@ -6,14 +6,21 @@ import {
 import { AddressWithId } from '../../interfaces/shared';
 import { CampaignModel } from '../../models/Campaign.model';
 import { TasksService, tasksService } from '../tasks/Tasks.service';
+import { rewardsService, RewardsService } from '../rewards/Rewards.service';
 
 export class CampaignsService {
   private campaignModel: CampaignModel;
   private tasksService: TasksService;
+  private rewardsService: RewardsService;
 
-  constructor({ campaignModel, tasksService }: CampaignServiceParams) {
+  constructor({
+    campaignModel,
+    tasksService,
+    rewardsService,
+  }: CampaignServiceParams) {
     this.campaignModel = campaignModel;
     this.tasksService = tasksService;
+    this.rewardsService = rewardsService;
   }
 
   async getCampaignProgress({
@@ -24,6 +31,8 @@ export class CampaignsService {
       address,
       campaign_id,
     });
+    const rewards = await this.rewardsService.getActiveRewards({ campaign_id });
+
     const claimedFragments = await this.tasksService.getClaimedFragments({
       address,
       campaign_id,
@@ -32,6 +41,7 @@ export class CampaignsService {
     return {
       claimedFragments,
       tasks,
+      rewards,
     };
   }
 
@@ -88,4 +98,5 @@ export class CampaignsService {
 export const campaignsService = new CampaignsService({
   campaignModel: CampaignModel,
   tasksService: tasksService,
+  rewardsService: rewardsService,
 });
