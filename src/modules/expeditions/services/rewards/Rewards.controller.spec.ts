@@ -52,7 +52,7 @@ describe('Tasks controller', () => {
         server,
         {
           method: 'POST',
-          url: '/expeditions/claimReward',
+          url: '/expeditions/claim-reward',
         }
       );
     });

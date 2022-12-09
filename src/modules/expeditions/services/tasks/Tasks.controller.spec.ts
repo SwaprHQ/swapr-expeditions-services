@@ -95,7 +95,7 @@ describe('Tasks controller', () => {
         server,
         {
           method: 'POST',
-          url: '/expeditions/claimTask',
+          url: '/expeditions/claim-task',
         }
       );
     });
@@ -493,7 +493,7 @@ describe('Tasks controller', () => {
         RegisterDailySwapRequest['payload']
       >(server, {
         method: 'POST',
-        url: '/expeditions/registerDailySwap',
+        url: '/expeditions/register-daily-swap',
       });
     });
 

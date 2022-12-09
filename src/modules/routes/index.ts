@@ -52,7 +52,7 @@ async function register(server: Server) {
 
   server.route({
     method: 'POST',
-    path: '/expeditions/claimTask',
+    path: '/expeditions/claim-task',
     options: {
       description: `Claim rewards (fragments) for specified type of task`,
       validate: {
@@ -84,7 +84,7 @@ async function register(server: Server) {
 
   server.route({
     method: 'POST',
-    path: '/expeditions/registerDailySwap',
+    path: '/expeditions/register-daily-swap',
     options: {
       description: 'Registers a trade made through swapr dapp',
       validate: {
@@ -100,7 +100,7 @@ async function register(server: Server) {
 
   server.route({
     method: 'POST',
-    path: '/expeditions/claimReward',
+    path: '/expeditions/claim-reward',
     options: {
       description:
         'Creates claim signature for nft reward that can be claimed on nft contract',
