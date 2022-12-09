@@ -70,7 +70,7 @@ const dailyVisit = Joi.object({
 const reward = Joi.object({
   requiredFragments: Joi.number().required(),
   nftAddress: address,
-  tokenId: Joi.number().required(),
+  tokenId: Joi.string().required(),
   name: Joi.string().required(),
   description: Joi.string().required(),
   rarity: Joi.string()
