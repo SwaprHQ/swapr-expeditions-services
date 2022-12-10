@@ -12,7 +12,8 @@
     "dockerize": "sh ./docker/build.sh",
     "graphql:codegen": "graphql-codegen --config graphql-codegen.yml",
     "prepare": "node -e \"if (process.env.NODE_ENV !== 'production'){process.exit(1)} \" || husky install",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seed:dev": "npx ts-node src/seeds/initialSeed.ts"
   },
   "keywords": [],
   "author": "",
