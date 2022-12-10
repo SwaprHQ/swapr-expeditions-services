@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest -i",
     "build": "tsc",
-    "dev": "cross-env DEBUG=*,-nodemon:*,-eslint:*,-eslintrc:*,-typescript-eslint:*,-nodemon nodemon -x ./node_modules/.bin/ts-node src/index.ts",
+    "dev": "npm run seed:dev && cross-env DEBUG=*,-nodemon:*,-eslint:*,-eslintrc:*,-typescript-eslint:*,-nodemon nodemon -x ./node_modules/.bin/ts-node src/index.ts",
     "lint": "eslint src/ --ext .ts",
     "lint:fix": "eslint src/ --ext .ts --fix",
     "dockerize": "sh ./docker/build.sh",
