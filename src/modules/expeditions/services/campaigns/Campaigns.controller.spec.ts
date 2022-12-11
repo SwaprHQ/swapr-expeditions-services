@@ -216,6 +216,8 @@ describe('Campaigns controller', () => {
 
       expect(res.result).toEqual(
         expect.objectContaining({
+          endDate: campaign.endDate,
+          redeemEndDate: campaign.redeemEndDate,
           claimedFragments: 0,
           rewards,
           tasks: {
@@ -314,6 +316,8 @@ describe('Campaigns controller', () => {
 
       expect(res.result).toEqual(
         expect.objectContaining({
+          endDate: campaign.endDate,
+          redeemEndDate: campaign.redeemEndDate,
           claimedFragments: 240 + 40 + 15 + 70,
           tasks: {
             dailyVisit: {

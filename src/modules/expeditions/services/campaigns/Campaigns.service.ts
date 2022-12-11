@@ -27,6 +27,12 @@ export class CampaignsService {
     address,
     campaign_id,
   }: AddressWithId): Promise<CampaignProgress> {
+    const campaign = await this.campaignModel.findOne({ campaign_id });
+
+    if (!campaign) {
+      throw new Error('No campaign has been found');
+    }
+
     const tasks = await this.tasksService.getActiveTasks({
       address,
       campaign_id,
@@ -39,6 +45,8 @@ export class CampaignsService {
     });
 
     return {
+      endDate: campaign.endDate,
+      redeemEndDate: campaign.redeemEndDate,
       claimedFragments,
       tasks,
       rewards,

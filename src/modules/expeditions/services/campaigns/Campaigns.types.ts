@@ -38,6 +38,8 @@ export interface GetCampaignProgressRequest extends Request {
 }
 
 export interface CampaignProgress {
+  endDate: Date;
+  redeemEndDate: Date;
   claimedFragments: number;
   tasks: ActiveTasks;
   rewards: ActiveReward[];

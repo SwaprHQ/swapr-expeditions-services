@@ -82,6 +82,8 @@ const reward = Joi.object({
   .label('Reward');
 
 export const GetCampaignProgressResponseDTO = Joi.object({
+  endDate: Joi.date().required(),
+  redeemEndDate: Joi.date().required(),
   claimedFragments: Joi.number().required(),
   rewards: Joi.array().items(reward).required().label('Rewards'),
   tasks: Joi.object({
