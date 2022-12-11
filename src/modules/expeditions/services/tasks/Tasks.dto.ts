@@ -7,16 +7,16 @@ const type = Joi.string()
   .required()
   .label('TasksType');
 
-export const ClaimRequestDTO = Joi.object({
+export const ClaimTaskRequestDTO = Joi.object({
   address,
   signature,
   type,
-}).label('ClaimRequest');
+}).label('ClaimTaskRequest');
 
-export const ClaimResponseDTO = Joi.object({
+export const ClaimTaskResponseDTO = Joi.object({
   claimedFragments: Joi.number().required(),
   type,
-}).label('ClaimResponse');
+}).label('ClaimTaskResponse');
 
 export const RegisterDailySwapRequestDTO = Joi.object({
   address,

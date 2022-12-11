@@ -36,3 +36,10 @@ export const DAILY_VISIT_MULTIPLAND = 1;
 export const DAILY_SWAPS_MULTIPLAND = 1;
 
 export const DAILY_SWAPS_MIN_USD_AMOUNT = 10;
+
+export const NFT_CONTRACT_ADDRESS = process.env.NFT_CONTRACT_ADDRESS;
+export const DOMAIN_NAME = process.env.DOMAIN_NAME;
+export const DOMAIN_VERSION = process.env.DOMAIN_VERSION;
+export const DOMAIN_CHAIN_ID = process.env.DOMAIN_CHAIN_ID;
+export const DOMAIN_VERIFYING_CONTRACT = NFT_CONTRACT_ADDRESS;
+export const TOKEN_EMITTER_PRIVATE_KEY = process.env.TOKEN_EMITTER_PRIVATE_KEY;

@@ -22,7 +22,7 @@ import {
 } from '../../interfaces/IFragment.interface';
 import { getWeekInformation } from '../../utils';
 import { AddressWithId } from '../../interfaces/shared';
-import { ClaimResult } from '../tasks/Tasks.types';
+import { ClaimTaskResult } from '../tasks/Tasks.types';
 import { addFragmentsWithMultiplier } from '../../utils/addFragmentsWithMultiplier';
 
 export class WeeklyFragmentsService {
@@ -207,7 +207,7 @@ export class WeeklyFragmentsService {
     address,
     type,
     campaign_id,
-  }: WeeklyRewardsBaseParams): Promise<ClaimResult> {
+  }: WeeklyRewardsBaseParams): Promise<ClaimTaskResult> {
     // Fetch the weekly fragment information
     const currentWeek = getWeekInformation();
     const weekRewards = await this.getWeeklyFragmentsByType({

@@ -11,15 +11,20 @@ import {
   getCampaignProgress,
 } from '../expeditions/services/campaigns/Campaigns.controller';
 import {
-  ClaimRequestDTO,
-  ClaimResponseDTO,
+  ClaimTaskRequestDTO,
+  ClaimTaskResponseDTO,
   RegisterDailySwapRequestDTO,
   RegisterDailySwapResponseDTO,
 } from '../expeditions/services/tasks/Tasks.dto';
 import {
-  claim,
+  claimTask,
   registerDailySwap,
 } from '../expeditions/services/tasks/Tasks.controller';
+import { claimReward } from '../expeditions/services/rewards/Rewards.controller';
+import {
+  ClaimRewardRequestDTO,
+  ClaimRewardResponseDTO,
+} from '../expeditions/services/rewards/Rewards.dto';
 
 async function register(server: Server) {
   // Return nothing
@@ -47,18 +52,18 @@ async function register(server: Server) {
 
   server.route({
     method: 'POST',
-    path: '/expeditions/claim',
+    path: '/expeditions/claim-task',
     options: {
       description: `Claim rewards (fragments) for specified type of task`,
       validate: {
-        payload: ClaimRequestDTO,
+        payload: ClaimTaskRequestDTO,
       },
-      tags: ['api', 'expeditions', 'claim'],
+      tags: ['api', 'expeditions', 'claimTask'],
       response: {
-        schema: ClaimResponseDTO,
+        schema: ClaimTaskResponseDTO,
       },
     },
-    handler: claim as HandlerDecorations,
+    handler: claimTask as HandlerDecorations,
   });
 
   server.route({
@@ -79,7 +84,7 @@ async function register(server: Server) {
 
   server.route({
     method: 'POST',
-    path: '/expeditions/registerDailySwap',
+    path: '/expeditions/register-daily-swap',
     options: {
       description: 'Registers a trade made through swapr dapp',
       validate: {
@@ -91,6 +96,23 @@ async function register(server: Server) {
       },
     },
     handler: registerDailySwap as HandlerDecorations,
+  });
+
+  server.route({
+    method: 'POST',
+    path: '/expeditions/claim-reward',
+    options: {
+      description:
+        'Creates claim signature for nft reward that can be claimed on nft contract',
+      validate: {
+        payload: ClaimRewardRequestDTO,
+      },
+      tags: ['api', 'expeditions', 'claimReward'],
+      response: {
+        schema: ClaimRewardResponseDTO,
+      },
+    },
+    handler: claimReward as HandlerDecorations,
   });
 }
 

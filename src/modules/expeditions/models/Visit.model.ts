@@ -47,7 +47,7 @@ VisitSchema.set('toJSON', {
 });
 
 VisitSchema.index({
-  name: 'text',
+  address: 'text',
 }).index({
   '$**': 'text',
 });

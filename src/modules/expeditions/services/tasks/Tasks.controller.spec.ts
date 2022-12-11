@@ -5,8 +5,8 @@ import { constants, Wallet } from 'ethers';
 import { HydratedDocument } from 'mongoose';
 
 import {
-  ClaimRequest,
-  ClaimResult,
+  ClaimTaskRequest,
+  ClaimTaskResult,
   RegisterDailySwapRequest,
   RegisterDailySwapResponse,
   TasksTypes,
@@ -87,14 +87,17 @@ describe('Tasks controller', () => {
     await stopMockServer(server);
   });
 
-  describe('claim', () => {
-    let makeClaimRequest: TypedRequestCreator<ClaimRequest['payload']>;
+  describe('claimTask', () => {
+    let makeClaimRequest: TypedRequestCreator<ClaimTaskRequest['payload']>;
 
     beforeEach(() => {
-      makeClaimRequest = createMakeRequest<ClaimRequest['payload']>(server, {
-        method: 'POST',
-        url: '/expeditions/claim',
-      });
+      makeClaimRequest = createMakeRequest<ClaimTaskRequest['payload']>(
+        server,
+        {
+          method: 'POST',
+          url: '/expeditions/claim-task',
+        }
+      );
     });
 
     it('throws when no active campaign has been found', async () => {
@@ -119,6 +122,38 @@ describe('Tasks controller', () => {
       });
     });
 
+    it('throws when past end date', async () => {
+      await CampaignModel.findByIdAndDelete(campaign._id);
+
+      await new CampaignModel({
+        startDate: week.startDate.subtract(3, 'weeks').toDate(),
+
+        endDate: week.endDate.subtract(1, 'weeks').toDate(),
+
+        redeemEndDate: week.endDate.add(3, 'weeks').toDate(),
+
+        initiatorAddress: constants.AddressZero,
+      }).save();
+
+      const signature = await testWallet.signMessage(TasksTypes.VISIT);
+
+      const testRes = await makeClaimRequest({
+        signature,
+
+        address: testWallet.address,
+
+        type: TasksTypes.VISIT,
+      });
+
+      expect(testRes.result).toEqual({
+        statusCode: 400,
+
+        error: 'Bad Request',
+
+        message: 'Campaign end date has passed',
+      });
+    });
+
     describe('daily visit', () => {
       let signature: string;
 
@@ -137,7 +172,7 @@ describe('Tasks controller', () => {
 
         expect(testRes.statusCode).toBe(200);
 
-        expect(testRes.result).toEqual<ClaimResult>({
+        expect(testRes.result).toEqual<ClaimTaskResult>({
           claimedFragments: 1,
 
           type: TasksTypes.VISIT,
@@ -305,7 +340,7 @@ describe('Tasks controller', () => {
           type: TasksTypes.LIQUIDITY_PROVISION,
         });
 
-        expect(testRes.result).toEqual<ClaimResult>({
+        expect(testRes.result).toEqual<ClaimTaskResult>({
           claimedFragments: FRAGMENTS_PER_WEEK + FRAGMENTS_PER_WEEK * 3,
 
           type: TasksTypes.LIQUIDITY_PROVISION,
@@ -439,7 +474,7 @@ describe('Tasks controller', () => {
           type: TasksTypes.LIQUIDITY_STAKING,
         });
 
-        expect(testRes.result).toEqual<ClaimResult>({
+        expect(testRes.result).toEqual<ClaimTaskResult>({
           claimedFragments: FRAGMENTS_PER_WEEK + FRAGMENTS_PER_WEEK * 3,
 
           type: TasksTypes.LIQUIDITY_STAKING,
@@ -458,7 +493,51 @@ describe('Tasks controller', () => {
         RegisterDailySwapRequest['payload']
       >(server, {
         method: 'POST',
-        url: '/expeditions/registerDailySwap',
+        url: '/expeditions/register-daily-swap',
+      });
+    });
+
+    it('throws when no active campaign has been found', async () => {
+      await CampaignModel.findByIdAndDelete(campaign._id);
+
+      const testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 2,
+      });
+
+      expect(testRes.result).toEqual({
+        statusCode: 400,
+
+        error: 'Bad Request',
+
+        message: 'No active campaign has been found',
+      });
+    });
+
+    it('throws when past end date', async () => {
+      await CampaignModel.findByIdAndDelete(campaign._id);
+
+      await new CampaignModel({
+        startDate: week.startDate.subtract(3, 'weeks').toDate(),
+
+        endDate: week.endDate.subtract(1, 'weeks').toDate(),
+
+        redeemEndDate: week.endDate.add(3, 'weeks').toDate(),
+
+        initiatorAddress: constants.AddressZero,
+      }).save();
+
+      const testRes = await makeRegisterRequest({
+        address: testWallet.address,
+        tradeUSDValue: 2,
+      });
+
+      expect(testRes.result).toEqual({
+        statusCode: 400,
+
+        error: 'Bad Request',
+
+        message: 'Campaign end date has passed',
       });
     });
 

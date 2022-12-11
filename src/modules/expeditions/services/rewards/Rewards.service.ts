@@ -1,40 +1,165 @@
-/* 
-    CONCEPT
-    -- -- Fetching Images
-    Option 1
-    - on getCampaignProgress user gets address of the ERC1155 and id's of all rewards (tokens)
-    - user fetches metadata from ipfs, then fetches image (present on metadata) from ipfs
-    - everything is nicely displayed
-    Option 2
-    - we store imageURL in the backend
-    - images are already served skipping metadata
-    
-    -- -- Checking if NFT is already owned
-    Option 1
-    - after getting ERC1155 address from response and array of tokenIds user make a query to a contract
-    Option 2
-    - we keep track of collected tokens in the Backend and add 'owned' flag to each nft fetched in 'rewards'
-
-    -- -- Claiming
-    - user fires claim reward endpoint with signature and tokenID
-    - BE validates that there are enough fragments and signature
-    - BE produces signed typed data (userAddress, tokenId), stores it in db and sends it back to the user
-    - - if for some reason claiming process stops on the front end, next call for claim will return sig from db
-    - user makes claim call to the contract
-    - contract verifies if user already have it, verifies signature, if all good then token is minted
-
-    -- -- style-affecting nfts
-    - FE would need to have address of the ERC1155 contract
-    - on init it would check balance of all tokens owned by the user
-    - if user has some of them then it will be available to pick them from config menu
-    - info about prefered style would be held in local-storage
-    - each login would need to verify if user can use specified style
-
-    -- 
-*/
+import { Wallet } from 'ethers';
+import type { TypedDataDomain } from '@ethersproject/abstract-signer';
+import {
+  ActiveReward,
+  ClaimRewardParams,
+  ClaimRewardResult,
+  RewardsServiceParams,
+} from './Rewards.types';
+import { RewardModel } from '../../models/Reward.model';
+import { RewardClaimModel } from '../../models/RewardClaim.model';
+import { TasksService, tasksService } from '../tasks/Tasks.service';
+import {
+  DOMAIN_CHAIN_ID,
+  DOMAIN_NAME,
+  DOMAIN_VERIFYING_CONTRACT,
+  DOMAIN_VERSION,
+  TOKEN_EMITTER_PRIVATE_KEY,
+} from '../../../config/config.service';
+import { AddressWithId } from '../../interfaces/shared';
 
 export class RewardsService {
-  async getActiveRewards() {
-    return;
+  private rewardModel: RewardModel;
+  private rewardClaimModel: RewardClaimModel;
+  private tasksService: TasksService;
+
+  constructor({
+    rewardModel,
+    rewardClaimModel,
+    tasksService,
+  }: RewardsServiceParams) {
+    this.rewardModel = rewardModel;
+    this.rewardClaimModel = rewardClaimModel;
+    this.tasksService = tasksService;
+  }
+
+  async getActiveRewards({
+    campaign_id,
+  }: Pick<AddressWithId, 'campaign_id'>): Promise<ActiveReward[]> {
+    const rewards = await this.rewardModel.find({ campaign_id });
+
+    return rewards.map(reward => {
+      const { _id, campaign_id, ...rest } = reward.toObject();
+      return rest;
+    });
+  }
+
+  async claim({
+    address,
+    campaign_id,
+    tokenId,
+  }: ClaimRewardParams): Promise<ClaimRewardResult> {
+    const rewardToClaim = await this.rewardModel.findOne({
+      tokenId,
+      campaign_id,
+    });
+
+    if (!rewardToClaim) {
+      throw new Error('Reward not found');
+    }
+
+    const existingRewardClaim = await this.rewardClaimModel.findOne({
+      tokenId,
+      receiverAddress: address,
+      campaign_id,
+    });
+
+    if (existingRewardClaim) {
+      const { domainChainId, domainVerifyingContract, claimSignature } =
+        existingRewardClaim;
+
+      return {
+        tokenId,
+        chainId: domainChainId,
+        nftAddress: domainVerifyingContract,
+        claimSignature,
+      };
+    }
+
+    const claimedFragmentsBalance = await this.tasksService.getClaimedFragments(
+      { address, campaign_id }
+    );
+
+    if (claimedFragmentsBalance < rewardToClaim.requiredFragments) {
+      throw new Error('Not enough fragments to claim reward');
+    }
+
+    const generatedClaimSignature = await this.generateClaimSignature({
+      tokenId,
+      receiver: address,
+    });
+
+    await new RewardClaimModel({
+      campaign_id,
+      ...generatedClaimSignature,
+    }).save();
+
+    return {
+      tokenId,
+      chainId: generatedClaimSignature.domainChainId,
+      nftAddress: generatedClaimSignature.domainVerifyingContract,
+      claimSignature: generatedClaimSignature.claimSignature,
+    };
+  }
+
+  private async generateClaimSignature({
+    tokenId,
+    receiver,
+  }: {
+    tokenId: string;
+    receiver: string;
+  }) {
+    if (
+      !TOKEN_EMITTER_PRIVATE_KEY ||
+      !DOMAIN_NAME ||
+      !DOMAIN_VERSION ||
+      !DOMAIN_CHAIN_ID ||
+      !DOMAIN_VERIFYING_CONTRACT
+    ) {
+      throw new Error('Missing domain/tokenEmitter config');
+    }
+
+    const tokenEmitter = new Wallet(TOKEN_EMITTER_PRIVATE_KEY);
+
+    const domain: TypedDataDomain = {
+      name: DOMAIN_NAME,
+      version: DOMAIN_VERSION,
+      chainId: DOMAIN_CHAIN_ID,
+      verifyingContract: DOMAIN_VERIFYING_CONTRACT,
+    };
+
+    const types = {
+      ClaimingData: [
+        { name: 'receiver', type: 'address' },
+        { name: 'tokenId', type: 'uint256' },
+      ],
+    };
+
+    const data = {
+      tokenId,
+      receiver,
+    };
+
+    const claimSignature = await tokenEmitter._signTypedData(
+      domain,
+      types,
+      data
+    );
+
+    return {
+      domainChainId: DOMAIN_CHAIN_ID,
+      domainName: DOMAIN_NAME,
+      domainVerifyingContract: DOMAIN_VERIFYING_CONTRACT,
+      domainVersion: DOMAIN_VERSION,
+      receiverAddress: receiver,
+      claimSignature,
+      tokenEmitterAddress: tokenEmitter.address,
+      tokenId,
+    };
   }
 }
+export const rewardsService = new RewardsService({
+  rewardModel: RewardModel,
+  rewardClaimModel: RewardClaimModel,
+  tasksService,
+});

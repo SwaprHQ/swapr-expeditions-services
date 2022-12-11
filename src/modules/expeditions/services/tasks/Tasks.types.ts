@@ -2,6 +2,7 @@ import { WeeklyFragmentsType } from '../../interfaces/IFragment.interface';
 import { AddressWithId } from '../../interfaces/shared';
 import { DailyFragmentsService } from '../dailyFragments/DailyFragments.service';
 import {
+  ActiveDailySwaps,
   DailyFragments,
   DailyFragmentsTypes,
   RegisterDailySwapParams,
@@ -12,7 +13,7 @@ import { WeeklyFragmentsService } from '../weeklyFragments/WeeklyFragments.servi
 export const TasksTypes = { ...WeeklyFragmentsType, ...DailyFragmentsTypes };
 export type TasksTypes = WeeklyFragmentsType | DailyFragmentsTypes;
 
-export interface ClaimRequest {
+export interface ClaimTaskRequest {
   payload: {
     type: TasksTypes;
     address: string;
@@ -20,7 +21,7 @@ export interface ClaimRequest {
   };
 }
 
-export type ClaimResponse = Promise<ClaimResult>;
+export type ClaimTaskResponse = Promise<ClaimTaskResult>;
 
 export interface RegisterDailySwapRequest {
   payload: Omit<RegisterDailySwapParams, 'campaign_id'>;
@@ -31,11 +32,11 @@ export type RegisterDailySwapResponse = Promise<{
   totalTradeUSDValue: number;
 }>;
 
-export interface ClaimParams extends AddressWithId {
+export interface ClaimTaskParams extends AddressWithId {
   type: TasksTypes;
 }
 
-export interface ClaimResult {
+export interface ClaimTaskResult {
   type: TasksTypes;
   claimedFragments: number;
 }
@@ -59,6 +60,7 @@ type ActiveDailyTask<Task> = Task & {
 
 export interface ActiveTasks {
   dailyVisit: ActiveDailyTask<DailyFragments>;
+  dailySwaps: ActiveDailySwaps;
   liquidityProvision: ActiveWeeklyTask<WeeklyFragmentsBase>;
   liquidityStaking: ActiveWeeklyTask<WeeklyFragmentsBase>;
 }

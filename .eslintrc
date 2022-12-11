@@ -16,6 +16,10 @@
       }
     }
   },
+  "env": {
+    "node": true,
+    "commonjs": true
+  },
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "no-case-declarations": "off",
