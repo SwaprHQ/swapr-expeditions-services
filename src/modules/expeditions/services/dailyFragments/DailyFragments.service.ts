@@ -5,6 +5,7 @@ import {
   DailyFragmentsServiceParams,
   DailyFragments,
   RegisterDailySwapParams,
+  ActiveDailySwaps,
 } from './DailyFragments.types';
 import { AddressWithId } from '../../interfaces/shared';
 import { VisitModel } from '../../models/Visit.model';
@@ -99,6 +100,39 @@ export class DailyFragmentsService {
     return {
       claimedFragments: claimedFragments,
       type: DailyFragmentsTypes.VISIT,
+    };
+  }
+
+  async getActiveDailySwaps({
+    address,
+    campaign_id,
+  }: AddressWithId): Promise<ActiveDailySwaps> {
+    const currentDay = dayjs.utc().startOf('day').toDate();
+    const endDate = dayjs.utc().endOf('day').toDate();
+
+    let dailySwapsDocument: HydratedDocument<IDailySwaps> | null;
+
+    dailySwapsDocument = await this.dailySwapsModel.findOne({
+      address,
+      campaign_id,
+      date: currentDay,
+    });
+
+    if (!dailySwapsDocument) {
+      dailySwapsDocument = await new DailySwapsModel({
+        address,
+        campaign_id,
+        date: currentDay,
+        fragments: 0,
+        totalTradeUSDValue: 0,
+      }).save();
+    }
+
+    return {
+      endDate,
+      startDate: currentDay,
+      fragments: dailySwapsDocument.fragments,
+      totalTradeUSDValue: dailySwapsDocument.totalTradeUSDValue,
     };
   }
 

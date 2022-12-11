@@ -43,6 +43,10 @@ export class TasksService {
       address,
       campaign_id,
     });
+    const dailySwaps = await this.dailyFragmentsService.getActiveDailySwaps({
+      address,
+      campaign_id,
+    });
 
     const startDate = currentWeek.startDate.toDate();
     const endDate = currentWeek.endDate.toDate();
@@ -52,6 +56,7 @@ export class TasksService {
         ...dailyVisit,
         type: TasksTypes.VISIT,
       },
+      dailySwaps,
       liquidityProvision: {
         ...liquidityProvision,
         startDate,

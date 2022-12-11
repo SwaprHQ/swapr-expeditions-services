@@ -2,6 +2,7 @@ import { WeeklyFragmentsType } from '../../interfaces/IFragment.interface';
 import { AddressWithId } from '../../interfaces/shared';
 import { DailyFragmentsService } from '../dailyFragments/DailyFragments.service';
 import {
+  ActiveDailySwaps,
   DailyFragments,
   DailyFragmentsTypes,
   RegisterDailySwapParams,
@@ -59,6 +60,7 @@ type ActiveDailyTask<Task> = Task & {
 
 export interface ActiveTasks {
   dailyVisit: ActiveDailyTask<DailyFragments>;
+  dailySwaps: ActiveDailySwaps;
   liquidityProvision: ActiveWeeklyTask<WeeklyFragmentsBase>;
   liquidityStaking: ActiveWeeklyTask<WeeklyFragmentsBase>;
 }

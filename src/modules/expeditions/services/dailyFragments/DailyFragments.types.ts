@@ -1,3 +1,4 @@
+import { IDailySwaps } from '../../interfaces/IDailySwaps.interface';
 import { IVisit } from '../../interfaces/IVisit.interface';
 import { AddressWithId } from '../../interfaces/shared';
 import { DailySwapsModel } from '../../models/DailySwaps.model';
@@ -15,6 +16,14 @@ export interface DailyFragmentsServiceParams {
   visitModel: VisitModel;
   dailySwapsModel: DailySwapsModel;
 }
+
+export type ActiveDailySwaps = Pick<
+  IDailySwaps,
+  'fragments' | 'totalTradeUSDValue'
+> & {
+  startDate: Date;
+  endDate: Date;
+};
 
 export type DailyFragments = Pick<IVisit, 'allVisits' | 'fragments'> & {
   lastVisit: Date | number;

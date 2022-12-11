@@ -228,6 +228,12 @@ describe('Campaigns controller', () => {
               nextVisit: new Date(0),
               type: TasksTypes.VISIT,
             },
+            dailySwaps: {
+              fragments: 0,
+              totalTradeUSDValue: 0,
+              startDate: dayjs.utc().startOf('day').toDate(),
+              endDate: dayjs.utc().endOf('day').toDate(),
+            },
             liquidityProvision: {
               totalAmountUSD: 0,
               claimableFragments: 0,
@@ -326,6 +332,12 @@ describe('Campaigns controller', () => {
               nextVisit: dayjs.utc(lastVisit).add(1, 'day').toDate(),
               fragments: 15,
               type: TasksTypes.VISIT,
+            },
+            dailySwaps: {
+              fragments: 50,
+              totalTradeUSDValue: 10,
+              startDate: dayjs.utc().startOf('day').toDate(),
+              endDate: dayjs.utc().endOf('day').toDate(),
             },
             liquidityProvision: {
               totalAmountUSD: 0,

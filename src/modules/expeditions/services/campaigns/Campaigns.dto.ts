@@ -67,6 +67,15 @@ const dailyVisit = Joi.object({
   .required()
   .label('DailyVisit');
 
+const dailySwaps = Joi.object({
+  startDate: Joi.date().required(),
+  endDate: Joi.date().required(),
+  fragments: Joi.number().required(),
+  totalTradeUSDValue: Joi.number().required(),
+})
+  .required()
+  .label('DailySwaps');
+
 const reward = Joi.object({
   requiredFragments: Joi.number().required(),
   nftAddress: address,
@@ -88,6 +97,7 @@ export const GetCampaignProgressResponseDTO = Joi.object({
   rewards: Joi.array().items(reward).required().label('Rewards'),
   tasks: Joi.object({
     dailyVisit,
+    dailySwaps,
     liquidityProvision: weeklyFragments.required(),
     liquidityStaking: weeklyFragments.required(),
   })
